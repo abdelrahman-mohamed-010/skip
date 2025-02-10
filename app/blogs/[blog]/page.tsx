@@ -1,0 +1,53 @@
+import { client } from "@/sanity/lib/client";
+import RichTextRenderer from "@/components/RichTextRenderer";
+
+async function getBlog(slug: string) {
+  return await client.fetch(
+    `*[_type == "blog" && slug.current == $slug][0] {
+      title,
+      publishedAt,
+      "imageUrl": image.asset->url,
+      content[] {
+        ...,
+        _type == "image" => {
+          ...,
+          asset->
+        }
+      }
+    }`,
+    { slug }
+  );
+}
+
+const BlogPage = async ({ params }: { params: { blog: string } }) => {
+  const blog = await getBlog(params.blog);
+
+  if (!blog) {
+    return <div>Blog not found</div>;
+  }
+
+  return (
+    <article className="container mx-auto px-4 mt-16 py-12 max-w-4xl">
+      <header className="mb-8">
+        <h1 className="text-4xl max-sm:text-2xl font-bold mb-4">
+          {blog.title}
+        </h1>
+        <time className="text-gray-600">
+          {new Date(blog.publishedAt).toLocaleDateString()}
+        </time>
+      </header>
+
+      {blog.imageUrl && (
+        <img
+          src={blog.imageUrl}
+          alt={blog.title}
+          className="h-[250px] md:h-[400px] w-full object-cover rounded-lg mb-8"
+        />
+      )}
+
+      <RichTextRenderer content={blog.content} />
+    </article>
+  );
+};
+
+export default BlogPage;

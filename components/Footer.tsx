@@ -1,0 +1,160 @@
+import Link from "next/link";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
+
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="bg-gradient-to-b from-white to-primary/5 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          {/* Company Info */}
+          <div className="space-y-4">
+            <h3 className="text-2xl font-bold text-primary">SkipLegal</h3>
+            <p className="text-secondary/80 leading-relaxed">
+              Making immigration simple and accessible for everyone. Your
+              trusted partner in the journey to a new life.
+            </p>
+            <div className="flex items-center space-x-4">
+              <Link
+                href="https://facebook.com"
+                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
+              >
+                <Facebook size={18} />
+              </Link>
+              <Link
+                href="https://twitter.com"
+                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
+              >
+                <Twitter size={18} />
+              </Link>
+              <Link
+                href="https://instagram.com"
+                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
+              >
+                <Instagram size={18} />
+              </Link>
+              <Link
+                href="https://linkedin.com"
+                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
+              >
+                <Linkedin size={18} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-lg font-semibold text-primary mb-6">
+              Quick Links
+            </h4>
+            <ul className="space-y-3">
+              {[
+                "About Us",
+                "Services",
+                "Immigration Guide",
+                "Success Stories",
+                "Contact",
+              ].map((item) => (
+                <li key={item}>
+                  <Link
+                    href={`/${item.toLowerCase().replace(" ", "-")}`}
+                    className="text-secondary/80 hover:text-primary transition-colors duration-200"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className="text-lg font-semibold text-primary mb-6">
+              Our Services
+            </h4>
+            <ul className="space-y-3">
+              {[
+                "Visa Applications",
+                "Student Services",
+                "Business Immigration",
+                "Family Sponsorship",
+                "Legal Consultation",
+              ].map((item) => (
+                <li key={item}>
+                  <Link
+                    href={`/services/${item.toLowerCase().replace(" ", "-")}`}
+                    className="text-secondary/80 hover:text-primary transition-colors duration-200"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h4 className="text-lg font-semibold text-primary mb-6">
+              Get in Touch
+            </h4>
+            <div className="space-y-3">
+              <a
+                href="mailto:hello@skiplegal.com"
+                className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors duration-200"
+              >
+                <Mail size={18} className="text-primary" />
+                <span className=" text-primary">hello@skiplegal.com</span>
+              </a>
+              <a
+                href="tel:+1234567890"
+                className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors duration-200"
+              >
+                <Phone size={18} className="text-primary" />
+                <span className=" text-primary">(123) 456-7890</span>
+              </a>
+              <div className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl">
+                <MapPin size={18} className="text-primary" />
+                <span className=" text-primary">New York, NY 10001</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-primary/10 ">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-secondary/60 text-sm">
+              © {currentYear} SkipLegal. All rights reserved.
+            </p>
+            <div className="flex items-center space-x-6">
+              <Link
+                href="/privacy-policy"
+                className="text-secondary/60 hover:text-primary text-sm"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-secondary/60 hover:text-primary text-sm"
+              >
+                Terms of Service
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
