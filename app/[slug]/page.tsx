@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from "@/sanity/lib/client";
 import ImageSlider from "@/components/imageSlider";
@@ -5,6 +6,7 @@ import ContentSlider from "@/components/ContentSlider";
 import PdfViewer from "@/components/PdfViewer";
 import PageHEader from "@/components/PageHEader";
 import RichTextRenderer from "@/components/RichTextRenderer";
+import PageCTA from "@/components/PageCTA";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -64,6 +66,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
           optionLabel,
           value
         }
+      },
+      sideImage {
+        asset->{
+          url
+        },
+        alt
+      },
+      cta {
+        text,
+        link
       }
     }
   }`,
@@ -153,10 +165,50 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </div>
               </section>
             );
+          case "responsibilities":
+            return (
+              <section
+                key={index}
+                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+              >
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="h-auto">
+                    {component.sideImage?.asset?.url && (
+                      <img
+                        src={component.sideImage.asset.url}
+                        alt={component.sideImage?.alt || ""}
+                        className="object-cover rounded-lg w-full"
+                        style={{ height: "400px" }}
+                      />
+                    )}
+                  </div>
+                  <div className="flex flex-col justify-between h-full">
+                    <div className="prose max-w-none">
+                      <RichTextRenderer
+                        content={component.content}
+                        alignment="left"
+                      />
+                    </div>
+                    {component.cta && (
+                      <div>
+                        <a
+                          href={component.cta.link}
+                          className="inline-block px-12 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                        >
+                          {component.cta.text}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </section>
+            );
           default:
             return null;
         }
       })}
+
+      <PageCTA />
     </main>
   );
 }

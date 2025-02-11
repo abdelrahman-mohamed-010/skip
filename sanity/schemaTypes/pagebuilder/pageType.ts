@@ -1,47 +1,3 @@
-// import { defineArrayMember, defineField, defineType } from "sanity";
-
-// export const pageType = defineType({
-//   name: "page",
-//   type: "document",
-//   title: "Page",
-//   fields: [
-//     defineField({ name: "title", type: "string" }),
-//     defineField({
-//       name: "slug",
-//       type: "slug",
-//       description: "This is the page URL path (e.g., 'about', 'contact', 'services'). This will determine the page's web address.",
-//       options: {
-//         source: "title",
-//         maxLength: 96,
-//       },
-//     }),
-//     defineField({
-//       name: "pageBuilder",
-//       type: "array",
-//       title: "Page builder",
-//       of: [
-//         defineArrayMember({
-//           name: "gallery",
-//           type: "gallery",
-//         }),
-//         defineArrayMember({
-//           name: "richText",
-//           type: "richText",
-//         }),
-//         defineArrayMember({
-//           name: "contentSlider",
-//           type: "contentSlider",
-//         }),
-//         defineArrayMember({
-//           name: "pdfViewer",
-//           type: "pdfViewer",
-//         }),
-//         // etc...
-//       ],
-//     }),
-//   ],
-// });
-
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const pageType = defineType({
@@ -70,6 +26,10 @@ export const pageType = defineType({
         defineArrayMember({ name: "richText", type: "richText" }),
         defineArrayMember({ name: "contentSlider", type: "contentSlider" }),
         defineArrayMember({ name: "pdfViewer", type: "pdfViewer" }),
+        defineArrayMember({
+          name: "responsibilities",
+          type: "responsibilities",
+        }),
       ],
     }),
     defineField({
@@ -109,6 +69,10 @@ export const pageType = defineType({
                   type: "contentSlider",
                 }),
                 defineArrayMember({ name: "pdfViewer", type: "pdfViewer" }),
+                defineArrayMember({
+                  name: "responsibilities",
+                  type: "responsibilities",
+                }), // Add this line
               ],
             }),
           ],

@@ -9,6 +9,7 @@ import blog from "./blog";
 import news from "./news";
 import guides from "./guides";
 import footer from "./footer"; // added footer schema
+import { responsibilities } from "./pagebuilder/responsibilities";
 
 export const schemaTypes = [
   landing,
@@ -22,4 +23,5 @@ export const schemaTypes = [
   news,
   guides,
   footer, // added footer schema
+  responsibilities,
 ];

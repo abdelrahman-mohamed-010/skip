@@ -1,4 +1,5 @@
 import LawyerBot from "./LawyerBot";
+import { Phone } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -38,10 +39,16 @@ const Hero = () => {
             <LawyerBot />
           </div>
         </div>
+        <a
+          href="tel:+1234567890"
+          className="inline-flex items-center px-12 max-sm:px-8 py-3 mt-12 text-lg max-sm:text-base font-medium text-white bg-primary rounded-full hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
+        >
+          <Phone className="w-5 h-5 mr-2 max-sm:w-4 max-sm:h-4" />
+          Call Us Now
+        </a>
       </div>
     </section>
   );
 };
 
 export default Hero;
-

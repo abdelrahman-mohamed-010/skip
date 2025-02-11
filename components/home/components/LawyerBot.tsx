@@ -1,6 +1,6 @@
 "use client";
 
-import { SendHorizontal } from "lucide-react";
+import { SendHorizontal, Paperclip } from "lucide-react"; // changed to FileUp
 import { useState } from "react";
 
 interface Message {
@@ -18,6 +18,7 @@ const LawyerBot = () => {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [fileName, setFileName] = useState<string>("");
 
   const getLegalResponse = (question: string) => {
     const responses: { [key: string]: string } = {
@@ -63,9 +64,17 @@ const LawyerBot = () => {
     sendMessage(question);
   };
 
+  // New file upload handler
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFileName(e.target.files[0].name);
+      // TODO: Implement file upload backend integration
+    }
+  };
+
   return (
     <div className="relative rounded-2xl bg-white/80 backdrop-blur-md p-4 max-sm:p-3 shadow-lg border border-primary/10">
-      <div className="space-y-4 mb-4 min-h-[200px] max-sm:min-h-[150px] max-h-[200px] max-sm:max-h-[150px] overflow-y-auto p-2">
+      <div className="space-y-4 mb-4 min-h-[240px] max-sm:min-h-[150px] max-h-[240px] max-sm:max-h-[150px] overflow-y-auto p-2">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -108,16 +117,39 @@ const LawyerBot = () => {
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && sendMessage(inputMessage)}
           placeholder="Type your immigration question..."
-          className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-12 max-sm:text-sm"
+          className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-24 max-sm:text-sm" // increased right padding
         />
-        <button
-          onClick={() => sendMessage(inputMessage)}
-          disabled={isLoading}
-          className="absolute right-2 p-2 text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
-        >
-          <SendHorizontal className="w-5 h-5" />
-        </button>
+        <div className="absolute right-2 flex items-center gap-1">
+          <button
+            onClick={() =>
+              document.getElementById("file-upload-input")?.click()
+            }
+            className="p-2 text-primary hover:text-primary/80 transition-colors"
+          >
+            <Paperclip className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => sendMessage(inputMessage)}
+            disabled={isLoading}
+            className="p-2 text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
+          >
+            <SendHorizontal className="w-5 h-5" />
+          </button>
+        </div>
+        <input
+          id="file-upload-input"
+          type="file"
+          onChange={handleFileUpload}
+          className="hidden"
+        />
       </div>
+
+      {/* Optionally display uploaded file name */}
+      {fileName && (
+        <div className="mt-2 text-sm text-gray-500">
+          Uploaded file: {fileName}
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2 mt-3 justify-center max-sm:gap-1.5">
         {["Visa requirements", "Green card process", "Processing times"].map(

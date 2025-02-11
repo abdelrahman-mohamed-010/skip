@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { client } from "@/sanity/lib/client";
 import {
   Menu,
@@ -84,9 +85,11 @@ const Navigation = () => {
       <div className="fixed w-full z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
         <nav className="h-16 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-full">
-            <Link href="/" className="flex items-center space-x-2 shrink-0">
-              <Home className="w-6 h-6 text-primary" />
-              <span className="text-xl font-bold text-primary">SkipLegal</span>
+            <Link href="/" className="flex items-center space-x-2 shrink-0 p-2">
+              <Image src="/logo.svg" alt="Logo" width={32} height={32} />
+              <span className="text-xl font-bold text-primary">
+                SKIP<span className=" text-blue-700">LEGAL</span>.ai
+              </span>
             </Link>
 
             {/* Desktop Menu */}
@@ -120,6 +123,23 @@ const Navigation = () => {
                 </div>
               ))}
             </div>
+              {/* Auth Buttons */}
+              <div className="flex items-center space-x-3 ml-0 pl-2 border-l border-gray-200">
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-sm font-medium text-secondary hover:text-primary transition-colors"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors"
+                >
+                  Sign up
+                </Link>
+              </div>
+            
+
 
             {/* Mobile Menu Button */}
             <button
