@@ -1,3 +1,7 @@
+"use client";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Facebook,
@@ -8,9 +12,53 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
+import { client } from "@/sanity/lib/client";
 
-const Footer = () => {
+const query = `*[_type == "footer"][0]{
+  companyInfo{
+    description,
+    socialLinks[]{
+      platform,
+      url
+    }
+  },
+  quickLinks[]{
+    text,
+    url
+  },
+  ourServices[]{
+    text,
+    url
+  },
+  contactInfo{
+    email,
+    phone,
+    address
+  },
+  bottomLinks[]{
+    text,
+    url
+  }
+}`;
+
+const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
+  const [footerData, setFooterData] = useState<any>(initialFooterData);
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    if (!footerData) {
+      (async () => {
+        try {
+          const data = await client.fetch(query);
+          setFooterData(data);
+        } catch (error) {
+          console.error("Error fetching footer:", error);
+        }
+      })();
+    }
+  }, [footerData]);
+
+  if (!footerData) return null;
 
   return (
     <footer className="bg-gradient-to-b from-white to-primary/5 pt-16 pb-8">
@@ -21,34 +69,29 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-primary">SkipLegal</h3>
             <p className="text-secondary/80 leading-relaxed">
-              Making immigration simple and accessible for everyone. Your
-              trusted partner in the journey to a new life.
+              {footerData.companyInfo?.description}
             </p>
             <div className="flex items-center space-x-4">
-              <Link
-                href="https://facebook.com"
-                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
-              >
-                <Facebook size={18} />
-              </Link>
-              <Link
-                href="https://twitter.com"
-                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
-              >
-                <Twitter size={18} />
-              </Link>
-              <Link
-                href="https://instagram.com"
-                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
-              >
-                <Instagram size={18} />
-              </Link>
-              <Link
-                href="https://linkedin.com"
-                className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
-              >
-                <Linkedin size={18} />
-              </Link>
+              {footerData.companyInfo?.socialLinks?.map(
+                (link: any, i: number) => {
+                  const icons: any = {
+                    facebook: Facebook,
+                    twitter: Twitter,
+                    instagram: Instagram,
+                    linkedin: Linkedin,
+                  };
+                  const Icon = icons[link.platform];
+                  return (
+                    <Link
+                      key={i}
+                      href={link.url || "3"}
+                      className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
+                    >
+                      <Icon size={18} />
+                    </Link>
+                  );
+                }
+              )}
             </div>
           </div>
 
@@ -58,47 +101,39 @@ const Footer = () => {
               Quick Links
             </h4>
             <ul className="space-y-3">
-              {[
-                "About Us",
-                "Services",
-                "Immigration Guide",
-                "Success Stories",
-                "Contact",
-              ].map((item) => (
-                <li key={item}>
-                  <Link
-                    href={`/${item.toLowerCase().replace(" ", "-")}`}
-                    className="text-secondary/80 hover:text-primary transition-colors duration-200"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
+              {footerData.quickLinks?.map(
+                (item: { text: string; url: string | null }, i: number) => (
+                  <li key={i}>
+                    <Link
+                      href={item.url || "3"}
+                      className="text-secondary/80 hover:text-primary transition-colors duration-200"
+                    >
+                      {item.text}
+                    </Link>
+                  </li>
+                )
+              )}
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Our Services */}
           <div>
             <h4 className="text-lg font-semibold text-primary mb-6">
               Our Services
             </h4>
             <ul className="space-y-3">
-              {[
-                "Visa Applications",
-                "Student Services",
-                "Business Immigration",
-                "Family Sponsorship",
-                "Legal Consultation",
-              ].map((item) => (
-                <li key={item}>
-                  <Link
-                    href={`/services/${item.toLowerCase().replace(" ", "-")}`}
-                    className="text-secondary/80 hover:text-primary transition-colors duration-200"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
+              {footerData.ourServices?.map(
+                (item: { text: string; url: string | null }, i: number) => (
+                  <li key={i}>
+                    <Link
+                      href={item.url || "3"}
+                      className="text-secondary/80 hover:text-primary transition-colors duration-200"
+                    >
+                      {item.text}
+                    </Link>
+                  </li>
+                )
+              )}
             </ul>
           </div>
 
@@ -109,22 +144,28 @@ const Footer = () => {
             </h4>
             <div className="space-y-3">
               <a
-                href="mailto:hello@skiplegal.com"
+                href={`mailto:${footerData.contactInfo?.email || ""}`}
                 className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors duration-200"
               >
                 <Mail size={18} className="text-primary" />
-                <span className=" text-primary">hello@skiplegal.com</span>
+                <span className=" text-primary">
+                  {footerData.contactInfo?.email}
+                </span>
               </a>
               <a
-                href="tel:+1234567890"
+                href={`tel:${footerData.contactInfo?.phone || ""}`}
                 className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors duration-200"
               >
                 <Phone size={18} className="text-primary" />
-                <span className=" text-primary">(123) 456-7890</span>
+                <span className=" text-primary">
+                  {footerData.contactInfo?.phone}
+                </span>
               </a>
               <div className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl">
                 <MapPin size={18} className="text-primary" />
-                <span className=" text-primary">New York, NY 10001</span>
+                <span className=" text-primary">
+                  {footerData.contactInfo?.address}
+                </span>
               </div>
             </div>
           </div>
@@ -137,18 +178,17 @@ const Footer = () => {
               © {currentYear} SkipLegal. All rights reserved.
             </p>
             <div className="flex items-center space-x-6">
-              <Link
-                href="/privacy-policy"
-                className="text-secondary/60 hover:text-primary text-sm"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms"
-                className="text-secondary/60 hover:text-primary text-sm"
-              >
-                Terms of Service
-              </Link>
+              {footerData.bottomLinks?.map(
+                (item: { text: string; url: string | null }, i: number) => (
+                  <Link
+                    key={i}
+                    href={item.url || "3"}
+                    className="text-secondary/60 hover:text-primary text-sm"
+                  >
+                    {item.text}
+                  </Link>
+                )
+              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import footer from "./footer";
 import landing from "./landing";
 import { imageGalleryType } from "./pagebuilder/imageGallery";
 import { pageType } from "./pagebuilder/pageType";
@@ -9,9 +8,9 @@ import { pdfType } from "./pagebuilder/pdfType";
 import blog from "./blog";
 import news from "./news";
 import guides from "./guides";
+import footer from "./footer"; // added footer schema
 
 export const schemaTypes = [
-  footer,
   landing,
   pageType,
   imageGalleryType,
@@ -21,5 +20,6 @@ export const schemaTypes = [
   pdfType,
   blog,
   news,
-  guides
+  guides,
+  footer, // added footer schema
 ];
