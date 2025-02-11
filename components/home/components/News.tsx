@@ -1,7 +1,34 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { client } from "@/sanity/lib/client";
 
-const News = () => {
+interface NewsItem {
+  _id: string;
+  title: string;
+  slug: {
+    current: string;
+  };
+  excerpt: string;
+  imageUrl: string;
+  category: string;
+}
+
+async function getLatestNews(): Promise<NewsItem[]> {
+  return await client.fetch(`
+    *[_type == "news"] | order(publishedAt desc)[0...3] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      "imageUrl": image.asset->url,
+      "category": category->title
+    }
+  `);
+}
+
+const News = async () => {
+  const latestNews = await getLatestNews();
+
   return (
     <section className="py-16 bg-gradient-to-br from-white via-primary/5 to-primary/10 mb-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,24 +45,29 @@ const News = () => {
           </Link>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3].map((_, index) => (
+          {latestNews.map((news, index) => (
             <article
-              key={index}
+              key={news._id}
               className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 animate-fadeIn"
               style={{ animationDelay: `${0.2 * index}s` }}
             >
-              <div className="aspect-video bg-muted" />
+              {news.imageUrl && (
+                <img
+                  src={news.imageUrl}
+                  alt={news.title}
+                  className="w-full aspect-video object-cover"
+                />
+              )}
               <div className="p-6">
-                <span className="text-sm text-accent">Immigration Updates</span>
-                <h3 className="text-xl font-semibold text-primary mt-2 mb-3">
-                  Latest Changes in Immigration Policy
+                <span className="text-sm text-accent">{news.category}</span>
+                <h3 className="text-xl font-semibold text-primary mt-2 mb-3 line-clamp-2">
+                  {news.title}
                 </h3>
                 <p className="text-secondary mb-4 line-clamp-2">
-                  Stay informed about the most recent updates and changes in
-                  U.S. immigration policies and procedures.
+                  {news.excerpt}
                 </p>
                 <Link
-                  href="/latest-immigration-news"
+                  href={`/latest-immigration-news/${news.slug.current}`}
                   className="inline-flex items-center text-primary hover:text-accent transition-colors duration-200"
                 >
                   Read More
