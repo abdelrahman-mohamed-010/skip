@@ -1,5 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import RichTextRenderer from "@/components/RichTextRenderer";
+import ShareButton from "@/components/ShareButton";
 
 async function getNews(slug: string) {
   return await client.fetch(
@@ -32,9 +33,16 @@ const newsPage = async ({ params }: { params: { news: string } }) => {
         <h1 className="text-4xl max-sm:text-2xl font-bold mb-4">
           {news.title}
         </h1>
-        <time className="text-gray-600">
-          {new Date(news.publishedAt).toLocaleDateString()}
-        </time>
+        <div className="flex items-center space-x-2">
+          <time className="text-gray-600">
+            {new Date(news.publishedAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </time>
+          <ShareButton title={news.title} />
+        </div>
       </header>
 
       {news.imageUrl && (

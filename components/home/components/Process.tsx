@@ -1,28 +1,17 @@
+import React from "react";
 import { CheckSquare, ClipboardCheck, FileCheck } from "lucide-react";
 
-const Process = () => {
-  const steps = [
-    {
-      step: "01",
-      title: "Initial Consultation",
-      description: "Free evaluation of your case with our immigration experts.",
-      icon: CheckSquare,
-    },
-    {
-      step: "02",
-      title: "Document Preparation",
-      description:
-        "Professional assistance in gathering and preparing all required documentation.",
-      icon: ClipboardCheck,
-    },
-    {
-      step: "03",
-      title: "Application Filing",
-      description:
-        "Careful submission of your application with continued progress tracking.",
-      icon: FileCheck,
-    },
-  ];
+interface ProcessData {
+  sectionTitle: string;
+  description: string;
+  steps: {
+    title: string;
+    description: string;
+  }[];
+}
+
+const Process = ({ data }: { data: ProcessData }) => {
+  const icons = [CheckSquare, ClipboardCheck, FileCheck];
 
   return (
     <section className="py-24 relative overflow-hidden bg-gradient-to-b from-primary/5 via-white to-white">
@@ -32,30 +21,32 @@ const Process = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 ">
+        <div className="text-center mb-16">
           <span className="px-4 py-1.5 bg-primary/5 text-primary rounded-full text-sm font-medium">
             How It Works
           </span>
           <h2 className="text-4xl font-bold max-sm:text-3xl text-primary mt-4">
-            Simple 3-Step Process
+            {data.sectionTitle}
           </h2>
           <p className="mt-4 max-sm:mt-2 text-lg text-secondary/80 max-w-2xl max-sm:text-sm mx-auto">
-            We ve streamlined the immigration process to make it easy for you
+            {data.description}
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((step, index) => (
+          {data.steps.map((step, index) => (
             <div
-              key={step.step}
+              key={index}
               className="relative bg-white/50 backdrop-blur-sm p-8 rounded-2xl border border-primary/10 hover:border-primary/20 transition-all duration-300"
               style={{ animationDelay: `${index * 150}ms` }}
             >
               <span className="absolute -top-4 right-4 text-5xl font-bold text-primary/5">
-                {step.step}
+                {String(index + 1).padStart(2, "0")}
               </span>
               <div className="relative">
-                <step.icon className="w-10 h-10 text-primary mb-6" />
+                {React.createElement(icons[index % icons.length], {
+                  className: "w-10 h-10 text-primary mb-6",
+                })}
                 <h3 className="text-xl font-semibold text-primary mb-3">
                   {step.title}
                 </h3>

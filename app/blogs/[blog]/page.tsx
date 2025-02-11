@@ -1,5 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import RichTextRenderer from "@/components/RichTextRenderer";
+import ShareButton from "@/components/ShareButton";
 
 async function getBlog(slug: string) {
   return await client.fetch(
@@ -32,9 +33,16 @@ const BlogPage = async ({ params }: { params: { blog: string } }) => {
         <h1 className="text-4xl max-sm:text-2xl font-bold mb-4">
           {blog.title}
         </h1>
-        <time className="text-gray-600">
-          {new Date(blog.publishedAt).toLocaleDateString()}
-        </time>
+        <div className="flex items-center space-x-2">
+          <time className="text-gray-600">
+            {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </time>
+          <ShareButton title={blog.title} />
+        </div>
       </header>
 
       {blog.imageUrl && (

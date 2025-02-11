@@ -1,4 +1,4 @@
-import landing from "./landing";
+
 import { imageGalleryType } from "./pagebuilder/imageGallery";
 import { pageType } from "./pagebuilder/pageType";
 import { navigationType } from "./pagebuilder/navigationType";
@@ -10,9 +10,15 @@ import news from "./news";
 import guides from "./guides";
 import footer from "./footer"; // added footer schema
 import { responsibilities } from "./pagebuilder/responsibilities";
+import { featuresType } from "./pagebuilder/features";
+import { servicesType } from "./pagebuilder/services";
+import { processType } from "./pagebuilder/process";
+import landing from "./landing";
+import hero from "./hero";
 
 export const schemaTypes = [
   landing,
+  hero,
   pageType,
   imageGalleryType,
   navigationType,
@@ -24,4 +30,7 @@ export const schemaTypes = [
   guides,
   footer, // added footer schema
   responsibilities,
+  featuresType,
+  servicesType,
+  processType,
 ];

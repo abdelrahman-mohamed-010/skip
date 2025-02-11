@@ -1,3 +1,4 @@
+import React from "react";
 import {
   FileSearch,
   GraduationCap,
@@ -7,44 +8,24 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const Services = () => {
-  const services = [
-    {
-      title: "Immigration Visas",
-      description:
-        "Comprehensive assistance with all types of visa applications including work, family, and business visas.",
-      icon: Book,
-      progress: "95%",
-      gradient: "from-blue-500 via-primary to-purple-500",
-      link: "/visas",
-    },
-    {
-      title: "Student Services",
-      description:
-        "Specialized support for international students seeking to study in the United States.",
-      icon: GraduationCap,
-      progress: "90%",
-      gradient: "from-purple-500 via-pink-500 to-rose-500",
-      link: "/student-services",
-    },
-    {
-      title: "Business Immigration",
-      description:
-        "Expert guidance for companies and entrepreneurs looking to establish or expand in the US.",
-      icon: Building2,
-      progress: "88%",
-      gradient: "from-primary via-cyan-500 to-blue-500",
-      link: "/business-immigration",
-    },
-    {
-      title: "Legal Consultation",
-      description:
-        "Professional legal advice and strategy planning for your immigration journey.",
-      icon: FileSearch,
-      progress: "92%",
-      gradient: "from-rose-500 via-primary to-purple-500",
-      link: "/consultation",
-    },
+interface ServicesData {
+  sectionTitle: string;
+  description: string;
+  servicesList: {
+    title: string;
+    description: string;
+    link: string;
+    progress: string;
+  }[];
+}
+
+const Services = ({ data }: { data: ServicesData }) => {
+  const icons = [Book, GraduationCap, Building2, FileSearch];
+  const gradients = [
+    "from-blue-500 via-primary to-purple-500",
+    "from-purple-500 via-pink-500 to-rose-500",
+    "from-primary via-cyan-500 to-blue-500",
+    "from-rose-500 via-primary to-purple-500",
   ];
 
   return (
@@ -61,15 +42,15 @@ const Services = () => {
             Our Services
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-primary mt-3 sm:mt-4">
-            Comprehensive Immigration Solutions
+            {data.sectionTitle}
           </h2>
           <p className="mt-3 sm:mt-4 text-base sm:text-lg text-secondary/80 max-w-2xl mx-auto px-2 sm:px-0">
-            Expert guidance through every step of your immigration journey
+            {data.description}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
-          {services.map((service) => (
+          {data.servicesList.map((service, index) => (
             <Link
               href={service.link}
               key={service.title}
@@ -77,15 +58,17 @@ const Services = () => {
             >
               {/* Gradient Border */}
               <div
-                className={`absolute inset-0 bg-gradient-to-r ${service.gradient} rounded-2xl opacity-20 group-hover:opacity-100 transition-opacity duration-300`}
+                className={`absolute inset-0 bg-gradient-to-r ${gradients[index % gradients.length]} rounded-2xl opacity-20 group-hover:opacity-100 transition-opacity duration-300`}
               />
 
               <div className="relative bg-white/80 backdrop-blur-sm p-4 sm:p-8 rounded-2xl">
                 <div className="flex items-start gap-3 sm:gap-6">
                   <div
-                    className={`bg-gradient-to-br ${service.gradient} p-2 sm:p-3 rounded-xl shrink-0`}
+                    className={`bg-gradient-to-br ${gradients[index % gradients.length]} p-2 sm:p-3 rounded-xl shrink-0`}
                   >
-                    <service.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    {React.createElement(icons[index % icons.length], {
+                      className: "w-5 h-5 sm:w-6 sm:h-6 text-white",
+                    })}
                   </div>
 
                   <div className="flex-1">
@@ -101,7 +84,7 @@ const Services = () => {
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="flex-1 h-1 sm:h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div
-                          className={`h-full bg-gradient-to-r ${service.gradient} transition-all duration-500`}
+                          className={`h-full bg-gradient-to-r ${gradients[index % gradients.length]} transition-all duration-500`}
                           style={{ width: service.progress }}
                         />
                       </div>

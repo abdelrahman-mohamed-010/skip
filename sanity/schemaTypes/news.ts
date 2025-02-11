@@ -90,6 +90,24 @@ export default {
             },
           ],
         },
+        {
+          type: "object",
+          name: "cta",
+          title: "CTA Button",
+          fields: [
+            { name: "text", type: "string", title: "Button Text" },
+            { name: "link", type: "string", title: "Button URL" },
+            {
+              name: "alignment",
+              type: "string",
+              title: "Button Alignment",
+              options: {
+                list: ["left", "center", "right"],
+              },
+              initialValue: "left",
+            },
+          ],
+        },
       ],
     },
   ],

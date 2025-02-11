@@ -1,23 +1,43 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
 import Hero from "@/components/home/components/Hero";
 import Features from "@/components/home/components/Features";
 import Services from "@/components/home/components/Services";
 import Process from "@/components/home/components/Process";
 import News from "@/components/home/components/News";
-// import ChatBot from "@/components/ChatBot";
 import Navigation from "@/components/Navigation";
 import ContactLawyerForm from "@/components/ContactLawyerForm";
 import Footer from "@/components/Footer";
+import { client } from "../sanity/lib/client";
 
-export default function Home() {
+// Fetch landing page with sections (hero included)
+async function getLandingData() {
+  const data = await client.fetch(`*[_type == "landing"][0]{ sections }`);
+  return data ?? { sections: [] };
+}
+
+export default async function Home() {
+  const landingData = await getLandingData();
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      <Hero />
-      <Features />
-      <Services />
-      <Process />
+      {landingData.sections.map((section: any) => {
+        // Render section based on its _type.
+        switch (section._type) {
+          case "hero":
+            return <Hero heroData={section} key={section._id || "hero"} />;
+          case "features":
+            return <Features key="features" data={section} />;
+          case "services":
+            return <Services key="services" data={section} />;
+          case "process":
+            return <Process key="process" data={section} />;
+          default:
+            return null;
+        }
+      })}
       <News />
-      {/* <ChatBot /> */}
       <ContactLawyerForm />
       <Footer />
     </div>

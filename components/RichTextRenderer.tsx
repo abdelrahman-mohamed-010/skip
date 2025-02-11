@@ -18,6 +18,22 @@ export default function RichTextRenderer({
         className={`prose max-w-none [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_a]:inline [&_u]:inline text-${alignment}`}
       >
         {allBlocks.map((block: any, blockIndex: number) => {
+          // Added CTA block handling
+          if (block._type === "cta") {
+            return (
+              <div
+                key={blockIndex}
+                className={`my-12 ${block.alignment === "center" ? "text-center" : "text-left"}`}
+              >
+                <a
+                  href={block.link}
+                  className="inline-block px-12 py-3  bg-primary rounded-3xl text-white font-medium  hover:bg-primary/90 transition-colors"
+                >
+                  {block.text}
+                </a>
+              </div>
+            );
+          }
           if (block._type === "image") {
             return (
               <div
@@ -26,7 +42,7 @@ export default function RichTextRenderer({
               >
                 <div className="md:w-[35%] flex justify-center">
                   <img
-                    src={block.imageUrl}
+                    src={block.asset?.url || block.imageUrl}
                     alt={block.alt || ""}
                     className="h-full rounded-lg object-cover"
                   />
@@ -44,13 +60,14 @@ export default function RichTextRenderer({
                                 (span: any, spanIndex: number) => {
                                   const marks = span.marks || [];
                                   let text = span.text;
-
-                                  if (marks.includes("strong"))
+                                  if (marks.includes("strong")) {
                                     text = (
                                       <strong key={spanIndex}>{text}</strong>
                                     );
-                                  if (marks.includes("underline"))
+                                  }
+                                  if (marks.includes("underline")) {
                                     text = <u key={spanIndex}>{text}</u>;
+                                  }
                                   return text;
                                 }
                               )}
@@ -61,26 +78,31 @@ export default function RichTextRenderer({
 
                       const Component =
                         descBlock.style === "normal" ? "p" : descBlock.style;
+                      const className =
+                        descBlock.style === "h1"
+                          ? "text-4xl max-sm:text-2xl font-bold mb-8 text-primary"
+                          : descBlock.style === "h2"
+                            ? "text-3xl max-sm:text-xl font-bold mb-6  text-primary"
+                            : descBlock.style === "h3"
+                              ? "text-2xl max-sm:text-lg font-bold mb-5 text-primary"
+                              : descBlock.style === "h4"
+                                ? "text-xl font-bold mb-4"
+                                : descBlock.style === "h5"
+                                  ? "text-lg font-bold mb-3"
+                                  : "mb-4 leading-relaxed";
+
                       return (
-                        <Component
-                          key={descIndex}
-                          className={
-                            descBlock.style === "h4"
-                              ? "text-xl font-bold mb-4"
-                              : descBlock.style === "h5"
-                                ? "text-lg font-bold mb-3"
-                                : "mb-4 leading-relaxed"
-                          }
-                        >
+                        <Component key={descIndex} className={className}>
                           {descBlock.children.map(
                             (span: any, spanIndex: number) => {
                               const marks = span.marks || [];
                               let text = span.text;
-
-                              if (marks.includes("strong"))
+                              if (marks.includes("strong")) {
                                 text = <strong key={spanIndex}>{text}</strong>;
-                              if (marks.includes("underline"))
+                              }
+                              if (marks.includes("underline")) {
                                 text = <u key={spanIndex}>{text}</u>;
+                              }
                               return text;
                             }
                           )}

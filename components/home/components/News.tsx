@@ -46,35 +46,37 @@ const News = async () => {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {latestNews.map((news, index) => (
-            <article
+            <Link
+              href={`/latest-immigration-news/${news.slug.current}`}
               key={news._id}
-              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 animate-fadeIn"
-              style={{ animationDelay: `${0.2 * index}s` }}
+              className="group"
             >
-              {news.imageUrl && (
-                <img
-                  src={news.imageUrl}
-                  alt={news.title}
-                  className="w-full aspect-video object-cover"
-                />
-              )}
-              <div className="p-6">
-                <span className="text-sm text-accent">{news.category}</span>
-                <h3 className="text-xl font-semibold text-primary mt-2 mb-3 line-clamp-2">
-                  {news.title}
-                </h3>
-                <p className="text-secondary mb-4 line-clamp-2">
-                  {news.excerpt}
-                </p>
-                <Link
-                  href={`/latest-immigration-news/${news.slug.current}`}
-                  className="inline-flex items-center text-primary hover:text-accent transition-colors duration-200"
-                >
-                  Read More
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Link>
-              </div>
-            </article>
+              <article
+                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 animate-fadeIn cursor-pointer"
+                style={{ animationDelay: `${0.2 * index}s` }}
+              >
+                {news.imageUrl && (
+                  <img
+                    src={news.imageUrl}
+                    alt={news.title}
+                    className="w-full aspect-video object-cover"
+                  />
+                )}
+                <div className="p-6">
+                  <span className="text-sm text-accent">{news.category}</span>
+                  <h3 className="text-xl font-semibold text-primary mt-2 mb-3 line-clamp-2">
+                    {news.title}
+                  </h3>
+                  <p className="text-secondary mb-4 line-clamp-2">
+                    {news.excerpt}
+                  </p>
+                  <span className="inline-flex items-center text-primary group-hover:text-accent transition-colors duration-200">
+                    Read More
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </span>
+                </div>
+              </article>
+            </Link>
           ))}
         </div>
       </div>

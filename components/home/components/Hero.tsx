@@ -1,7 +1,15 @@
 import LawyerBot from "./LawyerBot";
 import { Phone } from "lucide-react";
 
-const Hero = () => {
+interface HeroProps {
+  heroData: {
+    journeyTitle: string;
+    startsText: string;
+    ctaNumber: string;
+  };
+}
+
+const Hero = ({ heroData }: HeroProps) => {
   return (
     <section className="relative md:min-h-screen py-24 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-white via-primary/5 to-primary/10">
       {/* Geometric shapes */}
@@ -26,11 +34,11 @@ const Hero = () => {
         <div className="space-y-4 sm:space-y-6 relative">
           <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight animate-fadeIn max-sm:leading-tight">
             <span className="block text-primary/90 leading-tight max-sm:text-2xl">
-              Your Journey to U.S. Immigration
+              {heroData.journeyTitle}
             </span>
 
             <span className="relative inline-block mt-2 sm:mt-4 text-3xl sm:text-5xl lg:text-6xl max-sm:text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-primary">
-              Starts Here
+              {heroData.startsText}
               <div className="absolute -bottom-2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             </span>
           </h1>
@@ -40,7 +48,7 @@ const Hero = () => {
           </div>
         </div>
         <a
-          href="tel:+1234567890"
+          href={`tel:${heroData.ctaNumber}`}
           className="inline-flex items-center px-12 max-sm:px-8 py-3 mt-12 text-lg max-sm:text-base font-medium text-white bg-primary rounded-full hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
         >
           <Phone className="w-5 h-5 mr-2 max-sm:w-4 max-sm:h-4" />
