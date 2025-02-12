@@ -33,6 +33,12 @@ export const pageType = defineType({
       ],
     }),
     defineField({
+      name: "showShareButton",
+      type: "boolean",
+      title: "Show Share Button",
+      description: "Toggle to display share button on page.",
+    }),
+    defineField({
       name: "innerPages",
       type: "array",
       title: "Inner Pages",
@@ -58,6 +64,12 @@ export const pageType = defineType({
               },
             }),
             defineField({
+              name: "showShareButton",
+              type: "boolean",
+              title: "Show Share Button",
+              description: "Toggle to display share button on inner page.",
+            }),
+            defineField({
               name: "content",
               type: "array",
               title: "Page Content",
@@ -72,7 +84,7 @@ export const pageType = defineType({
                 defineArrayMember({
                   name: "responsibilities",
                   type: "responsibilities",
-                }), // Add this line
+                }),
               ],
             }),
           ],

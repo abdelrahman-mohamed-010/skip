@@ -7,6 +7,7 @@ import PdfViewer from "@/components/PdfViewer";
 import PageHEader from "@/components/PageHEader";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import PageCTA from "@/components/PageCTA";
+import ShareBtnInner from "@/components/shareBtnInner";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -22,6 +23,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const page = await client.fetch(
     `*[_type == "page" && slug.current == $slug][0]{
     title,
+    showShareButton,
     pageBuilder[] {
       _type,
       title,
@@ -92,7 +94,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
           {page.title}
         </h1>
       </section>
-
       {page.pageBuilder?.map((component: any, index: number) => {
         const isFirstComponent = index === 0;
         const firstComponentClass = isFirstComponent ? "pt-12" : "";
@@ -207,7 +208,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
             return null;
         }
       })}
-
+      {/* Render share button if toggle is true */}
+      {page.showShareButton && <ShareBtnInner />}
       <PageCTA />
     </main>
   );
