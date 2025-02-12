@@ -4,11 +4,13 @@ interface RichTextRendererProps {
   content: any[];
   alignment?: string;
   minHeightClass?: string;
+  responsibilities?: boolean; // new optional prop
 }
 
 export default function RichTextRenderer({
   content,
   alignment = "left",
+  responsibilities = false, // default value added
 }: RichTextRendererProps) {
   const allBlocks = content || [];
 
@@ -80,15 +82,15 @@ export default function RichTextRenderer({
                         descBlock.style === "normal" ? "p" : descBlock.style;
                       const className =
                         descBlock.style === "h1"
-                          ? "text-4xl max-sm:text-2xl font-bold mb-8 text-primary"
+                          ? `text-4xl max-sm:text-2xl font-bold mb-8${responsibilities ? " mt-0" : ""} text-primary`
                           : descBlock.style === "h2"
-                            ? "text-3xl max-sm:text-xl font-bold mb-6  text-primary"
+                            ? `text-3xl max-sm:text-xl font-bold mb-6${responsibilities ? " mt-0" : ""} text-primary`
                             : descBlock.style === "h3"
-                              ? "text-2xl max-sm:text-lg font-bold mb-5 text-primary"
+                              ? `text-2xl max-sm:text-lg font-bold mb-5${responsibilities ? " mt-0" : ""} text-primary`
                               : descBlock.style === "h4"
-                                ? "text-xl font-bold mb-4"
+                                ? `text-xl font-bold mb-4${responsibilities ? " mt-0" : ""}`
                                 : descBlock.style === "h5"
-                                  ? "text-lg font-bold mb-3"
+                                  ? `text-lg font-bold mb-3${responsibilities ? " mt-0" : ""}`
                                   : "mb-4 leading-relaxed";
 
                       return (
@@ -230,15 +232,15 @@ export default function RichTextRenderer({
                   key={blockIndex}
                   className={`text-${alignment} ${
                     block.style === "h1"
-                      ? "text-4xl max-sm:text-2xl font-bold mb-8 mt-4 text-primary"
+                      ? `text-4xl max-sm:text-2xl font-bold mb-8 ${responsibilities ? "mt-0" : "mt-4"} text-primary`
                       : block.style === "h2"
-                        ? "text-3xl max-sm:text-xl font-bold mb-6 mt-8 text-primary"
+                        ? `text-3xl max-sm:text-xl font-bold mb-6 ${responsibilities ? "mt-0" : "mt-8"} text-primary`
                         : block.style === "h3"
-                          ? "text-2xl max-sm:text-lg font-bold mb-5 mt-8 text-primary"
+                          ? `text-2xl max-sm:text-lg font-bold mb-5 ${responsibilities ? "mt-0" : "mt-8"} text-primary`
                           : block.style === "h4"
-                            ? "text-xl max-sm:text-base font-bold mb-5 mt-8 text-primary"
+                            ? `text-xl max-sm:text-base font-bold mb-5 ${responsibilities ? "mt-0" : "mt-8"} text-primary`
                             : block.style === "h5"
-                              ? "text-lg max-sm:text-sm font-bold mb-4 mt-8 text-primary"
+                              ? `text-lg max-sm:text-sm font-bold mb-4 ${responsibilities ? "mt-0" : "mt-8"} text-primary`
                               : "leading-relaxed max-sm:text-sm text-gray-700"
                   }`}
                 >

@@ -64,18 +64,15 @@ export const responsibilities = defineType({
     }),
     defineField({
       name: "cta",
-      type: "object",
-      title: "Call to Action Button",
-      fields: [
+      type: "array",
+      title: "Call to Action Buttons",
+      of: [
         {
-          name: "text",
-          type: "string",
-          title: "Button Text",
-        },
-        {
-          name: "link",
-          type: "string",
-          title: "Button Link",
+          type: "object",
+          fields: [
+            { name: "text", type: "string", title: "Button Text" },
+            { name: "link", type: "string", title: "Button Link" },
+          ],
         },
       ],
     }),

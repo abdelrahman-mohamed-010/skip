@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ContactLawyerForm from "@/components/ContactLawyerForm";
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
@@ -26,27 +27,34 @@ const defaultMetadata = {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: string; nestedPages: string };
 }): Promise<Metadata> {
-  const page = await client.fetch(
+  const pageData = await client.fetch(
     `*[_type == "page" && slug.current == $slug][0]{
-      title,
-      seo
+      innerPages[]{
+        "slug": slug.current,
+        title,
+        seo
+      }
     }`,
     { slug: params.slug }
   );
 
-  if (!page?.seo?.metaTitle) {
+  const innerPage = pageData?.innerPages?.find(
+    (page: any) => page.slug === params.nestedPages
+  );
+
+  if (!innerPage?.seo?.metaTitle) {
     return defaultMetadata;
   }
 
   return {
-    title: page.seo.metaTitle,
-    description: page.seo.metaDescription,
-    keywords: page.seo.keywords,
+    title: innerPage.seo.metaTitle,
+    description: innerPage.seo.metaDescription,
+    keywords: innerPage.seo.keywords,
     openGraph: {
-      title: page.seo.metaTitle,
-      description: page.seo.metaDescription,
+      title: innerPage.seo.metaTitle,
+      description: innerPage.seo.metaDescription,
     },
   };
 }

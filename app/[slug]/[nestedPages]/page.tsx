@@ -8,6 +8,8 @@ import ImageSlider from "@/components/imageSlider";
 import ContentSlider from "@/components/ContentSlider";
 import PdfViewer from "@/components/PdfViewer";
 import PageCTA from "@/components/PageCTA";
+import Header from "@/components/Header";
+import Finale from "@/components/Finale";
 
 // ...existing or additional imports if needed...
 
@@ -57,9 +59,20 @@ export default async function Page({ params }: Params) {
             },
             alt
           },
-          cta {
+          cta[] {  // changed from cta { ... }
             text,
             link
+          },
+          cards[] {
+            title,
+            description,
+            icon,
+            isHighlighted
+          },
+          image {
+            asset->{
+              url
+            }
           }
         }
       }
@@ -75,14 +88,21 @@ export default async function Page({ params }: Params) {
 
   const contentLength = innerPage.content?.length || 0;
 
+  // Add this helper function after getting innerPage
+  const hasHeaderComponent = innerPage.content?.some(
+    (component: any) => component._type === "header"
+  );
+
   return (
     <main>
       <PageHEader />
-      <section className="pt-12 text-center">
-        <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
-          {innerPage.title}
-        </h1>
-      </section>
+      {!hasHeaderComponent && (
+        <section className=" text-center pt-24">
+          <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
+            {innerPage.title}
+          </h1>
+        </section>
+      )}
       {/* Render share button if toggle is true for inner page */}
       {innerPage.showShareButton && (
         <section className="text-center my-4">
@@ -182,21 +202,50 @@ export default async function Page({ params }: Params) {
                       <RichTextRenderer
                         content={component.content}
                         alignment="left"
+                        responsibilities={true}
                       />
                     </div>
-                    {component.cta && (
-                      <div>
-                        <a
-                          href={component.cta.link}
-                          className="inline-block px-12 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
-                        >
-                          {component.cta.text}
-                        </a>
+                    {component.cta && Array.isArray(component.cta) && (
+                      <div className="flex space-x-4 mt-4">
+                        {component.cta.map((button: any, btnIndex: number) => (
+                          <a
+                            key={btnIndex}
+                            href={button.link}
+                            className={`inline-block px-12 py-2 rounded-md transition-colors ${
+                              btnIndex % 2 === 0
+                                ? "bg-primary text-white hover:bg-primary/90"
+                                : "bg-secondary text-white hover:bg-secondary/90"
+                            }`}
+                          >
+                            {button.text}
+                          </a>
+                        ))}
                       </div>
                     )}
                   </div>
                 </div>
               </section>
+            );
+          case "header":
+            return (
+              <Header
+                key={index}
+                title={component.title}
+                subtitle={component.subtitle}
+                description={component.description}
+                cards={component.cards}
+              />
+            );
+          case "finale":
+            return (
+              <Finale
+                key={index}
+                title={component.title}
+                subtitle={component.subtitle}
+                description={component.description}
+                backgroundImageUrl={component.image?.asset?.url}
+                cta={component.cta}
+              />
             );
           default:
             return null;

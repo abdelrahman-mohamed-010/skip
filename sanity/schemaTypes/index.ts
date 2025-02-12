@@ -1,4 +1,3 @@
-
 import { imageGalleryType } from "./pagebuilder/imageGallery";
 import { pageType } from "./pagebuilder/pageType";
 import { navigationType } from "./pagebuilder/navigationType";
@@ -15,6 +14,8 @@ import { servicesType } from "./pagebuilder/services";
 import { processType } from "./pagebuilder/process";
 import landing from "./landing";
 import hero from "./hero";
+import { headerType } from "./pagebuilder/headerType";
+import { finaleType } from "./pagebuilder/finaleType";
 
 export const schemaTypes = [
   landing,
@@ -33,4 +34,6 @@ export const schemaTypes = [
   featuresType,
   servicesType,
   processType,
+  headerType,
+  finaleType,
 ];

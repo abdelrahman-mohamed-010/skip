@@ -4,10 +4,12 @@ import { client } from "@/sanity/lib/client";
 import ImageSlider from "@/components/imageSlider";
 import ContentSlider from "@/components/ContentSlider";
 import PdfViewer from "@/components/PdfViewer";
-import PageHEader from "@/components/PageHEader";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import PageCTA from "@/components/PageCTA";
 import ShareBtnInner from "@/components/shareBtnInner";
+import Header from "@/components/Header";
+import Finale from "@/components/Finale";
+import Head from "next/head";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -75,9 +77,20 @@ export default async function Page({ params }: { params: { slug: string } }) {
         },
         alt
       },
-      cta {
+      cta[]{  // changed from cta { ... }
         text,
         link
+      },
+      cards[] {
+        title,
+        description,
+        icon,
+        isHighlighted
+      },
+      image {
+        asset->{
+          url
+        }
       }
     }
   }`,
@@ -86,131 +99,178 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   const pageBuilderLength = page.pageBuilder?.length || 0;
 
+  const hasHeaderComponent = page.pageBuilder?.some(
+    (component: any) => component._type === "header"
+  );
+
   return (
-    <main>
-      <PageHEader />
-      <section className=" pt-12 text-center">
-        <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
-          {page.title}
-        </h1>
-      </section>
-      {page.pageBuilder?.map((component: any, index: number) => {
-        const isFirstComponent = index === 0;
-        const firstComponentClass = isFirstComponent ? "pt-12" : "";
+    <>
+      {page.seo && (
+        <Head>
+          <title>{page.seo.metaTitle || page.title}</title>
+          <meta name="description" content={page.seo.metaDescription || ""} />
+          {page.seo.keywords && (
+            <meta name="keywords" content={page.seo.keywords.join(", ")} />
+          )}
+        </Head>
+      )}
+      <main>
+        {!hasHeaderComponent && (
+          <section className="pt-24 text-center">
+            <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
+              {page.title}
+            </h1>
+          </section>
+        )}
+        {page.pageBuilder?.map((component: any, index: number) => {
+          const isFirstComponent = index === 0;
+          const firstComponentClass = isFirstComponent ? "pt-12" : "";
 
-        switch (component._type) {
-          case "richText":
-            let minHeightClass =
-              pageBuilderLength <= 2 ? "min-h-[500px]" : "min-h-[200px]";
-            if (index === 1 && pageBuilderLength !== 2) {
-              minHeightClass += " pt-20";
-            }
+          switch (component._type) {
+            case "richText":
+              let minHeightClass =
+                pageBuilderLength <= 2 ? "min-h-[500px]" : "min-h-[200px]";
+              if (index === 1 && pageBuilderLength !== 2) {
+                minHeightClass += " pt-20";
+              }
 
-            return (
-              <section
-                key={index}
-                className={`${minHeightClass} py-12 max-w-[1160px] px-4 mx-auto flex items-center justify-center bg-white ${firstComponentClass}`}
-              >
-                <RichTextRenderer
-                  content={component.content}
-                  alignment="left"
-                  minHeightClass={minHeightClass}
-                />
-              </section>
-            );
-
-          case "gallery":
-            return (
-              <section
-                key={index}
-                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
-              >
-                <div className="container mx-auto px-4">
-                  {component.galleryTitle && (
-                    <h2 className="text-3xl max-md:text-xl mb-20">
-                      {component.galleryTitle}
-                    </h2>
-                  )}
-                  <ImageSlider
-                    images={component.images}
-                    displayType={component.displayType}
+              return (
+                <section
+                  key={index}
+                  className={`${minHeightClass} py-12 max-w-7xl px-4 mx-auto flex items-center justify-center bg-white ${firstComponentClass}`}
+                >
+                  <RichTextRenderer
+                    content={component.content}
+                    alignment="left"
+                    minHeightClass={minHeightClass}
                   />
-                </div>
-              </section>
-            );
+                </section>
+              );
 
-          case "contentSlider":
-            return (
-              <section
-                key={index}
-                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
-              >
-                <div className="container mx-auto px-4">
-                  {component.sliderTitle && (
-                    <h2 className="text-3xl max-md:text-xl mb-20">
-                      {component.sliderTitle}
-                    </h2>
-                  )}
-                  <ContentSlider slides={component.slides} />
-                </div>
-              </section>
-            );
-          case "pdfViewer":
-            return (
-              <section
-                key={index}
-                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
-              >
-                <div className="container mx-auto px-4">
-                  <PdfViewer pdfUrl={component.pdfFile.asset.url} />
-                </div>
-              </section>
-            );
-          case "responsibilities":
-            return (
-              <section
-                key={index}
-                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
-              >
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="h-auto">
-                    {component.sideImage?.asset?.url && (
-                      <img
-                        src={component.sideImage.asset.url}
-                        alt={component.sideImage?.alt || ""}
-                        className="object-cover rounded-lg w-full"
-                        style={{ height: "400px" }}
-                      />
+            case "gallery":
+              return (
+                <section
+                  key={index}
+                  className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+                >
+                  <div className="container mx-auto px-4">
+                    {component.galleryTitle && (
+                      <h2 className="text-3xl max-md:text-xl mb-20">
+                        {component.galleryTitle}
+                      </h2>
                     )}
+                    <ImageSlider
+                      images={component.images}
+                      displayType={component.displayType}
+                    />
                   </div>
-                  <div className="flex flex-col justify-between h-full">
-                    <div className="prose max-w-none">
-                      <RichTextRenderer
-                        content={component.content}
-                        alignment="left"
-                      />
+                </section>
+              );
+
+            case "contentSlider":
+              return (
+                <section
+                  key={index}
+                  className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+                >
+                  <div className="container mx-auto px-4">
+                    {component.sliderTitle && (
+                      <h2 className="text-3xl max-md:text-xl mb-20">
+                        {component.sliderTitle}
+                      </h2>
+                    )}
+                    <ContentSlider slides={component.slides} />
+                  </div>
+                </section>
+              );
+            case "pdfViewer":
+              return (
+                <section
+                  key={index}
+                  className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+                >
+                  <div className="container mx-auto px-4">
+                    <PdfViewer pdfUrl={component.pdfFile.asset.url} />
+                  </div>
+                </section>
+              );
+            case "responsibilities":
+              return (
+                <section
+                  key={index}
+                  className={`py-16 px-4 max-w-7xl mx-auto bg-white ${firstComponentClass}`}
+                >
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="h-auto">
+                      {component.sideImage?.asset?.url && (
+                        <img
+                          src={component.sideImage.asset.url}
+                          alt={component.sideImage?.alt || ""}
+                          className="object-cover rounded-lg w-full"
+                          style={{ height: "400px" }}
+                        />
+                      )}
                     </div>
-                    {component.cta && (
-                      <div>
-                        <a
-                          href={component.cta.link}
-                          className="inline-block px-12 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
-                        >
-                          {component.cta.text}
-                        </a>
+                    <div className="flex flex-col justify-between h-full">
+                      <div className="prose max-w-none">
+                        <RichTextRenderer
+                          content={component.content}
+                          alignment="left"
+                          responsibilities={true}
+                        />
                       </div>
-                    )}
+                      {component.cta && Array.isArray(component.cta) && (
+                        <div className="flex space-x-4 mt-4">
+                          {component.cta.map(
+                            (button: any, btnIndex: number) => (
+                              <a
+                                key={btnIndex}
+                                href={button.link}
+                                className={`inline-block px-12 py-2 rounded-md transition-colors ${
+                                  btnIndex % 2 === 0
+                                    ? "bg-primary text-white hover:bg-primary/90"
+                                    : " text-primary rounded-lg border-2 border-primary hover:bg-primary hover:text-white transition-all"
+                                }`}
+                              >
+                                {button.text}
+                              </a>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </section>
-            );
-          default:
-            return null;
-        }
-      })}
-      {/* Render share button if toggle is true */}
-      {page.showShareButton && <ShareBtnInner />}
-      <PageCTA />
-    </main>
+                </section>
+              );
+            case "header":
+              return (
+                <Header
+                  key={index}
+                  title={component.title}
+                  subtitle={component.subtitle}
+                  description={component.description}
+                  cards={component.cards}
+                />
+              );
+            case "finale":
+              return (
+                <Finale
+                  key={index}
+                  title={component.title}
+                  subtitle={component.subtitle}
+                  description={component.description}
+                  backgroundImageUrl={component.image?.asset?.url}
+                  cta={component.cta}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
+        {/* Render share button if toggle is true */}
+        {page.showShareButton && <ShareBtnInner />}
+        <PageCTA />
+      </main>
+    </>
   );
 }

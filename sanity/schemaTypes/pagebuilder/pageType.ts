@@ -30,6 +30,8 @@ export const pageType = defineType({
           name: "responsibilities",
           type: "responsibilities",
         }),
+        defineArrayMember({ name: "header", type: "header" }),
+        defineArrayMember({ name: "finale", type: "finale" }),
       ],
     }),
     defineField({
@@ -87,8 +89,54 @@ export const pageType = defineType({
                 }),
               ],
             }),
+            defineField({
+              name: "seo",
+              title: "SEO Settings",
+              type: "object",
+              fields: [
+                {
+                  name: "metaTitle",
+                  title: "Meta Title",
+                  type: "string",
+                },
+                {
+                  name: "metaDescription",
+                  title: "Meta Description",
+                  type: "text",
+                },
+                {
+                  name: "keywords",
+                  title: "Keywords",
+                  type: "array",
+                  of: [{ type: "string" }],
+                },
+              ],
+            }),
           ],
         }),
+      ],
+    }),
+    defineField({
+      name: "seo",
+      title: "SEO Settings",
+      type: "object",
+      fields: [
+        {
+          name: "metaTitle",
+          title: "Meta Title",
+          type: "string",
+        },
+        {
+          name: "metaDescription",
+          title: "Meta Description",
+          type: "text",
+        },
+        {
+          name: "keywords",
+          title: "Keywords",
+          type: "array",
+          of: [{ type: "string" }],
+        },
       ],
     }),
   ],

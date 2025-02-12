@@ -123,23 +123,21 @@ const Navigation = () => {
                 </div>
               ))}
             </div>
-              {/* Auth Buttons */}
-              <div className="flex items-center space-x-3 ml-0 pl-2 border-l border-gray-200">
-                <Link
-                  href="/login"
-                  className="px-4 py-2 text-sm font-medium text-secondary hover:text-primary transition-colors"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/signup"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors"
-                >
-                  Sign up
-                </Link>
-              </div>
-            
-
+            {/* Auth Buttons */}
+            <div className="flex items-center space-x-3 ml-0 pl-2 border-l border-gray-200 max-xl:hidden">
+              <Link
+                href="/login"
+                className="px-4 py-2 text-sm font-medium text-secondary hover:text-primary transition-colors"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors"
+              >
+                Sign up
+              </Link>
+            </div>
 
             {/* Mobile Menu Button */}
             <button
@@ -247,6 +245,25 @@ const Navigation = () => {
                 )}
               </div>
             ))}
+
+            {/* Auth Buttons in Mobile Menu */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <Link
+                href="/login"
+                className="flex items-center w-full p-3 mb-2 rounded-md text-secondary hover:text-primary hover:bg-gray-50"
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="font-medium">Log in</span>
+              </Link>
+              <Link
+                href="/signup"
+                className="flex items-center w-full p-3 rounded-md text-white bg-blue-700 hover:bg-blue-800"
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="font-medium">Sign up</span>
+              </Link>
+            </div>
+
             <div className="mt-6 pt-6 border-t border-gray-200">
               {footerLinks.map((item) => (
                 <Link
