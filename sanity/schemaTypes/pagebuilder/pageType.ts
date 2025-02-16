@@ -27,8 +27,8 @@ export const pageType = defineType({
         defineArrayMember({ name: "contentSlider", type: "contentSlider" }),
         defineArrayMember({ name: "pdfViewer", type: "pdfViewer" }),
         defineArrayMember({
-          name: "responsibilities",
-          type: "responsibilities",
+          name: "blockcomponent",
+          type: "blockcomponent",
         }),
         defineArrayMember({ name: "header", type: "header" }),
         defineArrayMember({ name: "finale", type: "finale" }),
@@ -84,8 +84,8 @@ export const pageType = defineType({
                 }),
                 defineArrayMember({ name: "pdfViewer", type: "pdfViewer" }),
                 defineArrayMember({
-                  name: "responsibilities",
-                  type: "responsibilities",
+                  name: "blockcomponent",
+                  type: "blockcomponent",
                 }),
               ],
             }),

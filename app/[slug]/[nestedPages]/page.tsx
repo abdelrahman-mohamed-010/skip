@@ -10,6 +10,7 @@ import PdfViewer from "@/components/PdfViewer";
 import PageCTA from "@/components/PageCTA";
 import Header from "@/components/Header";
 import Finale from "@/components/Finale";
+import BlockComponent from "@/components/BlockComponent";
 
 // ...existing or additional imports if needed...
 
@@ -63,6 +64,7 @@ export default async function Page({ params }: Params) {
             text,
             link
           },
+          "reverse": reverse,
           cards[] {
             title,
             description,
@@ -124,7 +126,7 @@ export default async function Page({ params }: Params) {
             return (
               <section
                 key={index}
-                className={`${minHeightClass} py-12 max-w-[1160px] px-4 mx-auto flex items-center justify-center bg-white ${firstComponentClass}`}
+                className={`${minHeightClass} py-12 pb-0 max-w-[1160px] px-4 mx-auto flex items-center justify-center bg-white ${firstComponentClass}`}
               >
                 <RichTextRenderer
                   content={component.content}
@@ -180,50 +182,19 @@ export default async function Page({ params }: Params) {
                 </div>
               </section>
             );
-          case "responsibilities":
+          case "blockcomponent":
             return (
               <section
                 key={index}
                 className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
               >
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="h-auto">
-                    {component.sideImage?.asset?.url && (
-                      <img
-                        src={component.sideImage.asset.url}
-                        alt={component.sideImage?.alt || ""}
-                        className="object-cover rounded-lg w-full"
-                        style={{ height: "400px" }}
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col justify-between h-full">
-                    <div className="prose max-w-none">
-                      <RichTextRenderer
-                        content={component.content}
-                        alignment="left"
-                        responsibilities={true}
-                      />
-                    </div>
-                    {component.cta && Array.isArray(component.cta) && (
-                      <div className="flex space-x-4 mt-4">
-                        {component.cta.map((button: any, btnIndex: number) => (
-                          <a
-                            key={btnIndex}
-                            href={button.link}
-                            className={`inline-block px-12 py-2 rounded-md transition-colors ${
-                              btnIndex % 2 === 0
-                                ? "bg-primary text-white hover:bg-primary/90"
-                                : "bg-secondary text-white hover:bg-secondary/90"
-                            }`}
-                          >
-                            {button.text}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <BlockComponent
+                  title={component.title}
+                  sideImage={component.sideImage}
+                  content={component.content}
+                  cta={component.cta}
+                  reverse={component.reverse}
+                />
               </section>
             );
           case "header":

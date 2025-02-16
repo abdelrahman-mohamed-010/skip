@@ -15,7 +15,7 @@ export default function RichTextRenderer({
   const allBlocks = content || [];
 
   return (
-    <div className="container mx-auto px-4">
+    <div className=" max-sm:px-4">
       <div
         className={`prose max-w-none [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_a]:inline [&_u]:inline text-${alignment}`}
       >

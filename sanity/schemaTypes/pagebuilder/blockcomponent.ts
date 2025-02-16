@@ -1,17 +1,26 @@
 import { defineField, defineType } from "sanity";
 
-export const responsibilities = defineType({
-  name: "responsibilities",
+export const blockType = defineType({
+  name: "blockcomponent",
   type: "object",
-  title: "Responsibilities Section",
+  title: "Block Section",
   preview: {
-    prepare() {
+    select: {
+      title: "title",
+    },
+    prepare({ title }) {
       return {
-        title: "Responsibilities Component",
+        title: title || "Block Component",
       };
     },
   },
   fields: [
+    defineField({
+      name: "title",
+      type: "string",
+      title: "Block Title",
+      description: "Optional title for the block section",
+    }),
     defineField({
       name: "sideImage",
       type: "image",
@@ -75,6 +84,13 @@ export const responsibilities = defineType({
           ],
         },
       ],
+    }),
+    defineField({
+      name: "reverse",
+      type: "boolean",
+      title: "Reverse Layout",
+      description:
+        "If true, the image appears on the right instead of the left.",
     }),
   ],
 });

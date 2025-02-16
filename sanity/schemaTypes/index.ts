@@ -8,7 +8,7 @@ import blog from "./blog";
 import news from "./news";
 import guides from "./guides";
 import footer from "./footer"; // added footer schema
-import { responsibilities } from "./pagebuilder/responsibilities";
+import { blockType } from "./pagebuilder/blockcomponent"
 import { featuresType } from "./pagebuilder/features";
 import { servicesType } from "./pagebuilder/services";
 import { processType } from "./pagebuilder/process";
@@ -30,7 +30,7 @@ export const schemaTypes = [
   news,
   guides,
   footer, // added footer schema
-  responsibilities,
+  blockType,
   featuresType,
   servicesType,
   processType,
