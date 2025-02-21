@@ -27,7 +27,7 @@ const ContactLawyerForm = () => {
   };
 
   return (
-    <section className="py-16 max-sm:py-8 pt-0 bg-gradient-to-b from-white to-primary/5">
+    <section id="contact-lawyer-form" className="py-16 max-sm:py-8 pt-0 bg-gradient-to-b from-white to-primary/5">
       <div className="max-w-7xl mx-auto px-4 max-sm:px-3 sm:px-6 lg:px-8">
         <div className="text-center mb-12 max-sm:mb-6">
           <h2 className="text-3xl max-sm:text-2xl font-bold text-primary mb-4 max-sm:mb-2">

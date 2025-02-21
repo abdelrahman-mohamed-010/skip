@@ -32,6 +32,7 @@ export const pageType = defineType({
         }),
         defineArrayMember({ name: "header", type: "header" }),
         defineArrayMember({ name: "finale", type: "finale" }),
+        defineArrayMember({ name: "questions", type: "questions" }),
       ],
     }),
     defineField({

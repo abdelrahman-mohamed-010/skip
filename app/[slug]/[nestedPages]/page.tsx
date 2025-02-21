@@ -11,6 +11,7 @@ import PageCTA from "@/components/PageCTA";
 import Header from "@/components/Header";
 import Finale from "@/components/Finale";
 import BlockComponent from "@/components/BlockComponent";
+import Questions from "@/components/Questions";
 
 // ...existing or additional imports if needed...
 
@@ -75,6 +76,13 @@ export default async function Page({ params }: Params) {
             asset->{
               url
             }
+          },
+          questions[] {
+            question,
+            description,
+            buttonText,
+            chatbotQuestion,
+            icon
           }
         }
       }
@@ -217,6 +225,12 @@ export default async function Page({ params }: Params) {
                 backgroundImageUrl={component.image?.asset?.url}
                 cta={component.cta}
               />
+            );
+          case "questions":
+            return (
+              <section key={index} className="bg-gray-50">
+                <Questions questions={component.questions} />
+              </section>
             );
           default:
             return null;

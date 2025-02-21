@@ -16,6 +16,7 @@ import landing from "./landing";
 import hero from "./hero";
 import { headerType } from "./pagebuilder/headerType";
 import { finaleType } from "./pagebuilder/finaleType";
+import { questionsType } from "./pagebuilder/questionsType";
 
 export const schemaTypes = [
   landing,
@@ -36,4 +37,5 @@ export const schemaTypes = [
   processType,
   headerType,
   finaleType,
+  questionsType
 ];

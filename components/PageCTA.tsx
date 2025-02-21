@@ -8,6 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { chatStore } from "@/lib/chatStore";
 
 interface Message {
   role: "user" | "ai";
@@ -45,6 +46,16 @@ const PageCTA = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const handleChatMessage = (message: string) => {
+      setIsChatOpen(true);
+      sendMessage(message);
+    };
+
+    chatStore.subscribe(handleChatMessage);
+    return () => chatStore.unsubscribe(handleChatMessage);
   }, []);
 
   const getLegalResponse = (question: string) => {
@@ -102,6 +113,7 @@ const PageCTA = () => {
           ref={buttonRef}
           onClick={() => setIsChatOpen(!isChatOpen)}
           className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
+          aria-label="Open chat"
         >
           <MessageSquare className="w-5 h-5 md:w-6 md:h-6" />
         </button>

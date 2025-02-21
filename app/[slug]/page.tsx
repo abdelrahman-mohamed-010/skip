@@ -10,6 +10,7 @@ import Header from "@/components/Header";
 import Finale from "@/components/Finale";
 import Head from "next/head";
 import BlockComponent from "@/components/BlockComponent";
+import Questions from "@/components/Questions";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -93,6 +94,13 @@ export default async function Page({ params }: { params: { slug: string } }) {
         asset->{
           url
         }
+      },
+      questions[] {
+        question,
+        description,
+        buttonText,
+        chatbotQuestion,
+        icon
       }
     }
   }`,
@@ -231,6 +239,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   backgroundImageUrl={component.image?.asset?.url}
                   cta={component.cta}
                 />
+              );
+            case "questions":
+              return (
+                <section key={index} className="bg-gray-50">
+                  <Questions questions={component.questions} />
+                </section>
               );
             default:
               return null;
