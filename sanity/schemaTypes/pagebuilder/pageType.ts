@@ -33,6 +33,7 @@ export const pageType = defineType({
         defineArrayMember({ name: "header", type: "header" }),
         defineArrayMember({ name: "finale", type: "finale" }),
         defineArrayMember({ name: "questions", type: "questions" }),
+        defineArrayMember({ name: "slider", type: "slider" }),
       ],
     }),
     defineField({
@@ -88,6 +89,10 @@ export const pageType = defineType({
                   name: "blockcomponent",
                   type: "blockcomponent",
                 }),
+                defineArrayMember({ name: "header", type: "header" }), // Added header component
+                defineArrayMember({ name: "finale", type: "finale" }), // Added finale component
+                defineArrayMember({ name: "questions", type: "questions" }), // Added questions component
+                defineArrayMember({ name: "slider", type: "slider" }), // Add FAQ to inner pages
               ],
             }),
             defineField({

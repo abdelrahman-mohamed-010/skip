@@ -1,8 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { client } from "@/sanity/lib/client";
-import PageHEader from "@/components/PageHEader";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import ImageSlider from "@/components/imageSlider";
 import ContentSlider from "@/components/ContentSlider";
@@ -13,6 +11,7 @@ import Finale from "@/components/Finale";
 import BlockComponent from "@/components/BlockComponent";
 import Questions from "@/components/Questions";
 import InlineShareButtons from "@/components/InlineShareButtons";
+import Slider from "@/components/Slider";
 
 type Params = {
   params: {
@@ -82,6 +81,14 @@ export default async function Page({ params }: Params) {
             buttonText,
             chatbotQuestion,
             icon
+          },
+          slider[] {
+            question,
+            answer
+          },
+          faqs[] {  // Add this block to fetch FAQ data
+            question,
+            answer
           }
         }
       }
@@ -107,18 +114,12 @@ export default async function Page({ params }: Params) {
 
   return (
     <main>
-      <PageHEader />
       {!hasHeaderComponent && (
-        <section className=" text-center pt-24">
+        <section className="text-center pt-32 relative">
           <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
             {innerPage.title}
           </h1>
-        </section>
-      )}
-      {/* Render share button if toggle is true for inner page */}
-      {innerPage.showShareButton && (
-        <section className="text-center my-4">
-          <InlineShareButtons url={url} title={innerPage.title} />
+          <div className="w-48 h-1 mx-auto mt-3 absolute -bottom-5 right-1/2 translate-x-1/2 bg-yellow-500"></div>
         </section>
       )}
       {innerPage.content?.map((component: any, index: number) => {
@@ -129,12 +130,12 @@ export default async function Page({ params }: Params) {
             let minHeightClass =
               contentLength <= 2 ? "min-h-[500px]" : "min-h-[200px]";
             if (index === 1 && contentLength !== 2) {
-              minHeightClass += " pt-20";
+              minHeightClass += " pt-0";
             }
             return (
               <section
                 key={index}
-                className={`${minHeightClass} py-12 pb-0 max-w-[1160px] px-4 mx-auto flex items-center justify-center bg-white ${firstComponentClass}`}
+                className={`${minHeightClass} py-12 pb-0 max-w-[1280px] px-4 mx-auto flex items-center  bg-white ${firstComponentClass}`}
               >
                 <RichTextRenderer
                   content={component.content}
@@ -194,7 +195,7 @@ export default async function Page({ params }: Params) {
             return (
               <section
                 key={index}
-                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+                className={`py-6 px-4 max-w-[1280px] mx-auto bg-white ${firstComponentClass}`}
               >
                 <BlockComponent
                   title={component.title}
@@ -232,10 +233,24 @@ export default async function Page({ params }: Params) {
                 <Questions questions={component.questions} />
               </section>
             );
+          case "slider":
+            return (
+              <section
+                key={index}
+                className={`py-12 bg-white ${firstComponentClass}`}
+              >
+                <Slider title={component.title} faqs={component.faqs} />
+              </section>
+            );
           default:
             return null;
         }
       })}
+      {innerPage.showShareButton && (
+        <section className="text-center my-4">
+          <InlineShareButtons url={url} title={innerPage.title} />
+        </section>
+      )}
       <PageCTA />
     </main>
   );

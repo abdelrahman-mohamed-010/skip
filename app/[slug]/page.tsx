@@ -11,6 +11,7 @@ import Head from "next/head";
 import BlockComponent from "@/components/BlockComponent";
 import Questions from "@/components/Questions";
 import InlineShareButtons from "@/components/InlineShareButtons";
+import Slider from "@/components/Slider";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -101,6 +102,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
         buttonText,
         chatbotQuestion,
         icon
+      },
+      slider[] {
+        question,
+        answer
+      },
+      faqs[] {  // Add this block to fetch FAQ data
+        question,
+        answer
       }
     }
   }`,
@@ -247,6 +256,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
               return (
                 <section key={index} className="bg-gray-50">
                   <Questions questions={component.questions} />
+                </section>
+              );
+            case "slider":
+              return (
+                <section
+                  key={index}
+                  className={`py-12 bg-white ${firstComponentClass}`}
+                >
+                  <Slider title={component.title} faqs={component.faqs} />
                 </section>
               );
             default:

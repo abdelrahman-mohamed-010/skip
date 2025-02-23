@@ -37,51 +37,42 @@ const Questions = ({ questions = [] }: QuestionsProps) => {
   }
 
   return (
-    <div className="py-8 md:py-16  px-4 bg-gradient-to-br from-primary/5 via-white to-gray-50 relative">
-      <div className="absolute inset-0 opacity-[0.03] background-pattern"></div>
-      <div className="max-w-[1260px] mx-auto relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+    <div className="py-12 md:py-20 px-4 bg-white">
+      <div className="max-w-[1260px] mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
           {questions.map((q, index) => (
             <div
               key={index}
-              className="group bg-white/80 backdrop-blur-sm p-4 md:p-6 rounded-xl md:rounded-2xl relative overflow-hidden
-                        border border-gray-100/50 hover:border-primary/30
-                        before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:via-primary/10 before:to-primary/5
-                        before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500
-                        transition-all duration-500 ease-out hover:shadow-xl hover:shadow-primary/10
-                        animate-float cursor-pointer"
+              className="bg-white relative rounded-2xl overflow-hidden
+                        shadow-[0_2px_12px_rgba(0,0,0,0.08)]
+                        hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)]
+                        transition-shadow duration-300
+                        border border-gray-100"
             >
-              <div className="flex flex-col h-full justify-between gap-3 md:gap-6">
-                <div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary/70" />
+              <div className="p-6">
+                <div className="mb-5">
                   <div
-                    className="w-8 h-8 md:w-12 md:h-12 mb-3 md:mb-4 rounded-lg md:rounded-xl 
-                                bg-gradient-to-br from-primary/20 to-primary/10 
-                                flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-500"
+                    className="inline-flex items-center justify-center w-12 h-12 
+                                rounded-xl bg-primary/10 mb-4"
                   >
                     {React.createElement(getIcon(q.icon || "help-circle"), {
-                      className:
-                        "w-4 h-4 md:w-6 md:h-6 text-primary group-hover:scale-110 transition-all duration-500",
+                      className: "w-6 h-6 text-primary",
                     })}
                   </div>
-                  <h3
-                    className="text-lg md:text-xl font-bold text-gray-800 mb-2 md:mb-3 
-                               group-hover:text-primary group-hover:translate-x-1 transition-all duration-300"
-                  >
+                  <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">
                     {q.question}
                   </h3>
-                  <p className="text-sm md:text-base text-gray-600 leading-relaxed group-hover:text-gray-700">
+                  <p className="text-gray-600 leading-relaxed line-clamp-3">
                     {q.description}
                   </p>
                 </div>
                 <button
                   onClick={() => handleQuestionClick(q.chatbotQuestion)}
-                  className="w-full bg-white text-primary border-2 z-20 cursor-pointer
-                           hover:text-white hover:bg-primary border-primary 
-                           py-2 md:py-3 px-4 md:px-6 rounded-lg md:rounded-xl
-                           transition-all duration-300 ease-out
-                           text-xs md:text-sm font-semibold 
-                           shadow-sm hover:shadow-lg hover:shadow-primary/25
-                           transform group-hover:translate-y-[-2px]"
+                  className="w-full text-center px-5 py-3 text-sm font-semibold
+                           bg-gray-50 text-primary border border-gray-200
+                           hover:bg-primary hover:text-white hover:border-primary
+                           rounded-xl transition-all duration-200"
                 >
                   {q.buttonText}
                 </button>

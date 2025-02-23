@@ -32,7 +32,7 @@ export default function BlockComponent({
         <h2 className="text-3xl font-bold text-primary mb-8">{title}</h2>
       )}
       <div
-        className={`flex flex-col ${
+        className={`flex flex-col min-h-[300px] ${
           reverse ? "md:flex-row-reverse" : "md:flex-row"
         } gap-8 items-stretch`}
       >
@@ -45,7 +45,7 @@ export default function BlockComponent({
             />
           )}
         </div>
-        <div className="w-full md:w-1/2">
+        <div className="w-full md:w-1/2 flex flex-col justify-between">
           <div className="prose max-w-none">
             <RichTextRenderer
               content={content}
@@ -54,7 +54,7 @@ export default function BlockComponent({
             />
           </div>
           {cta && Array.isArray(cta) && (
-            <div className="flex space-x-4 mt-4">
+            <div className="flex space-x-4 mt-8">
               {cta.map((button, btnIndex) => (
                 <a
                   key={btnIndex}

@@ -8,7 +8,7 @@ import blog from "./blog";
 import news from "./news";
 import guides from "./guides";
 import footer from "./footer"; // added footer schema
-import { blockType } from "./pagebuilder/blockcomponent"
+import { blockType } from "./pagebuilder/blockcomponent";
 import { featuresType } from "./pagebuilder/features";
 import { servicesType } from "./pagebuilder/services";
 import { processType } from "./pagebuilder/process";
@@ -17,6 +17,7 @@ import hero from "./hero";
 import { headerType } from "./pagebuilder/headerType";
 import { finaleType } from "./pagebuilder/finaleType";
 import { questionsType } from "./pagebuilder/questionsType";
+import { sliderType } from "./pagebuilder/sliderType";
 
 export const schemaTypes = [
   landing,
@@ -37,5 +38,6 @@ export const schemaTypes = [
   processType,
   headerType,
   finaleType,
-  questionsType
+  questionsType,
+  sliderType,
 ];
