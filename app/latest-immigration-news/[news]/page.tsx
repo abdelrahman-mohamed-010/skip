@@ -33,7 +33,7 @@ const newsPage = async ({ params }: { params: { news: string } }) => {
         <h1 className="text-4xl max-sm:text-2xl font-bold mb-4">
           {news.title}
         </h1>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 w-full justify-between border-b-2 pb-3">
           <time className="text-gray-600">
             {new Date(news.publishedAt).toLocaleDateString("en-US", {
               month: "long",

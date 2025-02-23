@@ -12,8 +12,7 @@ import Header from "@/components/Header";
 import Finale from "@/components/Finale";
 import BlockComponent from "@/components/BlockComponent";
 import Questions from "@/components/Questions";
-
-// ...existing or additional imports if needed...
+import InlineShareButtons from "@/components/InlineShareButtons";
 
 type Params = {
   params: {
@@ -103,6 +102,9 @@ export default async function Page({ params }: Params) {
     (component: any) => component._type === "header"
   );
 
+  // Define url for share buttons
+  const url = typeof window !== "undefined" ? window.location.href : "";
+
   return (
     <main>
       <PageHEader />
@@ -116,9 +118,7 @@ export default async function Page({ params }: Params) {
       {/* Render share button if toggle is true for inner page */}
       {innerPage.showShareButton && (
         <section className="text-center my-4">
-          <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Share This Page
-          </button>
+          <InlineShareButtons url={url} title={innerPage.title} />
         </section>
       )}
       {innerPage.content?.map((component: any, index: number) => {

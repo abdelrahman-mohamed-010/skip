@@ -5,12 +5,12 @@ import ContentSlider from "@/components/ContentSlider";
 import PdfViewer from "@/components/PdfViewer";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import PageCTA from "@/components/PageCTA";
-import ShareBtnInner from "@/components/shareBtnInner";
 import Header from "@/components/Header";
 import Finale from "@/components/Finale";
 import Head from "next/head";
 import BlockComponent from "@/components/BlockComponent";
 import Questions from "@/components/Questions";
+import InlineShareButtons from "@/components/InlineShareButtons";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -112,6 +112,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const hasHeaderComponent = page.pageBuilder?.some(
     (component: any) => component._type === "header"
   );
+
+  // Define url for share buttons
+  const url = typeof window !== "undefined" ? window.location.href : "";
 
   return (
     <>
@@ -250,8 +253,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
               return null;
           }
         })}
-        {/* Render share button if toggle is true */}
-        {page.showShareButton && <ShareBtnInner />}
+        {page.showShareButton && (
+          <section className="text-center my-4">
+            <InlineShareButtons url={url} title={page.title} />
+          </section>
+        )}
         <PageCTA />
       </main>
     </>
