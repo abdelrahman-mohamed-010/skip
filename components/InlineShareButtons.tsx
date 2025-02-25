@@ -62,7 +62,7 @@ export default function InlineShareButtons({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 mb-12">
+    <div className="flex flex-col items-center gap-4 ">
       <h3 className="text-xl font-semibold text-gray-700">
         Share this article
       </h3>

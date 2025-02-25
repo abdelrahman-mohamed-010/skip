@@ -61,7 +61,7 @@ export default function BlockComponent({
                   href={button.link}
                   className={`inline-block px-12 py-2 rounded-md transition-colors ${
                     btnIndex === 0
-                      ? "bg-primary text-white hover:bg-primary/90"
+                      ? "bg-primary text-white border-2 border-primary hover:bg-primary/90 hover:bg-white hover:text-primary transition-all "
                       : "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white transition-all"
                   }`}
                 >
