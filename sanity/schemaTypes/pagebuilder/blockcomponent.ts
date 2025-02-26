@@ -75,12 +75,42 @@ export const blockType = defineType({
       name: "cta",
       type: "array",
       title: "Call to Action Buttons",
+      validation: (Rule) => Rule.max(2),
       of: [
         {
           type: "object",
           fields: [
-            { name: "text", type: "string", title: "Button Text" },
-            { name: "link", type: "string", title: "Button Link" },
+            {
+              name: "text",
+              type: "string",
+              title: "Button Text",
+            },
+            {
+              name: "buttonType",
+              type: "string",
+              title: "Button Type",
+              options: {
+                list: [
+                  { title: "Normal Button", value: "normal" },
+                  { title: "Call Button", value: "call" },
+                  { title: "Chat Question", value: "chat" },
+                ],
+              },
+              initialValue: "normal",
+            },
+            {
+              name: "link",
+              type: "string",
+              title: "Button Link",
+              hidden: ({ parent }) => parent?.buttonType === "chat",
+            },
+            {
+              name: "chatbotQuestion",
+              type: "text",
+              title: "Chatbot Question",
+              description: "The question to be sent to the chatbot",
+              hidden: ({ parent }) => parent?.buttonType !== "chat",
+            },
           ],
         },
       ],
