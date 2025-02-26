@@ -161,12 +161,6 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                   {footerData.contactInfo?.phone}
                 </span>
               </a>
-              {/* <div className="flex items-center space-x-3 px-4 py-2.5 bg-primary/5 rounded-xl">
-                <MapPin size={18} className="text-primary" />
-                <span className=" text-primary">
-                  {footerData.contactInfo?.address}
-                </span>
-              </div> */}
             </div>
           </div>
         </div>

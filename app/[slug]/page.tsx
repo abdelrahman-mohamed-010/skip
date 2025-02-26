@@ -80,9 +80,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
         alt
       },
       title,  // Add this line to fetch the title
-      cta[]{  // changed from cta { ... }
+      cta[]{  
         text,
-        link
+        link,
+        buttonType,    // Add these
+        chatbotQuestion  // Add these
       },
       "reverse": reverse,
       cards[] {
@@ -159,7 +161,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               return (
                 <section
                   key={index}
-                  className={`${minHeightClass} py-12 pb-0 max-w-7xl px-4 mx-auto flex items-center justify-center bg-white ${firstComponentClass}`}
+                  className={`${minHeightClass} py-12 pb-0 max-w-7xl px-4 mx-auto flex items-center justify-start bg-white ${firstComponentClass}`}
                 >
                   <RichTextRenderer
                     content={component.content}

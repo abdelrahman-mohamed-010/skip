@@ -21,7 +21,7 @@ export default function Slider({ title, faqs = [] }: FAQProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto  py-6 px-4">
+    <div className="max-w-7xl mx-auto py-6 px-4">
       {title && (
         <h2 className="text-3xl font-bold mb-8 text-primary">{title}</h2>
       )}

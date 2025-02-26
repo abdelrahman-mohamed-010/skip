@@ -59,9 +59,11 @@ export default async function Page({ params }: Params) {
             },
             alt
           },
-          cta[] {  // changed from cta { ... }
+          cta[] {  
             text,
-            link
+            link,
+            buttonType,    // Add these
+            chatbotQuestion  // Add these
           },
           "reverse": reverse,
           cards[] {
@@ -115,7 +117,7 @@ export default async function Page({ params }: Params) {
   return (
     <main>
       {!hasHeaderComponent && (
-        <section className="text-center pt-32 relative">
+        <section className="text-center pt-32 relative ">
           <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
             {innerPage.title}
           </h1>
@@ -168,7 +170,7 @@ export default async function Page({ params }: Params) {
             return (
               <section
                 key={index}
-                className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+                className={` px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
               >
                 <div className="container mx-auto px-4">
                   {component.sliderTitle && (
@@ -237,7 +239,7 @@ export default async function Page({ params }: Params) {
             return (
               <section
                 key={index}
-                className={`py-12 bg-white ${firstComponentClass}`}
+                className={` bg-white ${firstComponentClass}`}
               >
                 <Slider title={component.title} faqs={component.faqs} />
               </section>

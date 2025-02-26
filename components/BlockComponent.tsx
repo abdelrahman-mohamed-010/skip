@@ -1,21 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
-import RichTextRenderer from "./RichTextRenderer";
+"use client";
 
-interface ResponsibilitiesProps {
-  title?: string;
-  sideImage?: {
-    asset?: {
-      url: string;
-    };
-    alt?: string;
+import React, { useCallback } from "react";
+import RichTextRenderer from "./RichTextRenderer";
+import { chatStore } from "@/lib/chatStore";
+
+interface SideImage {
+  asset: {
+    url: string;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  alt?: string;
+}
+
+interface CTAButton {
+  text: string;
+  link?: string;
+  buttonType: "normal" | "call" | "chat";
+  chatbotQuestion?: string;
+}
+
+interface BlockComponentProps {
+  title?: string;
+  sideImage?: SideImage;
   content: any;
-  cta?: Array<{
-    text: string;
-    link: string;
-  }>;
+  cta?: CTAButton[]; // Make sure this matches the Sanity schema
   reverse?: boolean;
 }
 
@@ -25,7 +34,57 @@ export default function BlockComponent({
   content,
   cta,
   reverse = false,
-}: ResponsibilitiesProps) {
+}: BlockComponentProps) {
+  const handleQuestionClick = useCallback((question: string) => {
+    console.log("Sending question:", question); // Debug log
+    chatStore.sendMessage(question);
+  }, []);
+
+  const renderButton = (button: CTAButton, index: number) => {
+    const baseStyles =
+      "inline-block px-12 py-2 rounded-md transition-all cursor-pointer";
+    const darkStyle =
+      "bg-primary text-white border-2 border-primary hover:bg-primary/90";
+    const lightStyle =
+      "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white";
+
+    // Use style based on index position
+    const buttonStyle = index === 0 ? darkStyle : lightStyle;
+
+    switch (button.buttonType) {
+      case "call":
+        return (
+          <a
+            href={`tel:${button.link}`}
+            className={`${baseStyles} ${buttonStyle}`}
+          >
+            {button.text}
+          </a>
+        );
+      case "chat":
+        return (
+          <button
+            type="button"
+            onClick={() => {
+              if (button.chatbotQuestion) {
+                console.log("Button clicked:", button.chatbotQuestion); // Debug log
+                handleQuestionClick(button.chatbotQuestion);
+              }
+            }}
+            className={`${baseStyles} ${buttonStyle}`}
+          >
+            {button.text}
+          </button>
+        );
+      default:
+        return (
+          <a href={button.link} className={`${baseStyles} ${buttonStyle}`}>
+            {button.text}
+          </a>
+        );
+    }
+  };
+
   return (
     <>
       {title && (
@@ -56,17 +115,9 @@ export default function BlockComponent({
           {cta && Array.isArray(cta) && (
             <div className="flex space-x-4 mt-8">
               {cta.map((button, btnIndex) => (
-                <a
-                  key={btnIndex}
-                  href={button.link}
-                  className={`inline-block px-12 py-2 rounded-md transition-colors ${
-                    btnIndex === 0
-                      ? "bg-primary text-white border-2 border-primary hover:bg-primary/90 hover:bg-white hover:text-primary transition-all "
-                      : "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white transition-all"
-                  }`}
-                >
-                  {button.text}
-                </a>
+                <React.Fragment key={btnIndex}>
+                  {renderButton(button, btnIndex)}
+                </React.Fragment>
               ))}
             </div>
           )}
