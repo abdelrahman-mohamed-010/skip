@@ -117,7 +117,7 @@ export default async function Page({ params }: Params) {
   return (
     <main>
       {!hasHeaderComponent && (
-        <section className="text-center pt-32 relative ">
+        <section className="text-center pt-24 relative ">
           <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
             {innerPage.title}
           </h1>

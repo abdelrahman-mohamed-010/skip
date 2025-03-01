@@ -1,4 +1,4 @@
-import { Rule } from '@sanity/types';
+import { Rule } from "@sanity/types";
 
 const footer = {
   name: "footer",
@@ -63,29 +63,7 @@ const footer = {
             {
               name: "url",
               title: "URL",
-              type: "url",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "ourServices",
-      title: "Our Services",
-      type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            {
-              name: "text",
-              title: "Link Text",
               type: "string",
-            },
-            {
-              name: "url",
-              title: "URL",
-              type: "url",
             },
           ],
         },
@@ -110,7 +88,7 @@ const footer = {
           type: "object",
           fields: [
             { name: "text", title: "Link Text", type: "string" },
-            { name: "url", title: "URL", type: "url" },
+            { name: "url", title: "URL", type: "string" },
           ],
         },
       ],
