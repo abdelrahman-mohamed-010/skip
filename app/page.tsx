@@ -12,8 +12,11 @@ import { client } from "../sanity/lib/client";
 
 // Fetch landing page with sections (hero included)
 async function getLandingData() {
-  const data = await client.fetch(`*[_type == "landing"][0]{ sections }`);
-  return data ?? { sections: [] };
+  const data = await client.fetch(`*[_type == "landing"][0]{ 
+    sections,
+    footer
+  }`);
+  return data ?? { sections: [], footer: {} };
 }
 
 export default async function Home() {
@@ -38,7 +41,7 @@ export default async function Home() {
         }
       })}
       <News />
-      <ContactLawyerForm />
+      <ContactLawyerForm footerData={landingData.footer} />
       <Footer />
     </div>
   );

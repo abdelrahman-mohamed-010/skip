@@ -19,5 +19,25 @@ export default {
         { type: "process" },
       ],
     },
+    {
+      name: "footer",
+      title: "Footer Section",
+      type: "object",
+      fields: [
+        {
+          name: "legalAssistanceTitle",
+          title: "Legal Assistance Title",
+          type: "string",
+          initialValue: "Get Legal Assistance",
+        },
+        {
+          name: "legalAssistanceDescription",
+          title: "Legal Assistance Description",
+          type: "text",
+          initialValue:
+            "Connect with our experienced immigration lawyers for personalized guidance on your journey",
+        },
+      ],
+    },
   ],
 };

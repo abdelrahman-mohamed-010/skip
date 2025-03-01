@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 
-const ContactLawyerForm = () => {
+interface FooterData {
+  legalAssistanceTitle?: string;
+  legalAssistanceDescription?: string;
+}
+
+const ContactLawyerForm = ({ footerData }: { footerData?: FooterData }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,15 +32,18 @@ const ContactLawyerForm = () => {
   };
 
   return (
-    <section id="contact-lawyer-form" className="py-16 max-sm:py-8 pt-0 bg-gradient-to-b mt-12 from-white to-primary/5">
+    <section
+      id="contact-lawyer-form"
+      className="py-16 max-sm:py-8 pt-0 bg-gradient-to-b mt-12 from-white to-primary/5"
+    >
       <div className="max-w-7xl mx-auto px-4 max-sm:px-3 sm:px-6 lg:px-8">
         <div className="text-center mb-12 max-sm:mb-6">
           <h2 className="text-3xl max-sm:text-2xl font-bold text-primary mb-4 max-sm:mb-2">
-            Get Legal Assistance
+            {footerData?.legalAssistanceTitle || "Get Legal Assistance"}
           </h2>
           <p className="text-secondary/80 max-w-2xl mx-auto max-sm:text-sm">
-            Connect with our experienced immigration lawyers for personalized
-            guidance on your journey
+            {footerData?.legalAssistanceDescription ||
+              "Connect with our experienced immigration lawyers for personalized guidance on your journey"}
           </p>
         </div>
 
@@ -139,60 +147,3 @@ const ContactLawyerForm = () => {
 };
 
 export default ContactLawyerForm;
-
-
-
-// "use client";
-
-// import { useEffect } from "react";
-
-// declare global {
-//   interface Window {
-//     hbspt: {
-//       forms: {
-//         create: (options: {
-//           portalId: string;
-//           formId: string;
-//           target: string;
-//         }) => void;
-//       };
-//     };
-//   }
-// }
-
-// const ContactLawyerForm = () => {
-//   useEffect(() => {
-//     const script = document.createElement("script");
-//     script.src = "https://js.hsforms.net/forms/embed/v2.js";
-//     script.async = true;
-//     script.onload = () => {
-//       if (window.hbspt) {
-//         window.hbspt.forms.create({
-//           portalId: "1234567", // Replace with your portal ID
-//           formId: "1hfM3GPMXRc6vVq394rSprQsr9gq",
-//           target: "#hubspotForm",
-//         });
-//       }
-//     };
-//     document.body.appendChild(script);
-//   }, []);
-
-//   return (
-//     <section className="py-16 max-sm:py-8 pt-0 bg-gradient-to-b from-white to-primary/5">
-//       <div className="max-w-7xl mx-auto px-4 max-sm:px-3 sm:px-6 lg:px-8">
-//         <div className="text-center mb-12 max-sm:mb-6">
-//           <h2 className="text-3xl max-sm:text-2xl font-bold text-primary mb-4 max-sm:mb-2">
-//             Get Legal Assistance
-//           </h2>
-//           <p className="text-secondary/80 max-w-2xl mx-auto max-sm:text-sm">
-//             Connect with our experienced immigration lawyers for personalized
-//             guidance on your journey
-//           </p>
-//         </div>
-//         <div id="hubspotForm"></div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default ContactLawyerForm;

@@ -195,7 +195,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               return (
                 <section
                   key={index}
-                  className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
+                  className={`py-0 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
                 >
                   <div className="container mx-auto px-4">
                     {component.sliderTitle && (
@@ -264,7 +264,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               return (
                 <section
                   key={index}
-                  className={`py-12 bg-white ${firstComponentClass}`}
+                  className={`py-0 bg-white ${firstComponentClass}`}
                 >
                   <Slider title={component.title} faqs={component.faqs} />
                 </section>
