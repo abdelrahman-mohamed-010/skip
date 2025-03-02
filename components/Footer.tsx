@@ -3,15 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Mail,
-  Phone,
-  // MapPin,
-} from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, Phone } from "lucide-react";
 import { client } from "@/sanity/lib/client";
 
 const query = `*[_type == "footer"][0]{
@@ -75,10 +67,17 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
               {footerData.companyInfo?.socialLinks?.map(
                 (link: any, i: number) => {
                   const icons: any = {
-                    facebook: Facebook,
-                    twitter: Twitter,
-                    instagram: Instagram,
-                    linkedin: Linkedin,
+                    facebook: () => <Facebook size={18} />,
+                    twitter: () => (
+                      <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]">
+                        <path
+                          fill="currentColor"
+                          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                        />
+                      </svg>
+                    ),
+                    instagram: () => <Instagram size={18} />,
+                    linkedin: () => <Linkedin size={18} />,
                   };
                   const Icon = icons[link.platform];
                   return (
@@ -87,7 +86,7 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                       href={link.url || "3"}
                       className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
                     >
-                      <Icon size={18} />
+                      <Icon />
                     </Link>
                   );
                 }

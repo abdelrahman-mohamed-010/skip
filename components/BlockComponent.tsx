@@ -42,24 +42,32 @@ export default function BlockComponent({
 
   const renderButton = (button: CTAButton, index: number) => {
     const baseStyles =
-      "inline-block px-12 py-2 rounded-md transition-all cursor-pointer";
+      "inline-block px-6 py-1.5 md:px-12 md:py-2 text-sm md:text-base rounded-md transition-all cursor-pointer";
     const darkStyle =
-      "bg-primary text-white border-2 border-primary hover:bg-primary/90";
+      "bg-white text-primary border-2 border-primary  hover:bg-primary hover:text-white";
     const lightStyle =
-      "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white";
+      "bg-primary text-white border-2 border-primary hover:bg-white hover:text-primary";
 
-    // Use style based on index position
     const buttonStyle = index === 0 ? darkStyle : lightStyle;
 
     switch (button.buttonType) {
       case "call":
         return (
-          <a
-            href={`tel:${button.link}`}
-            className={`${baseStyles} ${buttonStyle}`}
-          >
-            {button.text}
-          </a>
+          <div className="group relative">
+            <a
+              href={`tel:${button.link}`}
+              className={`${baseStyles} ${buttonStyle}`}
+            >
+              {button.text}
+            </a>
+            <div className="absolute left-0 top-full mt-2 hidden group-hover:block">
+              <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
+                <p className="text-primary text-sm">
+                  Call Us @ 844-4-SKIPLEGAL (844-475-4753)
+                </p>
+              </div>
+            </div>
+          </div>
         );
       case "chat":
         return (
@@ -95,7 +103,7 @@ export default function BlockComponent({
           reverse ? "md:flex-row-reverse" : "md:flex-row"
         } gap-8 items-stretch`}
       >
-        <div className="w-full md:w-1/2 relative">
+        <div className="w-full md:w-1/2 max-md:h-[200px] relative">
           {sideImage?.asset?.url && (
             <img
               src={sideImage.asset.url}

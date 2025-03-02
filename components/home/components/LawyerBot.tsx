@@ -158,7 +158,7 @@ const LawyerBot = () => {
               key={question}
               onClick={() => handleSuggestedQuestion(question)}
               disabled={isLoading}
-              className="text-xs max-sm:text-[10px] px-3 py-1.5 max-sm:py-1 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
+              className="text-xs max-sm:text-[11px] px-3 py-1.5 max-sm:py-1 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
             >
               {question}
             </button>

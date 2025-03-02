@@ -70,6 +70,28 @@ const footer = {
       ],
     },
     {
+      name: "ourServices",
+      title: "Our Services",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "text",
+              title: "Service Text",
+              type: "string",
+            },
+            {
+              name: "url",
+              title: "URL",
+              type: "string",
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: "contactInfo",
       title: "Contact Information",
       type: "object",

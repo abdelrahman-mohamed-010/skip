@@ -53,6 +53,12 @@ export const headerType = defineType({
               description:
                 "If enabled, card will have a different background color",
             }),
+            defineField({
+              name: "link",
+              type: "string",
+              title: "Card Link",
+              description: "Enter the URL where this card should link to",
+            }),
           ],
         }),
       ],

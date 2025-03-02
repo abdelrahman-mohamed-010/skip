@@ -32,7 +32,7 @@ export default function Slider({ title, faqs = [] }: FAQProps) {
             className="border border-gray-200 rounded-lg overflow-hidden"
           >
             <button
-              className="w-full px-6 py-4 text-left flex justify-between items-center bg-white hover:bg-gray-50"
+              className="w-full px-6 py-4  text-left flex justify-between items-center bg-white hover:bg-gray-50"
               onClick={() =>
                 setActiveIndex(activeIndex === index ? null : index)
               }
@@ -45,7 +45,7 @@ export default function Slider({ title, faqs = [] }: FAQProps) {
               />
             </button>
             {activeIndex === index && (
-              <div className="px-6 py-4 bg-gray-50">
+              <div className="px-6 py-4 pt-2 bg-gray-50">
                 <div className="prose max-w-none">
                   <RichTextRenderer content={faq.answer} alignment="left" />
                 </div>
