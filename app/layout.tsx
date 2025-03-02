@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
 import CanonicalLink from "../components/CanonicalLink"; // import new component
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: "SkipLegal - Immigration Law Made Simple",
@@ -46,6 +47,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

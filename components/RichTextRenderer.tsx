@@ -181,7 +181,7 @@ export default function RichTextRenderer({
               return (
                 <ol
                   key={blockIndex}
-                  className="list-decimal mt-2 ml-6 [&>li]:pl-2 [&>li::marker]:text-yellow-500 [&>li::marker]:font-bold"
+                  className="list-decimal mt-2 ml-6 [&>li]:pl-2 [&>li::marker]:text-primary [&>li::marker]:font-bold"
                 >
                   {listItems.map((item: any, itemIndex: number) => (
                     <li key={itemIndex} className="mb-2">

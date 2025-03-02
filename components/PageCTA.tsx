@@ -109,20 +109,37 @@ const PageCTA = () => {
   return (
     <>
       <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-50">
-        <button
-          ref={buttonRef}
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
-          aria-label="Open chat"
-        >
-          <MessageSquare className="w-5 h-5 md:w-6 md:h-6" />
-        </button>
-        <button
-          onClick={handleCallAttorney}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
-        >
-          <Phone className="w-5 h-5 md:w-6 md:h-6" />
-        </button>
+        <div className="group relative flex items-center">
+          <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
+            <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
+              Chat with your personal immigration assistant
+              <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 transform rotate-45 w-3 h-3 bg-gray-900"></div>
+            </div>
+          </div>
+          <button
+            ref={buttonRef}
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
+            aria-label="Open chat"
+          >
+            <MessageSquare className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+        </div>
+
+        <div className="group relative flex items-center">
+          <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
+            <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
+              Call 844-4-SKIPLEGAL (844-475-4753)
+              <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 transform rotate-45 w-3 h-3 bg-gray-900"></div>
+            </div>
+          </div>
+          <button
+            onClick={handleCallAttorney}
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
+          >
+            <Phone className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+        </div>
       </div>
 
       {isChatOpen && (

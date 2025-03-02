@@ -70,7 +70,8 @@ export default async function Page({ params }: Params) {
             title,
             description,
             icon,
-            isHighlighted
+            isHighlighted,
+            link
           },
           image {
             asset->{

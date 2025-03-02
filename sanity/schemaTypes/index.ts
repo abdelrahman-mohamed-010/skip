@@ -18,6 +18,7 @@ import { headerType } from "./pagebuilder/headerType";
 import { finaleType } from "./pagebuilder/finaleType";
 import { questionsType } from "./pagebuilder/questionsType";
 import { sliderType } from "./pagebuilder/sliderType";
+import pageListings from "./pageListings";
 
 export const schemaTypes = [
   landing,
@@ -40,4 +41,5 @@ export const schemaTypes = [
   finaleType,
   questionsType,
   sliderType,
+  pageListings,
 ];
