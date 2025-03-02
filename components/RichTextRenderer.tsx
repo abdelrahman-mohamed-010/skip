@@ -1,38 +1,45 @@
+import CTAButton from "./CTAButton";
+
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface RichTextRendererProps {
   content: any[];
   alignment?: string;
   minHeightClass?: string;
-  responsibilities?: boolean; // new optional prop
+  responsibilities?: boolean;
 }
 
 export default function RichTextRenderer({
   content,
   alignment = "left",
-  responsibilities = false, // default value added
+  responsibilities = false,
 }: RichTextRendererProps) {
   const allBlocks = content || [];
 
   return (
-    <div className=" max-sm:px-4">
+    <div className="max-sm:px-4">
       <div
         className={`prose max-w-none [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_a]:inline [&_u]:inline text-${alignment}`}
       >
         {allBlocks.map((block: any, blockIndex: number) => {
-          // Added CTA block handling
           if (block._type === "cta") {
             return (
               <div
                 key={blockIndex}
-                className={`my-12 ${block.alignment === "center" ? "text-center" : "text-left"}`}
+                className={`my-12 ${
+                  block.alignment === "center"
+                    ? "text-center"
+                    : block.alignment === "right"
+                      ? "text-right"
+                      : "text-left"
+                }`}
               >
-                <a
-                  href={block.link}
-                  className="inline-block px-12 py-3  bg-primary rounded-3xl text-white font-medium  hover:bg-primary/90 transition-colors"
-                >
-                  {block.text}
-                </a>
+                <CTAButton
+                  buttonType={block.buttonType}
+                  text={block.text}
+                  link={block.link}
+                  chatbotQuestion={block.chatbotQuestion}
+                />
               </div>
             );
           }
