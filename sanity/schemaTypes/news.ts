@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   name: "news",
   type: "document",
@@ -96,7 +97,32 @@ export default {
           title: "CTA Button",
           fields: [
             { name: "text", type: "string", title: "Button Text" },
-            { name: "link", type: "string", title: "Button URL" },
+            {
+              name: "buttonType",
+              type: "string",
+              title: "Button Type",
+              options: {
+                list: [
+                  { title: "Normal Button", value: "normal" },
+                  { title: "Call Button", value: "call" },
+                  { title: "Chat Question", value: "chat" },
+                ],
+              },
+              initialValue: "normal",
+            },
+            {
+              name: "link",
+              type: "string",
+              title: "Button URL",
+              hidden: ({ parent }: { parent: { buttonType: string } }) => parent?.buttonType === "chat",
+            },
+            {
+              name: "chatbotQuestion",
+              type: "text",
+              title: "Chatbot Question",
+              description: "The question to be sent to the chatbot",
+              hidden: ({ parent }: { parent: { buttonType: string } }) => parent?.buttonType !== "chat",
+            },
             {
               name: "alignment",
               type: "string",
