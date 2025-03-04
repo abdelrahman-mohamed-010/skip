@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-anonymous-default-export */
 export default {
   name: "news",
@@ -81,9 +82,16 @@ export default {
                 type: "object",
                 fields: [
                   {
-                    title: "URL",
                     name: "href",
-                    type: "url",
+                    type: "string",
+                    title: "URL",
+                    description: "Enter any URL or path",
+                  },
+                  {
+                    name: "openInNewTab",
+                    type: "boolean",
+                    title: "Open in new tab",
+                    initialValue: false,
                   },
                 ],
               },
