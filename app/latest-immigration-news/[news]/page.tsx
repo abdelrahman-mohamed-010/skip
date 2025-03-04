@@ -1,6 +1,6 @@
 import { client } from "@/sanity/lib/client";
-import RichTextRenderer from "@/components/RichTextRenderer";
 import ShareButton from "@/components/ShareButton";
+import BlogRichText from "@/components/BlogsRichText";
 
 async function getNews(slug: string) {
   return await client.fetch(
@@ -52,8 +52,7 @@ const newsPage = async ({ params }: { params: { news: string } }) => {
           className="h-[250px] md:h-[400px] w-full object-cover rounded-lg mb-8"
         />
       )}
-
-      <RichTextRenderer content={news.content} />
+      <BlogRichText content={news.content} />
     </article>
   );
 };

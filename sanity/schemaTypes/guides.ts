@@ -41,6 +41,25 @@ export default {
       title: "Content",
       of: [
         {
+          type: "object",
+          name: "ctaButtons",
+          title: "Call & Chat Buttons",
+          fields: [
+            {
+              name: "phoneNumber",
+              type: "string",
+              title: "Phone Number",
+              initialValue: "9444754753",
+            },
+            {
+              name: "chatQuestion",
+              type: "text",
+              title: "Chat Question",
+              initialValue: "Hi, I have a question",
+            },
+          ],
+        },
+        {
           type: "block",
           styles: [
             { title: "Normal", value: "normal" },
@@ -114,14 +133,16 @@ export default {
               name: "link",
               type: "string",
               title: "Button URL",
-              hidden: ({ parent }: { parent: { buttonType: string } }) => parent?.buttonType === "chat",
+              hidden: ({ parent }: { parent: { buttonType: string } }) =>
+                parent?.buttonType === "chat",
             },
             {
               name: "chatbotQuestion",
               type: "text",
               title: "Chatbot Question",
               description: "The question to be sent to the chatbot",
-              hidden: ({ parent }: { parent: { buttonType: string } }) => parent?.buttonType !== "chat",
+              hidden: ({ parent }: { parent: { buttonType: string } }) =>
+                parent?.buttonType !== "chat",
             },
             {
               name: "alignment",
