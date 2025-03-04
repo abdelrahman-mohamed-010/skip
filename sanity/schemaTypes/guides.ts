@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-anonymous-default-export */
 export default {
   name: "guides",
@@ -41,6 +42,25 @@ export default {
       title: "Content",
       of: [
         {
+          type: "object",
+          name: "ctaButtons",
+          title: "Call & Chat Buttons",
+          fields: [
+            {
+              name: "phoneNumber",
+              type: "string",
+              title: "Phone Number",
+              initialValue: "9444754753",
+            },
+            {
+              name: "chatQuestion",
+              type: "text",
+              title: "Chat Question",
+              initialValue: "Hi, I have a question",
+            },
+          ],
+        },
+        {
           type: "block",
           styles: [
             { title: "Normal", value: "normal" },
@@ -62,9 +82,16 @@ export default {
                 type: "object",
                 fields: [
                   {
-                    title: "URL",
                     name: "href",
-                    type: "url",
+                    type: "string",
+                    title: "URL",
+                    description: "Enter any URL or path",
+                  },
+                  {
+                    name: "openInNewTab",
+                    type: "boolean",
+                    title: "Open in new tab",
+                    initialValue: false,
                   },
                 ],
               },
@@ -114,14 +141,16 @@ export default {
               name: "link",
               type: "string",
               title: "Button URL",
-              hidden: ({ parent }: { parent: { buttonType: string } }) => parent?.buttonType === "chat",
+              hidden: ({ parent }: { parent: { buttonType: string } }) =>
+                parent?.buttonType === "chat",
             },
             {
               name: "chatbotQuestion",
               type: "text",
               title: "Chatbot Question",
               description: "The question to be sent to the chatbot",
-              hidden: ({ parent }: { parent: { buttonType: string } }) => parent?.buttonType !== "chat",
+              hidden: ({ parent }: { parent: { buttonType: string } }) =>
+                parent?.buttonType !== "chat",
             },
             {
               name: "alignment",
