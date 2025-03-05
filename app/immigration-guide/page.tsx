@@ -1,7 +1,10 @@
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { client } from "@/sanity/lib/client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Clock, Tag, ArrowRight } from "lucide-react";
+import { User, Calendar, Tag, ArrowRight } from "lucide-react";
+import CustomDropdown from "@/components/CustomDropdown";
+import { client } from "@/sanity/lib/client";
 
 async function getGuide() {
   return await client.fetch(`
@@ -19,60 +22,91 @@ async function getGuide() {
   `);
 }
 
-const guidesPage = async () => {
-  const guidess = await getGuide();
+export default function GuidesPage() {
+  const [guides, setGuides] = useState<any[]>([]);
+
+  useEffect(() => {
+    getGuide().then(setGuides);
+  }, []);
+
+  const handleSort = (direction: "newest" | "oldest") => {
+    const sorted = [...guides].sort((a, b) =>
+      direction === "newest"
+        ? new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        : new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
+    );
+    setGuides(sorted);
+  };
 
   return (
     <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-12">
-          <h1 className="text-4xl max-sm:text-2xl font-bold text-primary text-center w-full">
-            Immigration guides
+        {/* Better Title Style */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold text-primary">
+            Immigration Guides
           </h1>
+          <div className="w-32 h-1 bg-accent mx-auto my-4 rounded-full"></div>
+          <p className="text-lg text-secondary">
+            Comprehensive guides to help you navigate immigration processes.
+          </p>
         </div>
 
+        {/* Custom Dropdown for Sorting */}
+        <div className="flex justify-end mb-6">
+          <CustomDropdown onSort={handleSort} />
+        </div>
+
+        {/* Guides Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {guidess.map((guides: any, index: number) => (
+          {guides.map((guide, index) => (
             <Link
-              href={`/immigration-guide/${guides.slug.current}`}
-              key={guides._id}
+              href={`/immigration-guide/${guide.slug.current}`}
+              key={guide._id}
               className="group"
             >
               <article
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
                 style={{ animationDelay: `${0.2 * index}s` }}
               >
-                {guides.imageUrl && (
+                {/* ...existing image code... */}
+                {guide.imageUrl && (
                   <img
-                    src={guides.imageUrl}
-                    alt={guides.title}
-                    className="w-full h-[200px] md:h-auto md:aspect-video object-cover"
+                    src={guide.imageUrl}
+                    alt={guide.title}
+                    className="w-full h-[200px] object-cover"
                   />
                 )}
                 <div className="p-6">
+                  {/* Card header with author and published date */}
                   <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
                     <span className="flex items-center">
                       <User className="w-4 h-4 mr-1" />
-                      {guides.author || "SkipLegal"}
+                      {guide.author || "SkipLegal"}
                     </span>
                     <span className="flex items-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {guides.estimatedReadingTime || "5 min read"}
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {new Date(guide.publishedAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </span>
                   </div>
-                  {guides.category && (
+                  {/* ...existing category, title, excerpt, and call-to-action... */}
+                  {guide.category && (
                     <div className="flex items-center mb-3">
                       <Tag className="w-4 h-4 mr-2 text-accent" />
                       <span className="text-sm text-accent">
-                        {guides.category}
+                        {guide.category}
                       </span>
                     </div>
                   )}
                   <h2 className="text-lg font-semibold text-primary mb-3 line-clamp-2">
-                    {guides.title}
+                    {guide.title}
                   </h2>
                   <p className="text-secondary mb-4 line-clamp-3">
-                    {guides.excerpt}
+                    {guide.excerpt}
                   </p>
                   <span className="inline-flex items-center text-primary group-hover:text-accent transition-colors duration-200">
                     Read Full Article
@@ -86,6 +120,4 @@ const guidesPage = async () => {
       </div>
     </main>
   );
-};
-
-export default guidesPage;
+}
