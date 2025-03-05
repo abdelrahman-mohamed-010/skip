@@ -61,7 +61,7 @@ export default function BlogsPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs.map((blog, index) => (
             <Link
-              href={`/blogs/${blog.slug.current}`}
+              href={`/immigration-blog/${blog.slug.current}`}
               key={blog._id}
               className="group"
             >
