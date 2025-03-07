@@ -1,5 +1,5 @@
-import ContactLawyerForm from "@/components/ContactLawyerForm";
-import Footer from "@/components/Footer";
+// import ContactLawyerForm from "@/components/ContactLawyerForm";
+// import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
@@ -56,8 +56,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       {children}
-      <ContactLawyerForm />
-      <Footer />
+      {/* <ContactLawyerForm /> */}
+      {/* <Footer /> */}
     </div>
   );
 }

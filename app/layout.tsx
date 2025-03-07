@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/inline-script-id */
 import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
 import CanonicalLink from "../components/CanonicalLink";
-import CookieConsent from "@/components/CookieConsent";
 import { client } from "@/sanity/lib/client";
+import Script from "next/script";
+import ConditionalFooterComponents from "@/components/ConditionalFooterComponents";
 
 const DEFAULT_TITLE = "SkipLegal - Immigration Law Made Simplee";
 const DEFAULT_DESCRIPTION =
@@ -64,12 +66,46 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <CanonicalLink />
+        {/* Tracking Scripts */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-975642063"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-975642063');
+          `}
+        </Script>
+        <Script
+          type="text/javascript"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "pfpw764hl7");
+            `,
+          }}
+        />
+        <Script
+          type="text/javascript"
+          id="hs-script-loader"
+          async
+          defer
+          strategy="afterInteractive"
+          src="//js.hs-scripts.com/48301226.js"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <CookieConsent />
+        <ConditionalFooterComponents />
       </body>
     </html>
   );

@@ -19,6 +19,7 @@ import { finaleType } from "./pagebuilder/finaleType";
 import { questionsType } from "./pagebuilder/questionsType";
 import { sliderType } from "./pagebuilder/sliderType";
 import pageListings from "./pageListings";
+import contactFormMeta from "./contactFormMeta";
 
 export const schemaTypes = [
   landing,
@@ -42,4 +43,5 @@ export const schemaTypes = [
   questionsType,
   sliderType,
   pageListings,
+  contactFormMeta
 ];

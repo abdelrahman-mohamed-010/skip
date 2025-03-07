@@ -32,7 +32,7 @@ const Services = ({ data }: { data: ServicesData }) => {
                 <div className="absolute left-0 right-0 top-full mt-2 hidden group-hover:block w-max">
                   <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
                     <p className="text-primary text-sm">
-                      Call Us @ 944-4-SKIPLEGAL (944-475-4753)
+                      Call Us @ 844-4-SKIPLEGAL (844-475-4753)
                     </p>
                   </div>
                 </div>

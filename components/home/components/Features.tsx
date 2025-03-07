@@ -19,7 +19,7 @@ const Features = ({ data }: { data: FeaturesData }) => {
         <div className="absolute left-0 bottom-0 w-1/4 h-1/2 bg-white/10 rounded-full filter blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto  max-sm:px-4">
         <div className="text-center mb-16 relative">
           <h2 className="text-4xl max-sm:text-2xl font-bold text-white mt-8">
             {data.sectionTitle}
