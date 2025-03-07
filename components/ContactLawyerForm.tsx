@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send } from "lucide-react";
+import { client } from "../sanity/lib/client";
 
 interface FooterData {
   legalAssistanceTitle?: string;
   legalAssistanceDescription?: string;
 }
 
-const ContactLawyerForm = ({ footerData }: { footerData?: FooterData }) => {
+const ContactLawyerForm = () => {
+  const [footerData, setFooterData] = useState<FooterData | null>(null);
+
+  useEffect(() => {
+    async function fetchMeta() {
+      const data = await client.fetch(
+        `*[_type == "contactFormMeta"][0]{ legalAssistanceTitle, legalAssistanceDescription }`
+      );
+      setFooterData(data);
+    }
+    fetchMeta();
+  }, []);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",

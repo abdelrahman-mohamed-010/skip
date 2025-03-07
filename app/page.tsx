@@ -10,13 +10,12 @@ import ContactLawyerForm from "@/components/ContactLawyerForm";
 import Footer from "@/components/Footer";
 import { client } from "../sanity/lib/client";
 
-// Fetch landing page with sections (hero included)
+// Fetch landing page sections
 async function getLandingData() {
   const data = await client.fetch(`*[_type == "landing"][0]{ 
-    sections,
-    footer
+    sections
   }`);
-  return data ?? { sections: [], footer: {} };
+  return data ?? { sections: [] };
 }
 
 export default async function Home() {
@@ -41,7 +40,7 @@ export default async function Home() {
         }
       })}
       <News />
-      <ContactLawyerForm footerData={landingData.footer} />
+      <ContactLawyerForm />
       <Footer />
     </div>
   );
