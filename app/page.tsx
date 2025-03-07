@@ -6,8 +6,8 @@ import Services from "@/components/home/components/Services";
 import Process from "@/components/home/components/Process";
 import News from "@/components/home/components/News";
 import Navigation from "@/components/Navigation";
-import ContactLawyerForm from "@/components/ContactLawyerForm";
-import Footer from "@/components/Footer";
+// import ContactLawyerForm from "@/components/ContactLawyerForm";
+// import Footer from "@/components/Footer";
 import { client } from "../sanity/lib/client";
 
 // Fetch landing page sections
@@ -40,8 +40,8 @@ export default async function Home() {
         }
       })}
       <News />
-      <ContactLawyerForm />
-      <Footer />
+      {/* <ContactLawyerForm /> */}
+      {/* <Footer /> */}
     </div>
   );
 }
