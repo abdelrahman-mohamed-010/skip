@@ -13,19 +13,22 @@ export async function GET(req) {
   }`);
 
   const dynamicUrls = [];
-  // Edge case slugs array
+  // Update edge cases with corrected "about-us"
   const edgeCases = ["terms", "privacy", "about-us"];
 
-  // Home page with priority 1.0
+  // Home page with priority 1.0 and daily changefreq
   dynamicUrls.push({ url: "/", changefreq: "daily", priority: 1.0 });
 
-  // Main pages with priority 0.9 (or 0.6 if an edge case) and nested pages with priority 0.7
+  // Main pages and nested pages
   pages.forEach((page) => {
     if (page.slug) {
+      const mainChangefreq = edgeCases.includes(page.slug)
+        ? "monthly"
+        : "weekly";
       const mainPriority = edgeCases.includes(page.slug) ? 0.6 : 0.9;
       dynamicUrls.push({
         url: `/${page.slug}`,
-        changefreq: "daily",
+        changefreq: mainChangefreq,
         priority: mainPriority,
       });
       if (page.innerPages) {
@@ -33,7 +36,7 @@ export async function GET(req) {
           if (nested.slug) {
             dynamicUrls.push({
               url: `/${page.slug}/${nested.slug}`,
-              changefreq: "daily",
+              changefreq: "weekly",
               priority: 0.7,
             });
           }
@@ -42,7 +45,7 @@ export async function GET(req) {
     }
   });
 
-  const sitemap = new SitemapStream({ hostname: "http://localhost:3000" });
+  const sitemap = new SitemapStream({ hostname: "https://skiplegal.ai" });
 
   dynamicUrls.forEach((urlData) => {
     sitemap.write(urlData);

@@ -17,7 +17,7 @@ export async function GET(req) {
     if (post.slug) {
       dynamicUrls.push({
         url: `/immigration-blog/${post.slug}`,
-        changefreq: "daily",
+        changefreq: "monthly",
         priority: 0.8,
       });
     }
@@ -28,7 +28,7 @@ export async function GET(req) {
     if (post.slug) {
       dynamicUrls.push({
         url: `/latest-immigration-news/${post.slug}`,
-        changefreq: "daily",
+        changefreq: "monthly",
         priority: 0.8,
       });
     }
@@ -39,13 +39,13 @@ export async function GET(req) {
     if (post.slug) {
       dynamicUrls.push({
         url: `/immigration-guide/${post.slug}`,
-        changefreq: "daily",
+        changefreq: "monthly",
         priority: 0.8,
       });
     }
   });
 
-  const sitemap = new SitemapStream({ hostname: "http://localhost:3000" });
+  const sitemap = new SitemapStream({ hostname: "https://skiplegal.ai" });
 
   dynamicUrls.forEach((urlData) => {
     sitemap.write(urlData);
