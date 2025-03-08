@@ -6,6 +6,7 @@ import CanonicalLink from "../components/CanonicalLink";
 import { client } from "@/sanity/lib/client";
 import Script from "next/script";
 import ConditionalFooterComponents from "@/components/ConditionalFooterComponents";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
 const DEFAULT_TITLE = "SkipLegal - Immigration Law Made Simplee";
 const DEFAULT_DESCRIPTION =
@@ -106,6 +107,7 @@ export default function RootLayout({
       >
         {children}
         <ConditionalFooterComponents />
+        <VercelAnalytics />
       </body>
     </html>
   );

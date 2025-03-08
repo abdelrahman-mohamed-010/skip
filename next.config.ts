@@ -9,6 +9,20 @@ const nextConfig: NextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/green-cards/family-based-green-cards",
+        destination: "/green-cards/family-based-greencards",
+        permanent: true,
+      },
+      {
+        source: "/green-card",
+        destination: "/green-cards",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

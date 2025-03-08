@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import CallButton from "@/components/CallButton";
 
 interface ServicesData {
   sectionTitle: string;
@@ -23,12 +24,13 @@ const Services = ({ data }: { data: ServicesData }) => {
             </p>
             <div className="flex gap-6">
               <div className="group relative inline-block">
-                <a
-                  href="tel:9444754753"
+                <CallButton
+                  phoneNumber="9444754753"
+                  source="services-section"
                   className="px-8 py-4 bg-primary hover:bg-white hover:text-primary border-primary border-2 max-sm:px-5 max-sm:py-3 max-sm:text-sm text-white rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center"
                 >
                   Call Us Now
-                </a>
+                </CallButton>
                 <div className="absolute left-0 right-0 top-full mt-2 hidden group-hover:block w-max">
                   <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
                     <p className="text-primary text-sm">

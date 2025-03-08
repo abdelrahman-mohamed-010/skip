@@ -5,6 +5,7 @@
 import React, { useCallback } from "react";
 import RichTextRenderer from "./RichTextRenderer";
 import { chatStore } from "@/lib/chatStore";
+import { logUserEvent } from "@/lib/logger";
 
 interface SideImage {
   asset: {
@@ -36,8 +37,17 @@ export default function BlockComponent({
   reverse = false,
 }: BlockComponentProps) {
   const handleQuestionClick = useCallback((question: string) => {
-    console.log("Sending question:", question); // Debug log
-    chatStore.sendMessage(question);
+    try {
+      logUserEvent("chat_start", {
+        chatbotQuestion: question,
+        buttonType: "chat",
+        source: "block-component",
+      });
+      chatStore.sendMessage(question);
+    } catch (error) {
+      console.error("Failed to log chat event:", error);
+      chatStore.sendMessage(question);
+    }
   }, []);
 
   const renderButton = (button: CTAButton, index: number) => {
@@ -57,6 +67,17 @@ export default function BlockComponent({
             <a
               href={`tel:${button.link}`}
               className={`${baseStyles} ${buttonStyle}`}
+              onClick={async () => {
+                try {
+                  await logUserEvent("call_click", {
+                    phoneNumber: button.link,
+                    buttonType: "call",
+                    source: "block-component",
+                  });
+                } catch (error) {
+                  console.error("Failed to log call event:", error);
+                }
+              }}
             >
               {button.text}
             </a>
@@ -75,7 +96,6 @@ export default function BlockComponent({
             type="button"
             onClick={() => {
               if (button.chatbotQuestion) {
-                console.log("Button clicked:", button.chatbotQuestion); // Debug log
                 handleQuestionClick(button.chatbotQuestion);
               }
             }}

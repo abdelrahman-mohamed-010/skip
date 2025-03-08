@@ -1,5 +1,5 @@
 import LawyerBot from "./LawyerBot";
-import { Phone } from "lucide-react";
+import CallButton from "@/components/CallButton";
 
 interface HeroProps {
   heroData: {
@@ -35,13 +35,14 @@ const Hero = ({ heroData }: HeroProps) => {
           </div>
         </div>
         <div className="group relative inline-block">
-          <a
-            href="tel:9444754753"
+          <CallButton
+            phoneNumber="9444754753"
+            source="hero-section"
+            showIcon
             className="inline-flex items-center px-12 max-sm:px-8 py-3 mt-12 text-lg max-sm:text-base font-medium text-white bg-primary border-2 border-primary hover:bg-white hover:text-primary rounded-full transition-colors shadow-lg hover:shadow-xl"
           >
-            <Phone className="w-5 h-5 mr-2 max-sm:w-4 max-sm:h-4" />
             Call Us Now
-          </a>
+          </CallButton>
           <div className="absolute left-0 right-0 top-full mt-2 hidden group-hover:block w-max">
             <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
               <p className="text-primary text-sm">

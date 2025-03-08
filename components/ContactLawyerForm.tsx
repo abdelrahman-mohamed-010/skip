@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
 import Script from "next/script";
 import { client } from "../sanity/lib/client";
+import { logUserEvent } from "@/lib/logger";
 
 interface FooterData {
   legalAssistanceTitle?: string;
@@ -13,6 +15,7 @@ const ContactLawyerForm = () => {
   const [footerData, setFooterData] = useState<FooterData | null>(null);
 
   useEffect(() => {
+    // Fetch meta data
     async function fetchMeta() {
       const data = await client.fetch(
         `*[_type == "contactFormMeta"][0]{ legalAssistanceTitle, legalAssistanceDescription }`
@@ -20,6 +23,33 @@ const ContactLawyerForm = () => {
       setFooterData(data);
     }
     fetchMeta();
+
+    // Listen for HubSpot form submission
+    const handleFormSubmit = (event: any) => {
+      try {
+        logUserEvent("form_submit", {
+          formId: "ee3448e0-9779-44b2-ae23-638918c34575",
+          portalId: "48301226",
+          source: "contact-lawyer-form",
+          email: event?.target?.querySelector('input[type="email"]')?.value,
+        });
+      } catch (error) {
+        console.error("Failed to log form submission:", error);
+      }
+    };
+
+    window.addEventListener("message", (event) => {
+      if (
+        event.data.type === "hsFormCallback" &&
+        event.data.eventName === "onFormSubmit"
+      ) {
+        handleFormSubmit(event);
+      }
+    });
+
+    return () => {
+      window.removeEventListener("message", handleFormSubmit);
+    };
   }, []);
 
   return (
