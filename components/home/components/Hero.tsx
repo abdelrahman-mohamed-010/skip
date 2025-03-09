@@ -36,7 +36,7 @@ const Hero = ({ heroData }: HeroProps) => {
         </div>
         <div className="group relative inline-block">
           <CallButton
-            phoneNumber="9444754753"
+            phoneNumber="8444754753"
             source="hero-section"
             showIcon
             className="inline-flex items-center px-12 max-sm:px-8 py-3 mt-12 text-lg max-sm:text-base font-medium text-white bg-primary border-2 border-primary hover:bg-white hover:text-primary rounded-full transition-colors shadow-lg hover:shadow-xl"
