@@ -26,7 +26,7 @@ async function getAccessToken(): Promise<string> {
   const clientId = process.env.USCIS_CLIENT_ID;
   const clientSecret = process.env.USCIS_CLIENT_SECRET;
   
-  const response = await axios.post('https://api-int.uscis.gov/oauth/accesstoken', 
+  const response = await axios.post<TokenResponse>('https://api-int.uscis.gov/oauth/accesstoken', 
     `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
     {
       headers: {
@@ -40,7 +40,7 @@ async function getAccessToken(): Promise<string> {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<CaseStatusResponse | { message: string }>
 ) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -55,7 +55,7 @@ export default async function handler(
   try {
     const accessToken = await getAccessToken();
     
-    const response = await axios.get(
+    const response = await axios.get<CaseStatusResponse>(
       `https://api-int.uscis.gov/case-status/${receiptNumber}`,
       {
         headers: {
