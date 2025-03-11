@@ -6,9 +6,12 @@ import {
   SendHorizontal,
   Paperclip,
   X,
+  LogIn,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { chatStore } from "@/lib/chatStore";
+import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface Message {
   role: "user" | "ai";
@@ -29,6 +32,22 @@ const PageCTA = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<string>("");
+  const [userMessageCount, setUserMessageCount] = useState(0);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const { isLoaded, userId } = useAuth();
+  const router = useRouter();
+
+  const isAuthenticated = isLoaded && userId;
+
+  // Load message count from localStorage when component mounts
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const storedCount = localStorage.getItem("userMessageCount");
+      if (storedCount) {
+        setUserMessageCount(parseInt(storedCount, 10));
+      }
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -75,9 +94,29 @@ const PageCTA = () => {
 
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
+
+    // Check if user is authenticated or has messages remaining
+    if (!isAuthenticated && userMessageCount >= 3) {
+      setShowAuthPrompt(true);
+      // Show authentication prompt instead of redirecting
+      return;
+    }
+
     setMessages((prev) => [...prev, { role: "user", content }]);
     setInputMessage("");
     setIsLoading(true);
+
+    // Increment message count for unauthenticated users
+    if (!isAuthenticated) {
+      const newCount = userMessageCount + 1;
+      setUserMessageCount(newCount);
+      localStorage.setItem("userMessageCount", newCount.toString());
+
+      // Show auth prompt if this was the 3rd message
+      if (newCount >= 3) {
+        setShowAuthPrompt(true);
+      }
+    }
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -199,6 +238,35 @@ const PageCTA = () => {
                   </div>
                 </div>
               )}
+
+              {showAuthPrompt && !isAuthenticated && (
+                <div className="flex items-start gap-2">
+                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary font-semibold text-sm">
+                      AI
+                    </span>
+                  </div>
+                  <div className="bg-primary/5 rounded-lg p-3 text-left">
+                    <p className="text-sm text-gray-700 mb-2">
+                      You've reached the maximum number of free messages for
+                      today. Please sign in to continue our conversation.
+                    </p>
+                    <div className="flex space-x-2 mt-2">
+                      <SignInButton mode="modal">
+                        <button className="flex items-center space-x-1 px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                          <LogIn className="w-3 h-3" />
+                          <span>Sign in</span>
+                        </button>
+                      </SignInButton>
+                      <SignUpButton mode="modal">
+                        <button className="flex items-center px-3 py-1 text-xs bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                          <span>Sign up</span>
+                        </button>
+                      </SignUpButton>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Input Area */}
@@ -211,8 +279,13 @@ const PageCTA = () => {
                   onKeyPress={(e) =>
                     e.key === "Enter" && sendMessage(inputMessage)
                   }
-                  placeholder="Type your immigration question..."
+                  placeholder={
+                    !isAuthenticated && userMessageCount >= 3
+                      ? "Sign in to continue..."
+                      : "Type your immigration question..."
+                  }
                   className="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-20 text-sm"
+                  disabled={!isAuthenticated && userMessageCount >= 3}
                 />
                 <div className="absolute right-2 flex items-center gap-1">
                   <button
@@ -220,12 +293,15 @@ const PageCTA = () => {
                       document.getElementById("file-upload-input")?.click()
                     }
                     className="p-1.5 text-primary hover:text-primary/80 transition-colors"
+                    disabled={!isAuthenticated && userMessageCount >= 3}
                   >
                     <Paperclip className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => sendMessage(inputMessage)}
-                    disabled={isLoading}
+                    disabled={
+                      isLoading || (!isAuthenticated && userMessageCount >= 3)
+                    }
                     className="p-1.5 text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
                   >
                     <SendHorizontal className="w-4 h-4" />
@@ -245,6 +321,14 @@ const PageCTA = () => {
                 </div>
               )}
 
+              {!isAuthenticated && !showAuthPrompt && (
+                <div className="mt-1.5 text-xs text-gray-500">
+                  {userMessageCount >= 3
+                    ? "You've reached your limit of free messages."
+                    : `${3 - userMessageCount} free messages remaining`}
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2 mt-3">
                 {[
                   "Visa requirements",
@@ -254,7 +338,9 @@ const PageCTA = () => {
                   <button
                     key={question}
                     onClick={() => handleSuggestedQuestion(question)}
-                    disabled={isLoading}
+                    disabled={
+                      isLoading || (!isAuthenticated && userMessageCount >= 3)
+                    }
                     className="text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
                   >
                     {question}
