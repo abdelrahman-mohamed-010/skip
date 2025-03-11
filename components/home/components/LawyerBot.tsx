@@ -14,7 +14,7 @@ const LawyerBot = () => {
     {
       role: "ai",
       content:
-        "Welcome! I&apos;m your legal assistant specializing in U.S. immigration law. How may I assist you today?",
+        "Welcome! I{'\''}m SkipGenius your personal legal assistant specializing in U.S. immigration law. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -39,7 +39,7 @@ const LawyerBot = () => {
   const getLegalResponse = (question: string) => {
     const responses: { [key: string]: string } = {
       "Visa requirements":
-        "To apply for a U.S. visa, you&apos;ll need: a valid passport, completed DS-160 form, application fee payment, and supporting documents specific to your visa type. Would you like me to explain more about a specific visa category?",
+        "To apply for a U.S. visa, you{'\''}ll need: a valid passport, completed DS-160 form, application fee payment, and supporting documents specific to your visa type. Would you like me to explain more about a specific visa category?",
       "Green card process":
         "The green card process typically involves filing Form I-485 (Adjustment of Status) or going through consular processing. The requirements vary based on your eligibility category. What specific aspect would you like to learn more about?",
       "Processing times":
@@ -151,7 +151,7 @@ const LawyerBot = () => {
             </div>
             <div className="bg-primary/5 rounded-lg p-3 text-left">
               <p className="text-sm max-sm:text-xs text-gray-700 mb-2">
-                You&apos;ve reached the maximum number of free messages for today.
+                You{'\''}ve reached the maximum number of free messages for today.
                 Please sign in to continue our conversation.
               </p>
               <div className="flex space-x-2 mt-2">
@@ -221,7 +221,7 @@ const LawyerBot = () => {
       {!isAuthenticated && !showAuthPrompt && (
         <div className="mt-1.5 text-xs text-gray-500">
           {userMessageCount >= 3
-            ? "You&apos;ve reached your limit of free messages."
+            ? "You{'\''}ve reached your limit of free messages."
             : `${3 - userMessageCount} free messages remaining`}
         </div>
       )}
