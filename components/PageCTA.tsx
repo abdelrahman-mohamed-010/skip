@@ -22,6 +22,7 @@ const PageCTA = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "ai",
@@ -76,6 +77,13 @@ const PageCTA = () => {
     chatStore.subscribe(handleChatMessage);
     return () => chatStore.unsubscribe(handleChatMessage);
   }, []);
+
+  useEffect(() => {
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages]);
 
   const getLegalResponse = (question: string) => {
     const responses: { [key: string]: string } = {
@@ -202,7 +210,10 @@ const PageCTA = () => {
             </div>
 
             {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div
+              ref={messagesContainerRef}
+              className="flex-1 overflow-y-auto p-4 space-y-4"
+            >
               {messages.map((message, index) => (
                 <div
                   key={index}

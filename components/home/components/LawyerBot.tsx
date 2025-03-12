@@ -1,7 +1,7 @@
 "use client";
 
 import { SendHorizontal, Paperclip, LogIn } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -25,6 +25,7 @@ const LawyerBot = () => {
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const { isLoaded, userId } = useAuth();
   const router = useRouter();
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const isAuthenticated = isLoaded && userId;
 
@@ -37,6 +38,13 @@ const LawyerBot = () => {
       }
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages]);
 
   const getLegalResponse = (question: string) => {
     const responses: { [key: string]: string } = {
@@ -111,7 +119,10 @@ const LawyerBot = () => {
 
   return (
     <div className="relative rounded-2xl bg-white/80 backdrop-blur-md p-4 max-sm:p-3 shadow-lg border border-primary/10">
-      <div className="space-y-4 mb-4 min-h-[240px] max-sm:min-h-[150px] max-h-[240px] max-sm:max-h-[150px] overflow-y-auto p-2">
+      <div
+        ref={messagesContainerRef}
+        className="space-y-4 mb-4 min-h-[240px] max-sm:min-h-[150px] max-h-[240px] max-sm:max-h-[150px] overflow-y-auto p-2"
+      >
         {messages.map((message, index) => (
           <div
             key={index}
