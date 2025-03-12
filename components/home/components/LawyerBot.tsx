@@ -23,7 +23,7 @@ const LawyerBot = () => {
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const { isLoaded, userId } = useAuth();
-  const router = useRouter();
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const isAuthenticated = isLoaded && userId;
 
@@ -162,8 +162,8 @@ const LawyerBot = () => {
             </div>
             <div className="bg-primary/5 rounded-lg p-3 text-left">
               <p className="text-sm max-sm:text-xs text-gray-700 mb-2">
-                You&apos;ve reached the maximum number of free messages for today.
-                Please sign in to continue our conversation.
+                You&apos;ve reached the maximum number of free messages for
+                today. Please sign in to continue our conversation.
               </p>
               <div className="flex space-x-2 mt-2">
                 <SignInButton mode="modal">
