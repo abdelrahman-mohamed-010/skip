@@ -96,6 +96,96 @@ export const pageType = defineType({
               ],
             }),
             defineField({
+              name: "deepNestedPages",
+              type: "array",
+              title: "Deep Nested Pages",
+              description: "Create third-level nested pages",
+              of: [
+                defineArrayMember({
+                  type: "object",
+                  name: "deepNestedPage",
+                  title: "Deep Nested Page",
+                  fields: [
+                    defineField({
+                      name: "title",
+                      type: "string",
+                      title: "Deep Nested Page Title",
+                    }),
+                    defineField({
+                      name: "slug",
+                      type: "slug",
+                      title: "Deep Nested Page Slug",
+                      options: {
+                        source: "title",
+                        maxLength: 96,
+                      },
+                    }),
+                    defineField({
+                      name: "showShareButton",
+                      type: "boolean",
+                      title: "Show Share Button",
+                      description:
+                        "Toggle to display share button on deep nested page.",
+                    }),
+                    defineField({
+                      name: "content",
+                      type: "array",
+                      title: "Page Content",
+                      of: [
+                        defineArrayMember({ name: "gallery", type: "gallery" }),
+                        defineArrayMember({
+                          name: "richText",
+                          type: "richText",
+                        }),
+                        defineArrayMember({
+                          name: "contentSlider",
+                          type: "contentSlider",
+                        }),
+                        defineArrayMember({
+                          name: "pdfViewer",
+                          type: "pdfViewer",
+                        }),
+                        defineArrayMember({
+                          name: "blockcomponent",
+                          type: "blockcomponent",
+                        }),
+                        defineArrayMember({ name: "header", type: "header" }),
+                        defineArrayMember({ name: "finale", type: "finale" }),
+                        defineArrayMember({
+                          name: "questions",
+                          type: "questions",
+                        }),
+                        defineArrayMember({ name: "slider", type: "slider" }),
+                      ],
+                    }),
+                    defineField({
+                      name: "seo",
+                      title: "SEO Settings",
+                      type: "object",
+                      fields: [
+                        {
+                          name: "metaTitle",
+                          title: "Meta Title",
+                          type: "string",
+                        },
+                        {
+                          name: "metaDescription",
+                          title: "Meta Description",
+                          type: "text",
+                        },
+                        {
+                          name: "keywords",
+                          title: "Keywords",
+                          type: "array",
+                          of: [{ type: "string" }],
+                        },
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+            defineField({
               name: "seo",
               title: "SEO Settings",
               type: "object",
