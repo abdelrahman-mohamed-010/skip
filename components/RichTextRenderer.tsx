@@ -19,7 +19,7 @@ export default function RichTextRenderer({
   return (
     <div className="max-sm:px-4">
       <div
-        className={`prose max-w-none [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_a]:inline [&_u]:inline text-${alignment}`}
+        className={`prose max-w-none text-gray-700 [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_a]:inline [&_u]:inline text-${alignment}`}
       >
         {allBlocks.map((block: any, blockIndex: number) => {
           if (block._type === "cta") {
@@ -127,7 +127,7 @@ export default function RichTextRenderer({
           if (block._type === "block") {
             if (block.listItem === "bullet") {
               return (
-                <ul key={blockIndex} className="list-disc ml-6 mt-3">
+                <ul key={blockIndex} className="list-disc ml-6 mt-3 text-gray-700">
                   <li className="mb-2">
                     {block.children.map((span: any, spanIndex: number) => {
                       const marks = span.marks || [];
@@ -188,7 +188,7 @@ export default function RichTextRenderer({
               return (
                 <ol
                   key={blockIndex}
-                  className="list-decimal mt-2 ml-6 [&>li]:pl-2 [&>li::marker]:text-primary [&>li::marker]:font-bold"
+                  className="list-decimal mt-2 ml-6 [&>li]:pl-2 text-gray-700 [&>li::marker]:text-primary [&>li::marker]:font-bold"
                 >
                   {listItems.map((item: any, itemIndex: number) => (
                     <li key={itemIndex} className="mb-2">

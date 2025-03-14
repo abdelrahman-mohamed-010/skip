@@ -139,7 +139,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           )}
         </Head>
       )}
-      <main>
+      <main className=" bg-white">
         {!hasHeaderComponent && (
           <section className="pt-24 text-center">
             <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
@@ -275,7 +275,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           }
         })}
         {page.showShareButton && (
-          <section className="text-center my-4">
+          <section className="text-center my-4 bg-white">
             <InlineShareButtons url={url} title={page.title} />
           </section>
         )}

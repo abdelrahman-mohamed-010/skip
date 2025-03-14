@@ -14,14 +14,20 @@ interface FAQProps {
 }
 
 export default function Slider({ title, faqs = [] }: FAQProps) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeIndices, setActiveIndices] = useState<number[]>([]);
 
   if (!faqs || faqs.length === 0) {
     return null;
   }
 
+  const toggleIndex = (index: number) => {
+    setActiveIndices((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
+  };
+
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4">
+    <div className="max-w-7xl mx-auto py-6 px-4 text-gray-700">
       {title && (
         <h2 className="text-3xl font-bold mb-8 text-primary">{title}</h2>
       )}
@@ -33,18 +39,16 @@ export default function Slider({ title, faqs = [] }: FAQProps) {
           >
             <button
               className="w-full px-6 py-4  text-left flex justify-between items-center bg-white hover:bg-gray-50"
-              onClick={() =>
-                setActiveIndex(activeIndex === index ? null : index)
-              }
+              onClick={() => toggleIndex(index)}
             >
               <span className="font-medium">{faq.question}</span>
               <ChevronDownIcon
                 className={`w-5 h-5 transition-transform ${
-                  activeIndex === index ? "transform rotate-180" : ""
+                  activeIndices.includes(index) ? "transform rotate-180" : ""
                 }`}
               />
             </button>
-            {activeIndex === index && (
+            {activeIndices.includes(index) && (
               <div className="px-6 py-4 pt-2 bg-gray-50">
                 <div className="prose max-w-none">
                   <RichTextRenderer content={faq.answer} alignment="left" />

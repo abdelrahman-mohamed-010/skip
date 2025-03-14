@@ -30,7 +30,7 @@ const BlogPage = async ({ params }: { params: { blog: string } }) => {
   return (
     <article className="container mx-auto px-4 mt-16 py-12 max-w-4xl">
       <header className="mb-8">
-        <h1 className="text-4xl max-sm:text-2xl font-bold mb-4">
+        <h1 className="text-4xl max-sm:text-2xl  text-primary font-bold mb-4">
           {blog.title}
         </h1>
         <div className="flex items-center space-x-2 w-full justify-between border-b-2 pb-3">

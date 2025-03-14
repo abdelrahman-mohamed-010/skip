@@ -56,6 +56,7 @@ const ContactLawyerForm = () => {
     <section
       id="contact-lawyer-form"
       className="py-16 max-sm:py-8 pt-0 bg-gradient-to-b mt-12 from-white to-primary/5"
+      // className="py-16 max-sm:py-8 pt-0 bg-gray-100 mt-12"
     >
       <div className="max-w-4xl mx-auto px-4 max-sm:px-3 sm:px-6 lg:px-8">
         <div className="text-center mb-12 max-sm:mb-6">
@@ -67,8 +68,6 @@ const ContactLawyerForm = () => {
               "Connect with our experienced immigration lawyers for personalized guidance on your journey"}
           </p>
         </div>
-
-        {/* HubSpot Embedded Form */}
         <Script
           src="https://js.hsforms.net/forms/embed/48301226.js"
           strategy="afterInteractive"

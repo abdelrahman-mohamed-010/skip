@@ -34,7 +34,7 @@ export default function Header({
   const isTwoCards = cards.length === 2;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 pt-24 ">
+    <div className="max-w-7xl mx-auto px-4 py-12 pt-24 text-gray-700">
       <div className="text-center space-y-4 mb-16">
         <h1 className="text-5xl font-bold tracking-tight text-primary">
           {title}

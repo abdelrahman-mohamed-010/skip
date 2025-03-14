@@ -153,7 +153,7 @@ const PageCTA = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-50">
+      <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-50 text-gray-700">
         <div className="group relative flex items-center">
           <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
             <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
@@ -215,7 +215,7 @@ const PageCTA = () => {
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex items-start gap-2 ${
+                  className={`flex items-start gap-2 text-gray-700 ${
                     message.role === "user" ? "flex-row-reverse" : ""
                   }`}
                 >
@@ -257,7 +257,8 @@ const PageCTA = () => {
                   </div>
                   <div className="bg-primary/5 rounded-lg p-3 text-left">
                     <p className="text-sm text-gray-700 mb-2">
-                      You&apos;ve reached the maximum number of free messages for today. Please sign in to continue our conversation.
+                      You&apos;ve reached the maximum number of free messages
+                      for today. Please sign in to continue our conversation.
                     </p>
                     <div className="flex space-x-2 mt-2">
                       <SignInButton mode="modal">

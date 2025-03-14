@@ -95,7 +95,7 @@ const Navigation = () => {
           <div className="flex justify-between items-center h-full">
             <Link href="/" className="flex items-center space-x-2 shrink-0 p-2">
               <Image src="/logo.svg" alt="Logo" width={32} height={32} />
-              <span className="text-xl font-bold text-primary">
+              <span className="xl:text-lg 2xl:text-xl font-bold text-primary">
                 SKIP<span className=" text-blue-700">LEGAL</span>.ai
               </span>
             </Link>
@@ -107,7 +107,7 @@ const Navigation = () => {
                   <div className="relative">
                     <Link
                       href={item.link || "#"}
-                      className="flex items-center text-[15px] py-2 px-2.5 rounded-md text-secondary hover:text-primary hover:bg-gray-50 transition-all duration-200"
+                      className="flex items-center xl:text-[13px] 2xl:text-[15px] py-2 px-2.5 rounded-md text-secondary hover:text-primary hover:bg-gray-50 transition-all duration-200"
                     >
                       <span className="font-medium">{item.text}</span>
                       {item.subItems && (
@@ -120,7 +120,7 @@ const Navigation = () => {
                           <Link
                             key={subItem.text}
                             href={subItem.link}
-                            className="block px-4 py-2 text-sm text-secondary hover:bg-gray-50 hover:text-primary transition-colors duration-200"
+                            className="block px-4 py-2 xl:text-xs 2xl:text-sm text-secondary hover:bg-gray-50 hover:text-primary transition-colors duration-200"
                           >
                             {subItem.text}
                           </Link>
@@ -136,12 +136,12 @@ const Navigation = () => {
             <div className="flex items-center space-x-3 ml-0 pl-2 border-l border-gray-200 max-xl:hidden">
               <SignedOut>
                 <SignInButton mode="modal">
-                  <button className="px-4 py-2 text-sm font-medium text-secondary hover:text-primary transition-colors">
+                  <button className="px-4 py-2 xl:text-xs 2xl:text-sm font-medium text-secondary hover:text-primary transition-colors">
                     Log in
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors">
+                  <button className="px-4 py-2 xl:text-xs 2xl:text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors">
                     Sign up
                   </button>
                 </SignUpButton>
