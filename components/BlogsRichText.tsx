@@ -1,5 +1,10 @@
+"use client"
+
 import CTAButton from "./CTAButton";
 import Link from "next/link";
+import { chatStore } from "@/lib/chatStore";
+import { logUserEvent } from "@/lib/logger";
+import { useCallback } from "react";
 
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -15,6 +20,20 @@ export default function BlogRichText({
   alignment = "left",
   responsibilities = false,
 }: RichTextRendererProps) {
+  const handleQuestionClick = useCallback((question: string) => {
+    try {
+      logUserEvent("chat_start", {
+        chatbotQuestion: question,
+        buttonType: "chat",
+        source: "blog-rich-text",
+      });
+      chatStore.sendMessage(question);
+    } catch (error) {
+      console.error("Failed to log chat event:", error);
+      chatStore.sendMessage(question);
+    }
+  }, []);
+
   const allBlocks = content || [];
 
   return (
@@ -30,11 +49,27 @@ export default function BlogRichText({
                   buttonType="call"
                   text="Call Us Now"
                   link={block.phoneNumber}
+                  onClick={async () => {
+                    try {
+                      await logUserEvent("call_click", {
+                        phoneNumber: block.phoneNumber,
+                        buttonType: "call",
+                        source: "blog-rich-text",
+                      });
+                    } catch (error) {
+                      console.error("Failed to log call event:", error);
+                    }
+                  }}
                 />
                 <CTAButton
                   buttonType="chat"
                   text="Ask a Question"
                   chatbotQuestion={block.chatQuestion}
+                  onClick={() => {
+                    if (block.chatQuestion) {
+                      handleQuestionClick(block.chatQuestion);
+                    }
+                  }}
                 />
               </div>
             );
