@@ -1,6 +1,7 @@
 "use client";
 
 import { logUserEvent } from "@/lib/logger";
+import logger from "@/lib/logger";
 import { Phone } from "lucide-react";
 
 interface CallButtonProps {
@@ -24,6 +25,13 @@ export default function CallButton({
         phoneNumber,
         source,
         buttonType: "call",
+      });
+      
+      logger.info("Call button clicked", {
+        phoneNumber,
+        source,
+        buttonType: "call",
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       console.error("Failed to log call event:", error);

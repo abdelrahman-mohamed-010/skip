@@ -213,7 +213,7 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                   href="/asylum"
                   className="text-secondary/80 hover:text-primary transition-colors duration-200"
                 >
-                  asylum
+                  Asylum
                 </Link>
               </li>
               <li>

@@ -1,6 +1,7 @@
 interface GeoInfo {
   city?: string;
   country?: string;
+  region?: string;
 }
 
 // Cache object to store IP lookups
@@ -15,13 +16,15 @@ export async function getClientIPInfo(ip: string): Promise<GeoInfo> {
   }
 
   try {
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,city`);
+    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,city,regionName`);
     const data = await response.json();
     
     if (data.status === 'success') {
       const geoInfo = {
         city: data.city,
+        region: data.regionName,
         country: data.country
+     
       };
       
       // Cache the result

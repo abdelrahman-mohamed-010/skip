@@ -3,6 +3,7 @@
 import { SendHorizontal, Paperclip, LogIn } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "ai";
@@ -14,7 +15,7 @@ const LawyerBot = () => {
     {
       role: "ai",
       content:
-        "Welcome! I\u0027m SkipGenius your personal legal assistant specializing in U.S. immigration law. How may I assist you today?",
+        "Welcome! I'm SkipGenius your personal legal assistant specializing in U.S. immigration law. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -44,23 +45,9 @@ const LawyerBot = () => {
     });
   }, [messages]);
 
-  const getLegalResponse = (question: string) => {
-    const responses: { [key: string]: string } = {
-      "Visa requirements":
-        "To apply for a U.S. visa, you\u0027ll need: a valid passport, completed DS-160 form, application fee payment, and supporting documents specific to your visa type. Would you like me to explain more about a specific visa category?",
-      "Green card process":
-        "The green card process typically involves filing Form I-485 (Adjustment of Status) or going through consular processing. The requirements vary based on your eligibility category. What specific aspect would you like to learn more about?",
-      "Processing times":
-        "Current USCIS processing times vary by form type and service center. I can help you check the processing time for your specific application. Which form are you interested in?",
-    };
-    return (
-      responses[question] ||
-      `Let me help you understand more about ${question}.`
-    );
-  };
-
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
+    
 
     // Check if user is authenticated or has messages remaining
     if (!isAuthenticated && userMessageCount >= 3) {
@@ -69,8 +56,11 @@ const LawyerBot = () => {
       return;
     }
 
-    // Add user message
-    setMessages((prev) => [...prev, { role: "user", content }]);
+    // Create updated messages array with new user message
+    const updatedMessages = [...messages, { role: "user" as const, content }];
+    
+    // Update the messages state
+    setMessages(updatedMessages);
     setInputMessage("");
     setIsLoading(true);
 
@@ -83,21 +73,124 @@ const LawyerBot = () => {
       // Show auth prompt if this was the 3rd message
       if (newCount >= 3) {
         setShowAuthPrompt(true);
+        console.log("Auth limit reached after increment, showing auth prompt");
       }
     }
 
     try {
-      // Simulate AI response with better legal responses
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          content: getLegalResponse(content),
+      // Convert messages to the format expected by the API
+      const chatHistory = updatedMessages.map(msg => ({
+        type: msg.role === "user" ? "user" : "assistant",
+        content: msg.content
+      }));
+      
+      
+      // Determine the correct URL to use - include port in development
+      const host = window.location.hostname === 'localhost' 
+        ? window.location.origin
+        : '';
+      
+      const apiUrl = `${host}/api/chat`;
+      
+      
+      // Make the API call
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          message: content,
+          chatHistory: chatHistory,
+          pageName: window.location.pathname.split('/').filter(Boolean)[0] || 'immigration',
+        }),
+      });
+      
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Chat API error:", errorText);
+        throw new Error(`Chat API error: ${response.status} - ${errorText}`);
+      }
+      
+      // Process streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("Response body is not readable");
+      }
+      
+      const decoder = new TextDecoder();
+      let responseText = "";
+      
+      // Use a temporary variable to build the response
+      setMessages(prev => [
+        ...prev, 
+        { role: "ai" as const, content: "" }
       ]);
+      
+      
+      let streamingStarted = false;
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log("Stream completed");
+          break;
+        }
+        
+        const chunk = decoder.decode(value, { stream: true });
+        
+        const lines = chunk.split("\n\n");
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.substring(6);
+            if (data === "[DONE]") {
+              break;
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                responseText += parsed.content;
+                streamingStarted = true;
+                
+                // Update the AI message with the accumulated response text
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = { 
+                    role: "ai" as const, 
+                    content: responseText 
+                  };
+                  return updated;
+                });
+              }
+              
+              if (parsed.error) {
+                console.error("Error in stream:", parsed.error);
+                throw new Error(parsed.error);
+              }
+            } catch (e) {
+              console.error("Error parsing SSE data:", e, "Raw data:", data);
+            }
+          }
+        }
+      }
+      
+      if (!streamingStarted) {
+        console.error("No streaming content was received from the API");
+        throw new Error("No content received from the API");
+      }
     } catch (error) {
       console.error("Failed to get response:", error);
+      setMessages(prev => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { 
+          role: "ai" as const, 
+          content: "I'm sorry, but I encountered an error while processing your request. Please try again later." 
+        };
+        return updated;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +233,15 @@ const LawyerBot = () => {
                   : "bg-primary/5"
               }`}
             >
-              <p className="text-sm max-sm:text-xs">{message.content}</p>
+              {message.role === "ai" ? (
+                <div className="prose prose-sm max-sm:prose-xs prose-p:my-1 prose-headings:mb-1 prose-headings:mt-2 prose-li:my-0.5">
+                  <ReactMarkdown>
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-sm max-sm:text-xs">{message.content}</p>
+              )}
             </div>
           </div>
         ))}
@@ -150,7 +251,9 @@ const LawyerBot = () => {
               <span className="text-primary font-semibold">AI</span>
             </div>
             <div className="bg-primary/5 rounded-lg p-3 text-left">
-              <p className="text-sm max-sm:text-xs text-gray-700">Typing...</p>
+              <div className="prose prose-sm max-sm:prose-xs">
+                <p className="text-gray-700 my-0">Typing...</p>
+              </div>
             </div>
           </div>
         )}
@@ -161,10 +264,12 @@ const LawyerBot = () => {
               <span className="text-primary font-semibold">AI</span>
             </div>
             <div className="bg-primary/5 rounded-lg p-3 text-left">
-              <p className="text-sm max-sm:text-xs text-gray-700 mb-2">
-                You&apos;ve reached the maximum number of free messages for
-                today. Please sign in to continue our conversation.
-              </p>
+              <div className="prose prose-sm max-sm:prose-xs">
+                <p className="my-1 text-gray-700">
+                  You&apos;ve reached the maximum number of free messages for
+                  today. Please sign in to continue our conversation.
+                </p>
+              </div>
               <div className="flex space-x-2 mt-2">
                 <SignInButton mode="modal">
                   <button className="flex items-center space-x-1 px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">

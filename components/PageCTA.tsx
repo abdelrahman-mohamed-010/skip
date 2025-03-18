@@ -2,7 +2,7 @@
 
 import {
   MessageSquare,
-  Phone,
+  Phone as PhoneIcon,
   SendHorizontal,
   Paperclip,
   X,
@@ -11,6 +11,9 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { chatStore } from "@/lib/chatStore";
 import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { logUserEvent } from "@/lib/logger";
+import logger from "@/lib/logger";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "ai";
@@ -26,7 +29,7 @@ const PageCTA = () => {
     {
       role: "ai",
       content:
-        "Welcome! I\u0027m SkipGenius your personal legal assistant specializing in U.S. immigration law. How may I assist you today?",
+        "Welcome! I'm SkipGenius your personal legal assistant specializing in U.S. immigration law. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -83,27 +86,18 @@ const PageCTA = () => {
     });
   }, [messages]);
 
-  const getLegalResponse = (question: string) => {
-    const responses: { [key: string]: string } = {
-      "Visa requirements":
-        "To apply for a U.S. visa, you\u0027ll need: a valid passport, completed DS-160 form, application fee payment, and supporting documents specific to your visa type. Would you like me to explain more about a specific visa category?",
-      "Green card process":
-        "The green card process typically involves filing Form I-485 (Adjustment of Status) or going through consular processing. The requirements vary based on your eligibility category. What specific aspect would you like to learn more about?",
-      "Processing times":
-        "Current USCIS processing times vary by form type and service center. I can help you check the processing time for your specific application. Which form are you interested in?",
-    };
-    return (
-      responses[question] ||
-      `Let me help you understand more about ${question}.`
-    );
-  };
-
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
+    
+    console.log("===== CHAT DEBUGGING START =====");
+    console.log("User message:", content);
+    console.log("Current authentication state:", isAuthenticated ? "Authenticated" : "Not authenticated");
+    console.log("User message count:", userMessageCount);
 
     // Check if user is authenticated or has messages remaining
     if (!isAuthenticated && userMessageCount >= 3) {
       setShowAuthPrompt(true);
+      console.log("Auth limit reached, showing auth prompt");
       // Show authentication prompt instead of redirecting
       return;
     }
@@ -117,23 +111,145 @@ const PageCTA = () => {
       const newCount = userMessageCount + 1;
       setUserMessageCount(newCount);
       localStorage.setItem("userMessageCount", newCount.toString());
+      console.log("Updated user message count:", newCount);
 
       // Show auth prompt if this was the 3rd message
       if (newCount >= 3) {
         setShowAuthPrompt(true);
+        console.log("Auth limit reached after increment, showing auth prompt");
       }
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", content: getLegalResponse(content) },
+      // Convert messages to the format expected by the API
+      const chatHistory = messages.map(msg => ({
+        type: msg.role === "user" ? "user" : "assistant",
+        content: msg.content
+      }));
+      
+      console.log("Sending message to API:", content);
+      console.log("Chat history:", JSON.stringify(chatHistory));
+      
+      // Determine the correct URL to use - include port in development
+      const host = window.location.hostname === 'localhost' 
+        ? window.location.origin
+        : '';
+      
+      const apiUrl = `${host}/api/chat`;
+      
+      console.log("Window location:", window.location.toString());
+      console.log("Using API URL:", apiUrl);
+      
+      // Make the API call
+      console.log("Initiating fetch to API");
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: content,
+          chatHistory: chatHistory,
+          pageName: window.location.pathname.split('/').filter(Boolean)[0] || 'immigration',
+        }),
+      });
+      
+      console.log("API response status:", response.status);
+      console.log("API response headers:", Object.fromEntries([...response.headers.entries()]));
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Chat API error:", errorText);
+        throw new Error(`Chat API error: ${response.status} - ${errorText}`);
+      }
+      
+      // Process streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("Response body is not readable");
+      }
+      
+      console.log("Starting to read response stream");
+      const decoder = new TextDecoder();
+      let responseText = "";
+      
+      // Use a temporary variable to build the response
+      setMessages(prev => [
+        ...prev, 
+        { role: "ai", content: "" }
       ]);
+      
+      console.log("Created empty AI response message");
+      
+      let streamingStarted = false;
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log("Stream completed");
+          break;
+        }
+        
+        const chunk = decoder.decode(value, { stream: true });
+        console.log("Received chunk:", chunk);
+        
+        const lines = chunk.split("\n\n");
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.substring(6);
+            if (data === "[DONE]") {
+              console.log("Received DONE signal");
+              break;
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                responseText += parsed.content;
+                streamingStarted = true;
+                console.log("Updated response text:", responseText);
+                
+                // Update the AI message with the accumulated response text
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = { 
+                    role: "ai", 
+                    content: responseText 
+                  };
+                  return updated;
+                });
+              }
+              
+              if (parsed.error) {
+                console.error("Error in stream:", parsed.error);
+                throw new Error(parsed.error);
+              }
+            } catch (e) {
+              console.error("Error parsing SSE data:", e, "Raw data:", data);
+            }
+          }
+        }
+      }
+      
+      if (!streamingStarted) {
+        console.error("No streaming content was received from the API");
+        throw new Error("No content received from the API");
+      }
+      
     } catch (error) {
       console.error("Failed to get response:", error);
+      setMessages(prev => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { 
+          role: "ai", 
+          content: "I'm sorry, but I encountered an error while processing your request. Please try again later." 
+        };
+        return updated;
+      });
     } finally {
       setIsLoading(false);
+      console.log("===== CHAT DEBUGGING END =====");
     }
   };
 
@@ -147,8 +263,25 @@ const PageCTA = () => {
     }
   };
 
-  const handleCallAttorney = () => {
-    window.location.href = "tel:+1234567890";
+  const handleCallAttorney = async () => {
+    try {
+      await logUserEvent("call_click", {
+        phoneNumber: "+18444754753",
+        source: "pageCTA",
+        buttonType: "floating",
+      });
+      
+      logger.info("Call button clicked", {
+        phoneNumber: "+18444754753",
+        source: "pageCTA",
+        buttonType: "floating",
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Failed to log call event:", error);
+    }
+    
+    window.location.href = "tel:+18444754753";
   };
 
   return (
@@ -182,7 +315,7 @@ const PageCTA = () => {
             onClick={handleCallAttorney}
             className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
           >
-            <Phone className="w-5 h-5 md:w-6 md:h-6" />
+            <PhoneIcon className="w-5 h-5 md:w-6 md:h-6" />
           </button>
         </div>
       </div>
@@ -231,7 +364,15 @@ const PageCTA = () => {
                         : "bg-primary/5"
                     }`}
                   >
-                    <p className="text-sm">{message.content}</p>
+                    {message.role === "ai" ? (
+                      <div className="prose prose-sm max-sm:prose-xs prose-p:my-1 prose-headings:mb-1 prose-headings:mt-2 prose-li:my-0.5">
+                        <ReactMarkdown>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm">{message.content}</p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -243,7 +384,9 @@ const PageCTA = () => {
                     </span>
                   </div>
                   <div className="bg-primary/5 rounded-lg p-3 text-left">
-                    <p className="text-sm text-gray-700">Typing...</p>
+                    <div className="prose prose-sm max-sm:prose-xs">
+                      <p className="text-gray-700 my-0">Typing...</p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -256,10 +399,12 @@ const PageCTA = () => {
                     </span>
                   </div>
                   <div className="bg-primary/5 rounded-lg p-3 text-left">
-                    <p className="text-sm text-gray-700 mb-2">
-                      You&apos;ve reached the maximum number of free messages
-                      for today. Please sign in to continue our conversation.
-                    </p>
+                    <div className="prose prose-sm max-sm:prose-xs">
+                      <p className="my-1 text-gray-700">
+                        You&apos;ve reached the maximum number of free messages
+                        for today. Please sign in to continue our conversation.
+                      </p>
+                    </div>
                     <div className="flex space-x-2 mt-2">
                       <SignInButton mode="modal">
                         <button className="flex items-center space-x-1 px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
@@ -333,7 +478,7 @@ const PageCTA = () => {
               {!isAuthenticated && !showAuthPrompt && (
                 <div className="mt-1.5 text-xs text-gray-500">
                   {userMessageCount >= 3
-                    ? "You\u0027ve reached your limit of free messages."
+                    ? "You've reached your limit of free messages."
                     : `${3 - userMessageCount} free messages remaining`}
                 </div>
               )}
