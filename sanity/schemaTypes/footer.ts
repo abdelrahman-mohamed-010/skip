@@ -114,6 +114,28 @@ const footer = {
       ],
     },
     {
+      name: "column4",
+      title: "Column 4 Links",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "text",
+              title: "Link Text",
+              type: "string",
+            },
+            {
+              name: "url",
+              title: "URL",
+              type: "string",
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: "contactInfo",
       title: "Contact Information",
       type: "object",
