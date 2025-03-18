@@ -95,6 +95,8 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                       <Link
                         key={i}
                         href={link.url || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
                       >
                         <Icon />
@@ -104,12 +106,16 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                 )}
                 <a
                   href={`mailto:${footerData.contactInfo?.email || ""}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
                 >
                   <Mail size={18} />
                 </a>
                 <a
                   href={`tel:${footerData.contactInfo?.phone || ""}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-colors duration-200"
                 >
                   <Phone size={18} />
