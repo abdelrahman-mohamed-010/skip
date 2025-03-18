@@ -48,8 +48,8 @@ const footer = {
       ],
     },
     {
-      name: "quickLinks",
-      title: "Quick Links",
+      name: "column1",
+      title: "Column 1 Links",
       type: "array",
       of: [
         {
@@ -70,8 +70,8 @@ const footer = {
       ],
     },
     {
-      name: "ourServices",
-      title: "Our Services",
+      name: "column2",
+      title: "Column 2 Links",
       type: "array",
       of: [
         {
@@ -79,7 +79,29 @@ const footer = {
           fields: [
             {
               name: "text",
-              title: "Service Text",
+              title: "Link Text",
+              type: "string",
+            },
+            {
+              name: "url",
+              title: "URL",
+              type: "string",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "column3",
+      title: "Column 3 Links",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "text",
+              title: "Link Text",
               type: "string",
             },
             {

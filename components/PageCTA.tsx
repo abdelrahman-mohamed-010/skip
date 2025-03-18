@@ -293,7 +293,7 @@ const PageCTA = () => {
                       ? "Sign in to continue..."
                       : "Type your immigration question..."
                   }
-                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-20 text-sm"
+                  className="w-full px-4 py-2.5 text-primary rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-20 text-sm"
                   disabled={!isAuthenticated && userMessageCount >= 3}
                 />
                 <div className="absolute right-2 flex items-center gap-1">
