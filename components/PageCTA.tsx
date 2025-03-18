@@ -279,7 +279,7 @@ const PageCTA = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-primary/10">
+            <div className="p-4 border-t border-primary/10 ">
               <div className="relative flex items-center">
                 <input
                   type="text"
