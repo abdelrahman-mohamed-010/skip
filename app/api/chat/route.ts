@@ -1,8 +1,15 @@
 import OpenAI from "openai";
 import { getPromptConfig } from "@/utils/prompts";
+import { log } from "@/lib/logger";
+import { getClientIPInfo } from "@/lib/ipUtils";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
+
+// Helper function to generate UUID compatible with Edge runtime
+function generateUUID() {
+  return crypto.randomUUID();
+}
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -27,6 +34,7 @@ interface ChatRequestBody {
   message: string;
   chatHistory: CustomChatMessage[];
   pageName: string;
+  conversationId?: string;
 }
 
 export async function POST(req: Request) {
@@ -47,6 +55,42 @@ export async function POST(req: Request) {
   try {
     const body = await req.json() as ChatRequestBody;
     const { message, chatHistory = [], pageName } = body;
+    
+    // Generate or use existing conversation ID using our helper function
+    const conversationId = body.conversationId || generateUUID();
+    
+    // Get client IP from request headers
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 
+               req.headers.get('x-real-ip') || 
+               'unknown';
+    
+    // Get path from request URL
+    const url = new URL(req.url);
+    const path = url.pathname;
+    
+    // Get geolocation info (handle as much as possible in Edge environment)
+    let geoInfo = {};
+    try {
+      geoInfo = await getClientIPInfo(ip);
+    } catch (error) {
+      console.error('Failed to get IP geo information:', error);
+    }
+    
+    // Ensure we log to console for immediate visibility
+    console.log(`User message: ${message.substring(0, 100)}${message.length > 100 ? '...' : ''}`);
+    
+    // Log the user's message with proper truncation and enhanced metadata
+    log('info', 'Chat API User Input', {
+      message: message.substring(0, 100) + (message.length > 100 ? '...' : ''),
+      fullMessage: message,
+      pageName,
+      conversationId,
+      messageCount: chatHistory.length,
+      ip,
+      path,
+      geoInfo: JSON.stringify(geoInfo), // Convert to string to avoid serialization issues
+      userAgent: req.headers.get('user-agent') || 'unknown'
+    });
     
     // Get the appropriate prompt config based on the page name
     const promptConfig = getPromptConfig(pageName);
@@ -132,10 +176,37 @@ export async function POST(req: Request) {
                 `data: ${JSON.stringify({ content: fallbackMessage })}\n\n`
               )
             );
+            responseContent = fallbackMessage;
           }
           
-          // Log the complete response for debugging
-          console.log(`Complete response received (${responseContent.length} chars)`);
+          // Ensure we log both to console and to Grafana
+          console.log(`Bot response: ${responseContent.substring(0, 500)}${responseContent.length > 500 ? '...' : ''}`);
+          
+          // Log the complete response for debugging with enhanced metadata
+          log('info', 'Chat API Bot Response', {
+            responseLength: responseContent.length,
+            response: responseContent.substring(0, 500) + (responseContent.length > 500 ? '...' : ''),
+            fullResponse: responseContent,
+            modelName,
+            conversationId,
+            ip,
+            path,
+            geoInfo: JSON.stringify(geoInfo), // Convert to string to avoid serialization issues
+            userAgent: req.headers.get('user-agent') || 'unknown'
+          });
+          
+          // Add a mirrored log entry in the same format as user input for consistent Grafana logging
+          log('info', 'Chat API Bot Output', {
+            message: responseContent.substring(0, 100) + (responseContent.length > 100 ? '...' : ''),
+            fullMessage: responseContent,
+            pageName,
+            conversationId,
+            messageCount: chatHistory.length + 1,
+            ip,
+            path,
+            geoInfo: JSON.stringify(geoInfo),
+            userAgent: req.headers.get('user-agent') || 'unknown'
+          });
           
           // Send the DONE signal and close the stream
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
@@ -143,6 +214,21 @@ export async function POST(req: Request) {
         } catch (error) {
           console.error("Error in streaming:", error);
           const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          
+          // Ensure we log both to console and to Grafana
+          console.log(`Error in chat API: ${errorMessage}`);
+          
+          log('error', 'Chat API Error', {
+            error: errorMessage,
+            type: error instanceof Error ? 
+              ((error as unknown) as {type?: string}).type || "api_error" 
+              : "unknown_error",
+            conversationId,
+            ip,
+            path,
+            geoInfo: JSON.stringify(geoInfo), // Convert to string to avoid serialization issues
+            userAgent: req.headers.get('user-agent') || 'unknown'
+          });
           
           // Send structured error response
           const errorData = {
@@ -179,6 +265,7 @@ export async function POST(req: Request) {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "X-Conversation-ID": conversationId
       },
     });
   } catch (error) {
