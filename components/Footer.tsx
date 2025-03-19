@@ -220,10 +220,10 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                   Guides
                 </Link>
                 <Link
-                  href="/about-us"
+                  href="/about"
                   className="text-secondary/80 hover:text-primary transition-colors duration-200"
                 >
-                  About
+                  About Us
                 </Link>
               </div>
             </div>

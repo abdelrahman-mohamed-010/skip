@@ -13,8 +13,8 @@ export async function GET(req) {
   }`);
 
   const dynamicUrls = [];
-  // Update edge cases with corrected "about-us"
-  const edgeCases = ["terms", "privacy", "about-us"];
+  // Update edge cases with corrected "about"
+  const edgeCases = ["terms", "privacy", "about"];
 
   // Home page with priority 1.0 and daily changefreq
   dynamicUrls.push({ url: "/", changefreq: "daily", priority: 1.0 });

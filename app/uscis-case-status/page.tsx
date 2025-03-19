@@ -38,15 +38,17 @@ export default function ImmigrationCaseStatus() {
       const response = await fetch(
         `/api/case-status?receiptNumber=${receiptNumber}`
       );
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error Response:", errorText);
+        throw new Error(`Failed to fetch case status: ${response.status}`);
+      }
+      
       const data = await response.json();
-
       console.log("API Response:", data);
       console.log("Historical Data:", data.case_status?.hist_case_status);
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch case status");
-      }
-
+      
       setCaseStatus(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -86,7 +88,7 @@ export default function ImmigrationCaseStatus() {
           <div className="mb-4">
             <input
               type="text"
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full text-primary p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={receiptNumber}
               onChange={(e) => setReceiptNumber(e.target.value)}
               placeholder="Enter your receipt number (e.g., EAC9999103402)"
@@ -111,7 +113,7 @@ export default function ImmigrationCaseStatus() {
             <div className="rounded-md border p-4 max-h-[600px] overflow-y-auto">
               <div className="space-y-6">
                 {/* Current Status Section */}
-                <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="bg-blue-50 p-4 rounded-lg text-primary">
                   <h2 className="text-xl font-semibold mb-4">Current Status</h2>
                   <div className="space-y-4">
                     <div>
