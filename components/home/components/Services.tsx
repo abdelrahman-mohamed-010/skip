@@ -16,9 +16,9 @@ const Services = ({ data }: { data: ServicesData }) => {
           {/* Content Side */}
           <div className="order-2 lg:order-1">
             <div className="w-20 h-1 bg-primary rounded-full mb-8" />
-            <h1 className="text-6xl font-light max-sm:text-4xl text-gray-900 mb-8 leading-tight">
+            <h2 className="text-6xl font-light max-sm:text-4xl text-gray-900 mb-8 leading-tight">
               {data.sectionTitle}
-            </h1>
+            </h2>
             <p className="text-xl max-sm:text-base text-gray-600 font-light leading-relaxed mb-12">
               {data.description}
             </p>

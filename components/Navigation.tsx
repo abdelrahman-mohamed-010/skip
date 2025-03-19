@@ -105,15 +105,24 @@ const Navigation = () => {
               {navigation?.items.map((item) => (
                 <div key={item.text} className="relative group px-1.5">
                   <div className="relative">
-                    <Link
-                      href={item.link || "#"}
-                      className="flex items-center xl:text-[13px] 2xl:text-[15px] py-2 px-2.5 rounded-md text-secondary hover:text-primary hover:bg-gray-50 transition-all duration-200"
-                    >
-                      <span className="font-medium">{item.text}</span>
-                      {item.subItems && (
-                        <ChevronDown className="w-4 h-4 ml-0.5 transition-transform group-hover:rotate-180" />
-                      )}
-                    </Link>
+                    {item.link === "*" ? (
+                      <div className="flex items-center xl:text-[13px] 2xl:text-[15px] py-2 px-2.5 rounded-md text-secondary cursor-default">
+                        <span className="font-medium">{item.text}</span>
+                        {item.subItems && (
+                          <ChevronDown className="w-4 h-4 ml-0.5 transition-transform group-hover:rotate-180" />
+                        )}
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.link || "#"}
+                        className="flex items-center xl:text-[13px] 2xl:text-[15px] py-2 px-2.5 rounded-md text-secondary hover:text-primary hover:bg-gray-50 transition-all duration-200"
+                      >
+                        <span className="font-medium">{item.text}</span>
+                        {item.subItems && (
+                          <ChevronDown className="w-4 h-4 ml-0.5 transition-transform group-hover:rotate-180" />
+                        )}
+                      </Link>
+                    )}
                     {item.subItems && (
                       <div className="absolute left-0 mt-1 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
                         {item.subItems.map((subItem) => (
@@ -205,13 +214,19 @@ const Navigation = () => {
                 {item.subItems ? (
                   <div>
                     <div className="flex items-center justify-between">
-                      <Link
-                        href={item.link || "#"}
-                        className="flex-1 p-3 rounded-md text-secondary hover:text-primary hover:bg-gray-50"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <span className="font-medium">{item.text}</span>
-                      </Link>
+                      {item.link === "*" ? (
+                        <div className="flex-1 p-3 rounded-md text-secondary cursor-default">
+                          <span className="font-medium">{item.text}</span>
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.link || "#"}
+                          className="flex-1 p-3 rounded-md text-secondary hover:text-primary hover:bg-gray-50"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <span className="font-medium">{item.text}</span>
+                        </Link>
+                      )}
                       <button
                         onClick={() => toggleSubMenu(item.text)}
                         className="p-3 rounded-md text-secondary hover:text-primary hover:bg-gray-50"
