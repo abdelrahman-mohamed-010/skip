@@ -205,7 +205,7 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
                   href="/immigration-blog"
                   className="text-secondary/80 hover:text-primary transition-colors duration-200"
                 >
-                  Blog
+                  Blogs
                 </Link>
                 <Link
                   href="/latest-immigration-news"
