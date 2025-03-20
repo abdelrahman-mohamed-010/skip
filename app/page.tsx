@@ -45,11 +45,6 @@ export default async function Home() {
       })}
       <News />
       
-      {/* API Test Button */}
-      <div className="w-full max-w-5xl mt-10 p-4 border border-gray-200 rounded-lg">
-        <h2 className="text-xl font-bold mb-2">Debug Tools</h2>
-        <p className="mb-4">Use this button to test if the chat API is working correctly.</p>
-      </div>
     </div>
   );
 }
