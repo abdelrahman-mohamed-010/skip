@@ -212,7 +212,7 @@ const LawyerBot = () => {
     <div className="relative rounded-2xl text-gray-700 bg-white/80 backdrop-blur-md p-4 max-sm:p-3 shadow-lg border border-primary/10">
       <div
         ref={messagesContainerRef}
-        className="space-y-4 mb-4 min-h-[240px] max-sm:min-h-[150px] max-h-[240px] max-sm:max-h-[150px] overflow-y-auto p-2"
+        className="space-y-4 mb-4 min-h-[240px] max-sm:min-h-[240px] max-h-[240px] max-sm:max-h-[240px] overflow-y-auto p-2"
       >
         {messages.map((message, index) => (
           <div

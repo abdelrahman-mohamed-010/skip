@@ -11,7 +11,7 @@ interface HeroProps {
 
 const Hero = ({ heroData }: HeroProps) => {
   return (
-    <section className="relative md:min-h-screen py-24 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-white via-primary/5 to-primary/10">
+    <section className="relative md:min-h-screen py-24  max-sm:pb-12 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-white via-primary/5 to-primary/10">
       <div className="max-w-7xl mx-auto text-center relative">
         <span className="inline-flex lg:mt-6 items-center max-sm:mt-3 px-4 py-1.5 bg-white/80 backdrop-blur-sm text-primary rounded-full text-sm max-sm:text-sm font-medium mb-8 max-sm:mb-6 animate-float border border-primary/10 shadow-sm">
           <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse" />
