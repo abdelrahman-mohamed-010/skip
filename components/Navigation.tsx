@@ -91,7 +91,7 @@ const Navigation = () => {
   return (
     <>
       <div className="fixed w-full z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
-        <nav className="h-16 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 capitalize">
+        <nav className="h-16 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-full">
             <Link href="/" className="flex items-center space-x-2 shrink-0 p-2">
               <Image src="/logo.svg" alt="Logo" width={32} height={32} />

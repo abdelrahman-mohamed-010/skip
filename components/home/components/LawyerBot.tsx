@@ -47,7 +47,6 @@ const LawyerBot = () => {
 
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
-    
 
     // Check if user is authenticated or has messages remaining
     if (!isAuthenticated && userMessageCount >= 3) {
@@ -58,7 +57,7 @@ const LawyerBot = () => {
 
     // Create updated messages array with new user message
     const updatedMessages = [...messages, { role: "user" as const, content }];
-    
+
     // Update the messages state
     setMessages(updatedMessages);
     setInputMessage("");
@@ -79,20 +78,17 @@ const LawyerBot = () => {
 
     try {
       // Convert messages to the format expected by the API
-      const chatHistory = updatedMessages.map(msg => ({
+      const chatHistory = updatedMessages.map((msg) => ({
         type: msg.role === "user" ? "user" : "assistant",
-        content: msg.content
+        content: msg.content,
       }));
-      
-      
+
       // Determine the correct URL to use - include port in development
-      const host = window.location.hostname === 'localhost' 
-        ? window.location.origin
-        : '';
-      
+      const host =
+        window.location.hostname === "localhost" ? window.location.origin : "";
+
       const apiUrl = `${host}/api/chat`;
-      
-      
+
       // Make the API call
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -102,70 +98,67 @@ const LawyerBot = () => {
         body: JSON.stringify({
           message: content,
           chatHistory: chatHistory,
-          pageName: window.location.pathname.split('/').filter(Boolean)[0] || 'immigration',
+          pageName:
+            window.location.pathname.split("/").filter(Boolean)[0] ||
+            "immigration",
         }),
       });
-      
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Chat API error:", errorText);
         throw new Error(`Chat API error: ${response.status} - ${errorText}`);
       }
-      
+
       // Process streaming response
       const reader = response.body?.getReader();
       if (!reader) {
         throw new Error("Response body is not readable");
       }
-      
+
       const decoder = new TextDecoder();
       let responseText = "";
-      
+
       // Use a temporary variable to build the response
-      setMessages(prev => [
-        ...prev, 
-        { role: "ai" as const, content: "" }
-      ]);
-      
-      
+      setMessages((prev) => [...prev, { role: "ai" as const, content: "" }]);
+
       let streamingStarted = false;
-      
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
           console.log("Stream completed");
           break;
         }
-        
+
         const chunk = decoder.decode(value, { stream: true });
-        
+
         const lines = chunk.split("\n\n");
-        
+
         for (const line of lines) {
           if (line.startsWith("data: ")) {
             const data = line.substring(6);
             if (data === "[DONE]") {
               break;
             }
-            
+
             try {
               const parsed = JSON.parse(data);
               if (parsed.content) {
                 responseText += parsed.content;
                 streamingStarted = true;
-                
+
                 // Update the AI message with the accumulated response text
-                setMessages(prev => {
+                setMessages((prev) => {
                   const updated = [...prev];
-                  updated[updated.length - 1] = { 
-                    role: "ai" as const, 
-                    content: responseText 
+                  updated[updated.length - 1] = {
+                    role: "ai" as const,
+                    content: responseText,
                   };
                   return updated;
                 });
               }
-              
+
               if (parsed.error) {
                 console.error("Error in stream:", parsed.error);
                 throw new Error(parsed.error);
@@ -176,18 +169,19 @@ const LawyerBot = () => {
           }
         }
       }
-      
+
       if (!streamingStarted) {
         console.error("No streaming content was received from the API");
         throw new Error("No content received from the API");
       }
     } catch (error) {
       console.error("Failed to get response:", error);
-      setMessages(prev => {
+      setMessages((prev) => {
         const updated = [...prev];
-        updated[updated.length - 1] = { 
-          role: "ai" as const, 
-          content: "I'm sorry, but I encountered an error while processing your request. Please try again later." 
+        updated[updated.length - 1] = {
+          role: "ai" as const,
+          content:
+            "I'm sorry, but I encountered an error while processing your request. Please try again later.",
         };
         return updated;
       });
@@ -210,6 +204,26 @@ const LawyerBot = () => {
 
   return (
     <div className="relative rounded-2xl text-gray-700 bg-white/80 backdrop-blur-md p-4 max-sm:p-3 shadow-lg border border-primary/10">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-primary">Legal Assistant</h3>
+          <div className="group relative">
+            <div className="w-5 h-5 rounded-full border-2 border-primary/40 flex items-center justify-center cursor-help text-primary/60 hover:border-primary hover:text-primary transition-colors">
+              <span className="text-xs font-semibold">i</span>
+            </div>
+            <div className="absolute left-0 bottom-[calc(100%+0.5rem)] hidden group-hover:block w-72 z-50">
+              <div className="bg-white text-gray-700 text-xs px-4 py-3 rounded-lg shadow-lg border border-primary/10">
+                <p className="font-medium mb-1 text-primary">Disclaimer</p>
+                <p>
+                  Please note that this information is general in nature and
+                  does not constitute legal advice.
+                </p>
+                <div className="absolute left-4 bottom-[-6px] transform rotate-45 w-3 h-3 bg-white border-r border-b border-primary/10"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div
         ref={messagesContainerRef}
         className="space-y-4 mb-4 min-h-[240px] max-sm:min-h-[240px] max-h-[240px] max-sm:max-h-[240px] overflow-y-auto p-2"
@@ -235,9 +249,7 @@ const LawyerBot = () => {
             >
               {message.role === "ai" ? (
                 <div className="prose prose-sm max-sm:prose-xs prose-p:my-1 prose-headings:mb-1 prose-headings:mt-2 prose-li:my-0.5">
-                  <ReactMarkdown>
-                    {message.content}
-                  </ReactMarkdown>
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
               ) : (
                 <p className="text-sm max-sm:text-xs">{message.content}</p>

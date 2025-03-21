@@ -136,6 +136,28 @@ const footer = {
       ],
     },
     {
+      name: "informationHub",
+      title: "Information Hub",
+      type: "object",
+      fields: [
+        { name: "title", title: "Title", type: "string" },
+        {
+          name: "links",
+          title: "Links",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              fields: [
+                { name: "text", title: "Link Text", type: "string" },
+                { name: "url", title: "URL", type: "string" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: "contactInfo",
       title: "Contact Information",
       type: "object",

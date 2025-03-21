@@ -41,6 +41,10 @@ const PageCTA = () => {
 
   const isAuthenticated = isLoaded && userId;
 
+  // NEW: state and ref for disclaimer modal timing
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const disclaimerTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Load message count from localStorage when component mounts
   useEffect(() => {
     if (!isAuthenticated) {
@@ -86,12 +90,36 @@ const PageCTA = () => {
     });
   }, [messages]);
 
+  // NEW: disclaimer hover handlers
+  const handleDisclaimerMouseEnter = () => {
+    if (disclaimerTimerRef.current) {
+      clearTimeout(disclaimerTimerRef.current);
+      disclaimerTimerRef.current = null;
+    }
+    setShowDisclaimer(true);
+  };
+
+  const handleDisclaimerMouseLeave = () => {
+    disclaimerTimerRef.current = setTimeout(() => {
+      setShowDisclaimer(false);
+    }, 3000); // 3 seconds delay
+  };
+
+  useEffect(() => {
+    return () => {
+      if (disclaimerTimerRef.current) clearTimeout(disclaimerTimerRef.current);
+    };
+  }, []);
+
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
-    
+
     console.log("===== CHAT DEBUGGING START =====");
     console.log("User message:", content);
-    console.log("Current authentication state:", isAuthenticated ? "Authenticated" : "Not authenticated");
+    console.log(
+      "Current authentication state:",
+      isAuthenticated ? "Authenticated" : "Not authenticated"
+    );
     console.log("User message count:", userMessageCount);
 
     // Check if user is authenticated or has messages remaining
@@ -122,24 +150,23 @@ const PageCTA = () => {
 
     try {
       // Convert messages to the format expected by the API
-      const chatHistory = messages.map(msg => ({
+      const chatHistory = messages.map((msg) => ({
         type: msg.role === "user" ? "user" : "assistant",
-        content: msg.content
+        content: msg.content,
       }));
-      
+
       console.log("Sending message to API:", content);
       console.log("Chat history:", JSON.stringify(chatHistory));
-      
+
       // Determine the correct URL to use - include port in development
-      const host = window.location.hostname === 'localhost' 
-        ? window.location.origin
-        : '';
-      
+      const host =
+        window.location.hostname === "localhost" ? window.location.origin : "";
+
       const apiUrl = `${host}/api/chat`;
-      
+
       console.log("Window location:", window.location.toString());
       console.log("Using API URL:", apiUrl);
-      
+
       // Make the API call
       console.log("Initiating fetch to API");
       const response = await fetch(apiUrl, {
@@ -150,51 +177,53 @@ const PageCTA = () => {
         body: JSON.stringify({
           message: content,
           chatHistory: chatHistory,
-          pageName: window.location.pathname.split('/').filter(Boolean)[0] || 'immigration',
+          pageName:
+            window.location.pathname.split("/").filter(Boolean)[0] ||
+            "immigration",
         }),
       });
-      
+
       console.log("API response status:", response.status);
-      console.log("API response headers:", Object.fromEntries([...response.headers.entries()]));
-      
+      console.log(
+        "API response headers:",
+        Object.fromEntries([...response.headers.entries()])
+      );
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Chat API error:", errorText);
         throw new Error(`Chat API error: ${response.status} - ${errorText}`);
       }
-      
+
       // Process streaming response
       const reader = response.body?.getReader();
       if (!reader) {
         throw new Error("Response body is not readable");
       }
-      
+
       console.log("Starting to read response stream");
       const decoder = new TextDecoder();
       let responseText = "";
-      
+
       // Use a temporary variable to build the response
-      setMessages(prev => [
-        ...prev, 
-        { role: "ai", content: "" }
-      ]);
-      
+      setMessages((prev) => [...prev, { role: "ai", content: "" }]);
+
       console.log("Created empty AI response message");
-      
+
       let streamingStarted = false;
-      
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
           console.log("Stream completed");
           break;
         }
-        
+
         const chunk = decoder.decode(value, { stream: true });
         console.log("Received chunk:", chunk);
-        
+
         const lines = chunk.split("\n\n");
-        
+
         for (const line of lines) {
           if (line.startsWith("data: ")) {
             const data = line.substring(6);
@@ -202,25 +231,25 @@ const PageCTA = () => {
               console.log("Received DONE signal");
               break;
             }
-            
+
             try {
               const parsed = JSON.parse(data);
               if (parsed.content) {
                 responseText += parsed.content;
                 streamingStarted = true;
                 console.log("Updated response text:", responseText);
-                
+
                 // Update the AI message with the accumulated response text
-                setMessages(prev => {
+                setMessages((prev) => {
                   const updated = [...prev];
-                  updated[updated.length - 1] = { 
-                    role: "ai", 
-                    content: responseText 
+                  updated[updated.length - 1] = {
+                    role: "ai",
+                    content: responseText,
                   };
                   return updated;
                 });
               }
-              
+
               if (parsed.error) {
                 console.error("Error in stream:", parsed.error);
                 throw new Error(parsed.error);
@@ -231,19 +260,19 @@ const PageCTA = () => {
           }
         }
       }
-      
+
       if (!streamingStarted) {
         console.error("No streaming content was received from the API");
         throw new Error("No content received from the API");
       }
-      
     } catch (error) {
       console.error("Failed to get response:", error);
-      setMessages(prev => {
+      setMessages((prev) => {
         const updated = [...prev];
-        updated[updated.length - 1] = { 
-          role: "ai", 
-          content: "I'm sorry, but I encountered an error while processing your request. Please try again later." 
+        updated[updated.length - 1] = {
+          role: "ai",
+          content:
+            "I'm sorry, but I encountered an error while processing your request. Please try again later.",
         };
         return updated;
       });
@@ -270,7 +299,7 @@ const PageCTA = () => {
         source: "pageCTA",
         buttonType: "floating",
       });
-      
+
       logger.info("Call button clicked", {
         phoneNumber: "+18444754753",
         source: "pageCTA",
@@ -280,7 +309,7 @@ const PageCTA = () => {
     } catch (error) {
       console.error("Failed to log call event:", error);
     }
-    
+
     window.location.href = "tel:+18444754753";
   };
 
@@ -331,7 +360,32 @@ const PageCTA = () => {
           <div className="relative h-[85vh] md:h-[600px] rounded-t-2xl md:rounded-2xl bg-white/95 backdrop-blur-md shadow-lg border border-primary/10 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-primary/10">
-              <h3 className="font-semibold text-primary">Legal Assistant</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-primary">Legal Assistant</h3>
+                {/* MODIFIED Disclaimer container */}
+                <div
+                  className="relative"
+                  onMouseEnter={handleDisclaimerMouseEnter}
+                  onMouseLeave={handleDisclaimerMouseLeave}
+                >
+                  <div className="w-5 h-5 rounded-full border-2 border-primary/40 flex items-center justify-center cursor-help text-primary/60 hover:border-primary hover:text-primary transition-colors">
+                    <span className="text-xs font-semibold">i</span>
+                  </div>
+                  {showDisclaimer && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 z-50">
+                      <div className="bg-white text-gray-700 text-xs px-4 py-3 rounded-lg shadow-lg border border-primary/10">
+                        <p className="font-medium mb-1 text-primary">
+                          Disclaimer
+                        </p>
+                        <p>
+                          Please note that this information is general in nature
+                          and does not constitute legal advice.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
               <button
                 onClick={() => setIsChatOpen(false)}
                 className="p-1 hover:bg-primary/10 rounded-full"
@@ -366,9 +420,7 @@ const PageCTA = () => {
                   >
                     {message.role === "ai" ? (
                       <div className="prose prose-sm max-sm:prose-xs prose-p:my-1 prose-headings:mb-1 prose-headings:mt-2 prose-li:my-0.5">
-                        <ReactMarkdown>
-                          {message.content}
-                        </ReactMarkdown>
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                     ) : (
                       <p className="text-sm">{message.content}</p>

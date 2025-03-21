@@ -127,7 +127,10 @@ export default function RichTextRenderer({
           if (block._type === "block") {
             if (block.listItem === "bullet") {
               return (
-                <ul key={blockIndex} className="list-disc ml-6 mt-3 text-gray-700">
+                <ul
+                  key={blockIndex}
+                  className="list-disc ml-6 mt-3 text-gray-700"
+                >
                   <li className="mb-2">
                     {block.children.map((span: any, spanIndex: number) => {
                       const marks = span.marks || [];
@@ -233,7 +236,12 @@ export default function RichTextRenderer({
             }
 
             if (!block.listItem) {
-              const Component = block.style === "normal" ? "p" : block.style;
+              const Component =
+                block.style === "normal"
+                  ? "p"
+                  : block.style === "h1"
+                    ? "h2"
+                    : block.style;
               return (
                 <Component
                   key={blockIndex}

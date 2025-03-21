@@ -269,7 +269,12 @@ export default function BlogRichText({
             }
 
             if (!block.listItem) {
-              const Component = block.style === "normal" ? "p" : block.style;
+              const Component =
+                block.style === "normal"
+                  ? "p"
+                  : block.style === "h1"
+                    ? "h2"
+                    : block.style;
               return (
                 <Component
                   key={blockIndex}

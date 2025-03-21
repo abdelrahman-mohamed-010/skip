@@ -36,6 +36,13 @@ const query = `*[_type == "footer"][0]{
     phone,
     address
   },
+  informationHub{
+    title,
+    links[]{
+      text,
+      url
+    }
+  },
   bottomLinks[]{
     text,
     url
@@ -195,38 +202,27 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
             {/* Empty cell for alignment */}
             <div className="hidden md:block"></div>
 
-            {/* Information Hub using 2 columns space */}
-            <div className="md:col-span-2">
-              <span className="text-lg text-primary relative after:absolute after:bottom-0 after:left-0 after:w-8 after:h-[2px] after:bg-primary/30 after:-mb-1 pb-2 block">
-                Information Hub
-              </span>
-              <div className="mt-4 grid grid-cols-2 gap-x-12 gap-y-2">
-                <Link
-                  href="/immigration-blog"
-                  className="text-secondary/80 hover:text-primary transition-colors duration-200"
-                >
-                  Blog
-                </Link>
-                <Link
-                  href="/latest-immigration-news"
-                  className="text-secondary/80 hover:text-primary transition-colors duration-200"
-                >
-                  News
-                </Link>
-                <Link
-                  href="/immigration-guide"
-                  className="text-secondary/80 hover:text-primary transition-colors duration-200"
-                >
-                  Guides
-                </Link>
-                <Link
-                  href="/about"
-                  className="text-secondary/80 hover:text-primary transition-colors duration-200"
-                >
-                  About Us
-                </Link>
+            {/* Replace hard-coded Information Hub with dynamic content */}
+            {footerData.informationHub && (
+              <div className="md:col-span-2">
+                <span className="text-lg text-primary relative after:absolute after:bottom-0 after:left-0 after:w-8 after:h-[2px] after:bg-primary/30 after:-mb-1 pb-2 block">
+                  {footerData.informationHub.title}
+                </span>
+                <div className="mt-4 grid grid-cols-2 justify-between items-stretch  gap-y-4">
+                  {footerData.informationHub.links?.map(
+                    (item: { text: string; url: string | null }, i: number) => (
+                      <Link
+                        key={i}
+                        href={item.url || "#"}
+                        className="text-secondary/80 hover:text-primary transition-colors duration-200"
+                      >
+                        {item.text}
+                      </Link>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Column 4 */}
             <div>
