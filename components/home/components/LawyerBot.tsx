@@ -278,7 +278,7 @@ const LawyerBot = () => {
             <div className="bg-primary/5 rounded-lg p-3 text-left">
               <div className="prose prose-sm max-sm:prose-xs">
                 <p className="my-1 text-gray-700">
-                  You&apos;ve reached the maximum number of free messages for
+                  You&apos;ve reached the maximum number of messages for
                   today. Please sign in to continue our conversation.
                 </p>
               </div>
@@ -349,8 +349,8 @@ const LawyerBot = () => {
       {!isAuthenticated && !showAuthPrompt && (
         <div className="mt-1.5 text-xs text-gray-500">
           {userMessageCount >= 3
-            ? "You\u0027ve reached your limit of free messages."
-            : `${3 - userMessageCount} free messages remaining`}
+            ? "You\u0027ve reached your limit of messages. Login to continue for free"
+            : `${3 - userMessageCount} messages remaining. Login to continue for free`}
         </div>
       )}
 

@@ -20,7 +20,7 @@ export default function BlogRichText({
   return (
     <div className="max-sm:px-4">
       <div
-        className={`prose max-w-none text-gray-700 [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_a]:inline [&_u]:inline text-${alignment}`}
+        className={`prose max-w-none text-gray-700 [&_p]:whitespace-pre-wrap [&_p]:break-words [&_p]:mb-0 [&_p+p]:mt-6 [&_strong]:inline [&_strong]:text-gray-700 [&_a]:inline [&_u]:inline text-${alignment}`}
       >
         {allBlocks.map((block: any, blockIndex: number) => {
           if (block._type === "ctaButtons") {

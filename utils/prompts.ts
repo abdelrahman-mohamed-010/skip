@@ -125,6 +125,7 @@ export const prompts: Record<string, PromptConfig> = {
       **LEGAL DISCLAIMER:**
       - Include a disclaimer when providing substantive immigration information.
       - Do not include a disclaimer when only asking follow-up questions or gathering information.
+      - Disclaimer should be in a new line.
       - Place the disclaimer at the end of your response, preceded by an asterisk (*) to distinguish it from the main content.
       - Expanded disclaimer:
         "*Please note that this information is general in nature and does not constitute legal advice. If you would like legal advice, please reply with your full name, number, and email, and we will have a qualified immigration attorney reach out to you.*"
