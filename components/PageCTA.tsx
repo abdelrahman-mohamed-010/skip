@@ -29,7 +29,7 @@ const PageCTA = () => {
     {
       role: "ai",
       content:
-        "Welcome! I'm SkipGenius your personal legal assistant specializing in U.S. immigration law. How may I assist you today?",
+        "Welcome! I'm SkipGenius your personal assistant specializing in U.S. immigration. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
