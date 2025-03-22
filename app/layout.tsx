@@ -70,6 +70,19 @@ export default function RootLayout({
         <head className="">
           <CanonicalLink />
           {/* Tracking Scripts */}
+
+          {/* Google Tag Manager */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-MMGTJ8TG');`
+            }}
+          />
+          {/* End Google Tag Manager */}
+
           <Script
             src="https://www.googletagmanager.com/gtag/js?id=AW-975642063"
             strategy="afterInteractive"
@@ -107,9 +120,18 @@ export default function RootLayout({
         <body
           className={`${montserrat.variable} ${inter.variable} antialiased bg-white`}
         >
+          {/* Google Tag Manager (noscript) */}
+          <noscript
+            dangerouslySetInnerHTML={{
+              __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMGTJ8TG"
+              height="0" width="0" style="display:none;visibility:hidden"></iframe>`
+            }}
+          />
+          {/* End Google Tag Manager (noscript) */}
           {children}
           <ConditionalFooterComponents />
           <VercelAnalytics />
+
         </body>
       </html>
     </ClerkProvider>
