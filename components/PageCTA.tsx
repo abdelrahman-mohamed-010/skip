@@ -337,10 +337,6 @@ const PageCTA = () => {
             <div className="flex items-center justify-between p-4 border-b border-primary/10">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-primary">Legal Assistant</h3>
-                {/* Info icon without hover functionality */}
-                <div className="w-5 h-5 rounded-full border-2 border-primary/40 flex items-center justify-center text-primary/60">
-                  <span className="text-xs font-semibold">i</span>
-                </div>
               </div>
               <button
                 onClick={() => setIsChatOpen(false)}
