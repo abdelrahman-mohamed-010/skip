@@ -206,7 +206,7 @@ const LawyerBot = () => {
     <div className="relative rounded-2xl text-gray-700 bg-white/80 backdrop-blur-md p-4 max-sm:p-3 shadow-lg border border-primary/10">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-primary">Legal Assistant</h3>
+          {/* Removed "Legal Assistant" text */}
         </div>
       </div>
       <div

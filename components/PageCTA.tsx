@@ -336,7 +336,7 @@ const PageCTA = () => {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-primary/10">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-primary">Legal Assistant</h3>
+                {/* Removed "Legal Assistant" text */}
               </div>
               <button
                 onClick={() => setIsChatOpen(false)}
