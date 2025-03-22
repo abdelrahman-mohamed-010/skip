@@ -207,20 +207,9 @@ const LawyerBot = () => {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold text-primary">Legal Assistant</h3>
-          <div className="group relative">
-            <div className="w-5 h-5 rounded-full border-2 border-primary/40 flex items-center justify-center cursor-help text-primary/60 hover:border-primary hover:text-primary transition-colors">
-              <span className="text-xs font-semibold">i</span>
-            </div>
-            <div className="absolute left-0 bottom-[calc(100%+0.5rem)] hidden group-hover:block w-72 z-50">
-              <div className="bg-white text-gray-700 text-xs px-4 py-3 rounded-lg shadow-lg border border-primary/10">
-                <p className="font-medium mb-1 text-primary">Disclaimer</p>
-                <p>
-                  Please note that this information is general in nature and
-                  does not constitute legal advice.
-                </p>
-                <div className="absolute left-4 bottom-[-6px] transform rotate-45 w-3 h-3 bg-white border-r border-b border-primary/10"></div>
-              </div>
-            </div>
+          {/* Info icon without hover functionality */}
+          <div className="w-5 h-5 rounded-full border-2 border-primary/40 flex items-center justify-center text-primary/60">
+            <span className="text-xs font-semibold">i</span>
           </div>
         </div>
       </div>
@@ -278,8 +267,8 @@ const LawyerBot = () => {
             <div className="bg-primary/5 rounded-lg p-3 text-left">
               <div className="prose prose-sm max-sm:prose-xs">
                 <p className="my-1 text-gray-700">
-                  You&apos;ve reached the maximum number of messages for
-                  today. Please sign in to continue our conversation.
+                  You&apos;ve reached the maximum number of messages for today.
+                  Please sign in to continue our conversation.
                 </p>
               </div>
               <div className="flex space-x-2 mt-2">
@@ -369,6 +358,15 @@ const LawyerBot = () => {
             </button>
           )
         )}
+      </div>
+
+      {/* Fixed disclaimer at the bottom */}
+      <div className="mt-3 pt-2 border-t border-primary/10">
+        <p className="text-xs text-gray-600 italic">
+          <span className="font-medium text-primary">Disclaimer:</span> Please
+          note that this information is general in nature and does not
+          constitute legal advice.
+        </p>
       </div>
     </div>
   );

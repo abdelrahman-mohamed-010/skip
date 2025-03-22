@@ -181,6 +181,12 @@ const footer = {
         },
       ],
     },
+    {
+      name: "disclaimer",
+      title: "Disclaimer",
+      type: "text",
+      description: "Legal disclaimer text displayed in the footer",
+    },
   ],
 };
 

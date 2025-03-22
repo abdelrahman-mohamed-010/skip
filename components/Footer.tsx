@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Mail, Phone } from "lucide-react";
 import { client } from "@/sanity/lib/client";
 
-// Update the query to include column4
+// Update the query to include disclaimer
 const query = `*[_type == "footer"][0]{
   companyInfo{
     description,
@@ -46,7 +46,8 @@ const query = `*[_type == "footer"][0]{
   bottomLinks[]{
     text,
     url
-  }
+  },
+  disclaimer
 }`;
 
 const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
@@ -248,6 +249,17 @@ const Footer = ({ footerData: initialFooterData }: { footerData?: any }) => {
             </div>
           </div>
         </div>
+
+        {/* Disclaimer Section */}
+        {footerData.disclaimer && (
+          <div className="pt-8 border-t border-primary/10 mb-8">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-secondary/70 text-sm leading-relaxed">
+                {footerData.disclaimer}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-primary/10 ">
