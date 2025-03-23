@@ -29,7 +29,7 @@ const PageCTA = () => {
     {
       role: "ai",
       content:
-        "Welcome! I'm SkipGenius your personal assistant specializing in U.S. immigration. How may I assist you today?",
+        "Welcome! I'm SkipGenius your AI assistant specializing in U.S. immigration. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -294,7 +294,7 @@ const PageCTA = () => {
         <div className="group relative flex items-center">
           <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
             <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
-              Chat with your personal immigration assistant
+              Chat with your AI immigration assistant
               <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 transform rotate-45 w-3 h-3 bg-gray-900"></div>
             </div>
           </div>
