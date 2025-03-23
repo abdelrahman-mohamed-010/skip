@@ -8,8 +8,9 @@ import ContactLawyerForm from "./ContactLawyerForm";
 export default function ConditionalFooterComponents() {
   const pathname = usePathname();
   const isStudioRoute = pathname.includes("/studio");
+  const isThankYouPage = pathname.includes("/thank-you");
 
-  if (isStudioRoute) {
+  if (isStudioRoute || isThankYouPage) {
     return null;
   }
 
