@@ -69,6 +69,8 @@ export default function RootLayout({
       <html lang="en">
         <head className="">
           <CanonicalLink />
+          {/* Add robots meta tag */}
+          <meta name="robots" content="index, follow" />
           {/* Tracking Scripts */}
 
           {/* Google Tag Manager */}

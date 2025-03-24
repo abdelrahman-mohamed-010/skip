@@ -65,6 +65,6 @@ export async function GET(request: Request) {
     return NextResponse.json(response.data);
   } catch (error) {
     console.error('Error fetching case status:', error);
-    return NextResponse.json({ message: 'Error fetching case status' }, { status: 500 });
+    return NextResponse.json({ message: 'Error fetching case status. Please make sure you have the correct receipt number' }, { status: 500 });
   }
 } 

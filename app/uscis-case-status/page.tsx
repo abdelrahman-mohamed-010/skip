@@ -42,7 +42,7 @@ export default function ImmigrationCaseStatus() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error Response:", errorText);
-        throw new Error(`Failed to fetch case status: ${response.status}`);
+        throw new Error(`Failed to fetch case status. Please make sure you have the correct receipt number`);
       }
       
       const data = await response.json();
