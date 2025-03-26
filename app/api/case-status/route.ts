@@ -32,6 +32,7 @@ async function getAccessToken(): Promise<string> {
     {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'demo_id': '2842'
       },
     }
   );
@@ -55,6 +56,7 @@ export async function GET(request: Request) {
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
+          'demo_id': '2842'
         },
       }
     );
