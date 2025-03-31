@@ -143,7 +143,9 @@ export default function BlogRichText({
                         : null;
 
                       if (linkDef) {
-                        const isInternal = linkDef.href.startsWith("/");
+                        const isInternal = linkDef.href
+                          ? linkDef.href.startsWith("/")
+                          : false;
                         const target = linkDef.openInNewTab
                           ? "_blank"
                           : undefined;
@@ -154,7 +156,7 @@ export default function BlogRichText({
                         return isInternal ? (
                           <Link
                             key={spanIndex}
-                            href={linkDef.href}
+                            href={linkDef.href || "#"}
                             className="text-primary underline hover:underline transition-all"
                             target={target}
                             rel={rel}
@@ -164,7 +166,7 @@ export default function BlogRichText({
                         ) : (
                           <a
                             key={spanIndex}
-                            href={linkDef.href}
+                            href={linkDef.href || "#"}
                             target={target}
                             rel={rel}
                             className="text-primary underline hover:underline transition-all"
@@ -226,7 +228,9 @@ export default function BlogRichText({
                           : null;
 
                         if (linkDef) {
-                          const isInternal = linkDef.href.startsWith("/");
+                          const isInternal = linkDef.href
+                            ? linkDef.href.startsWith("/")
+                            : false;
                           const target = linkDef.openInNewTab
                             ? "_blank"
                             : undefined;
@@ -237,7 +241,7 @@ export default function BlogRichText({
                           return isInternal ? (
                             <Link
                               key={spanIndex}
-                              href={linkDef.href}
+                              href={linkDef.href || "#"}
                               className="text-primary underline hover:underline transition-all"
                               target={target}
                               rel={rel}
@@ -247,7 +251,7 @@ export default function BlogRichText({
                           ) : (
                             <a
                               key={spanIndex}
-                              href={linkDef.href}
+                              href={linkDef.href || "#"}
                               target={target}
                               rel={rel}
                               className="text-primary underline hover:underline transition-all"
@@ -307,7 +311,9 @@ export default function BlogRichText({
                       : null;
 
                     if (linkDef) {
-                      const isInternal = linkDef.href.startsWith("/");
+                      const isInternal = linkDef.href
+                        ? linkDef.href.startsWith("/")
+                        : false;
                       const target = linkDef.openInNewTab
                         ? "_blank"
                         : undefined;
@@ -318,7 +324,7 @@ export default function BlogRichText({
                       return isInternal ? (
                         <Link
                           key={spanIndex}
-                          href={linkDef.href}
+                          href={linkDef.href || "#"}
                           className="text-primary underline hover:underline transition-all"
                           target={target}
                           rel={rel}
@@ -328,10 +334,10 @@ export default function BlogRichText({
                       ) : (
                         <a
                           key={spanIndex}
-                          href={linkDef.href}
+                          href={linkDef.href || "#"}
+                          className="text-primary underline hover:underline transition-all"
                           target={target}
                           rel={rel}
-                          className="text-primary underline hover:underline transition-all"
                         >
                           {text}
                         </a>

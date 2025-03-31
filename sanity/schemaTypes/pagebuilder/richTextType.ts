@@ -35,6 +35,12 @@ export const richTextType = defineType({
                     type: "string",
                     title: "URL",
                   },
+                  {
+                    name: "openInNewTab",
+                    type: "boolean",
+                    title: "Open in new tab",
+                    initialValue: false,
+                  },
                 ],
               },
             ],
