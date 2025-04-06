@@ -4,6 +4,7 @@ import { SendHorizontal, Paperclip, LogIn } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
+import Link from "next/link";
 
 interface Message {
   role: "user" | "ai";
@@ -15,7 +16,7 @@ const LawyerBot = () => {
     {
       role: "ai",
       content:
-        "Welcome! I'm SkipGenius your AI assistant specializing in U.S. immigration. How may I assist you today?",
+        "Welcome! I'm SkipGenius your AI search assistant specializing in U.S. immigration. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -49,7 +50,7 @@ const LawyerBot = () => {
     if (!content.trim()) return;
 
     // Check if user is authenticated or has messages remaining
-    if (!isAuthenticated && userMessageCount >= 3) {
+    if (!isAuthenticated && userMessageCount >= 0) {
       setShowAuthPrompt(true);
       // Show authentication prompt instead of redirecting
       return;
@@ -70,7 +71,7 @@ const LawyerBot = () => {
       localStorage.setItem("userMessageCount", newCount.toString());
 
       // Show auth prompt if this was the 3rd message
-      if (newCount >= 3) {
+      if (newCount >= 0) {
         setShowAuthPrompt(true);
         console.log("Auth limit reached after increment, showing auth prompt");
       }
@@ -226,14 +227,14 @@ const LawyerBot = () => {
               </span>
             </div>
             <div
-              className={`rounded-lg p-3 text-left max-w-[80%] ${
+              className={`rounded-lg p-3 text-left max-w-[95%] ${
                 message.role === "user"
                   ? "bg-primary/20 text-primary"
                   : "bg-primary/5"
               }`}
             >
               {message.role === "ai" ? (
-                <div className="prose prose-sm max-sm:prose-xs prose-p:my-1 prose-headings:mb-1 prose-headings:mt-2 prose-li:my-0.5">
+                <div className="prose prose-sm max-sm:prose-xs prose-p:my-1 prose-headings:mb-1 prose-headings:mt-2 prose-li:my-0.5 prose-pre:max-w-full max-w-full">
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
               ) : (
@@ -292,12 +293,12 @@ const LawyerBot = () => {
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && sendMessage(inputMessage)}
           placeholder={
-            !isAuthenticated && userMessageCount >= 3
+            !isAuthenticated && userMessageCount >= 0
               ? "Sign in to continue..."
               : "Type your immigration question..."
           }
           className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-24 max-sm:text-sm"
-          disabled={!isAuthenticated && userMessageCount >= 3}
+          disabled={!isAuthenticated && userMessageCount >= 0}
         />
         <div className="absolute right-2 flex items-center gap-1">
           <button
@@ -305,13 +306,13 @@ const LawyerBot = () => {
               document.getElementById("file-upload-input")?.click()
             }
             className="p-2 text-primary hover:text-primary/80 transition-colors"
-            disabled={!isAuthenticated && userMessageCount >= 3}
+            disabled={!isAuthenticated && userMessageCount >= 0}
           >
             <Paperclip className="w-5 h-5" />
           </button>
           <button
             onClick={() => sendMessage(inputMessage)}
-            disabled={isLoading || (!isAuthenticated && userMessageCount >= 3)}
+            disabled={isLoading || (!isAuthenticated && userMessageCount >= 0)}
             className="p-2 text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
           >
             <SendHorizontal className="w-5 h-5" />
@@ -333,9 +334,9 @@ const LawyerBot = () => {
 
       {!isAuthenticated && !showAuthPrompt && (
         <div className="mt-1.5 text-xs text-gray-500">
-          {userMessageCount >= 3
-            ? "You\u0027ve reached your limit of messages. Login to continue for free"
-            : `${3 - userMessageCount} messages remaining. Login to continue for free`}
+          {userMessageCount >= 0
+            ? "Login to continue for free"
+            : `${0 - userMessageCount} messages remaining. Login to continue for free`}
         </div>
       )}
 
@@ -346,7 +347,7 @@ const LawyerBot = () => {
               key={question}
               onClick={() => handleSuggestedQuestion(question)}
               disabled={
-                isLoading || (!isAuthenticated && userMessageCount >= 3)
+                isLoading || (!isAuthenticated && userMessageCount >= 0)
               }
               className="text-xs max-sm:text-[11px] px-3 py-1.5 max-sm:py-1 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
             >
@@ -361,7 +362,10 @@ const LawyerBot = () => {
         <p className="text-xs text-gray-600 italic">
           <span className="font-medium text-primary">Disclaimer:</span> Please
           note that this information is general in nature and does not
-          constitute legal advice.
+          constitute legal advice.{" "}
+          <Link href="/terms" className="text-primary hover:text-primary/80">
+            Read full terms here
+          </Link>
         </p>
       </div>
     </div>

@@ -79,12 +79,16 @@ export default function ImmigrationCaseStatus() {
   return (
     <>
       <Navigation />
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold text-center mb-8">
+      <div className="container mx-auto py-24 px-4">
+        <h1 className="text-3xl font-bold text-center mb-8 text-primary">
           USCIS Case Status Checker
         </h1>
 
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-8">
+        <form 
+          name="uscis-case-status-form"
+          onSubmit={handleSubmit} 
+          className="max-w-md mx-auto mb-8"
+        >
           <div className="mb-4">
             <input
               type="text"

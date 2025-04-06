@@ -310,6 +310,13 @@ export async function logUserEvent(eventType: UserEventType, metadata: EventMeta
     timestamp: new Date().toISOString(),
     userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
     path: typeof window !== 'undefined' ? window.location.pathname : '',
+    referrer: typeof window !== 'undefined' ? document.referrer : '',
+    // Extract UTM parameters if they exist
+    utm_source: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('utm_source') : '',
+    utm_medium: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('utm_medium') : '',
+    utm_campaign: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('utm_campaign') : '',
+    utm_content: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('utm_content') : '',
+    utm_term: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('utm_term') : '',
   };
 
   // Always log to console for immediate feedback

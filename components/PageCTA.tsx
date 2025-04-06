@@ -14,6 +14,7 @@ import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { logUserEvent } from "@/lib/logger";
 import logger from "@/lib/logger";
 import ReactMarkdown from "react-markdown";
+import Link from "next/link";
 
 interface Message {
   role: "user" | "ai";
@@ -29,7 +30,7 @@ const PageCTA = () => {
     {
       role: "ai",
       content:
-        "Welcome! I'm SkipGenius your AI assistant specializing in U.S. immigration. How may I assist you today?",
+        "Welcome! I'm SkipGenius your AI search assistant specializing in U.S. immigration. How may I assist you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -98,7 +99,7 @@ const PageCTA = () => {
     console.log("User message count:", userMessageCount);
 
     // Check if user is authenticated or has messages remaining
-    if (!isAuthenticated && userMessageCount >= 3) {
+    if (!isAuthenticated && userMessageCount >= 0) {
       setShowAuthPrompt(true);
       console.log("Auth limit reached, showing auth prompt");
       // Show authentication prompt instead of redirecting
@@ -117,7 +118,7 @@ const PageCTA = () => {
       console.log("Updated user message count:", newCount);
 
       // Show auth prompt if this was the 3rd message
-      if (newCount >= 3) {
+      if (newCount >= 0) {
         setShowAuthPrompt(true);
         console.log("Auth limit reached after increment, showing auth prompt");
       }
@@ -438,12 +439,12 @@ const PageCTA = () => {
                     e.key === "Enter" && sendMessage(inputMessage)
                   }
                   placeholder={
-                    !isAuthenticated && userMessageCount >= 3
+                    !isAuthenticated && userMessageCount >= 0
                       ? "Sign in to continue..."
                       : "Type your immigration question..."
                   }
                   className="w-full px-4 py-2.5 text-primary rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-20 text-sm"
-                  disabled={!isAuthenticated && userMessageCount >= 3}
+                  disabled={!isAuthenticated && userMessageCount >= 0}
                 />
                 <div className="absolute right-2 flex items-center gap-1">
                   <button
@@ -451,14 +452,14 @@ const PageCTA = () => {
                       document.getElementById("file-upload-input")?.click()
                     }
                     className="p-1.5 text-primary hover:text-primary/80 transition-colors"
-                    disabled={!isAuthenticated && userMessageCount >= 3}
+                    disabled={!isAuthenticated && userMessageCount >= 0}
                   >
                     <Paperclip className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => sendMessage(inputMessage)}
                     disabled={
-                      isLoading || (!isAuthenticated && userMessageCount >= 3)
+                      isLoading || (!isAuthenticated && userMessageCount >= 0)
                     }
                     className="p-1.5 text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
                   >
@@ -481,8 +482,8 @@ const PageCTA = () => {
 
               {!isAuthenticated && !showAuthPrompt && (
                 <div className="mt-1.5 text-xs text-gray-500">
-                  {userMessageCount >= 3
-                    ? "You've reached your limit of messages. Login to continue for free"
+                  {userMessageCount >= 0
+                    ? "Login to continue for free"
                     : `${3 - userMessageCount} messages remaining. Login to continue for free`}
                 </div>
               )}
@@ -497,7 +498,7 @@ const PageCTA = () => {
                     key={question}
                     onClick={() => handleSuggestedQuestion(question)}
                     disabled={
-                      isLoading || (!isAuthenticated && userMessageCount >= 3)
+                      isLoading || (!isAuthenticated && userMessageCount >= 0)
                     }
                     className="text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
                   >
@@ -511,7 +512,10 @@ const PageCTA = () => {
                 <p className="text-xs text-gray-600 italic">
                   <span className="font-medium text-primary">Disclaimer:</span>{" "}
                   Please note that this information is general in nature and
-                  does not constitute legal advice.
+                  does not constitute legal advice.{" "}
+                  <Link href="/terms" className="text-primary hover:text-primary/80">
+                    Read full terms here
+                  </Link>
                 </p>
               </div>
             </div>

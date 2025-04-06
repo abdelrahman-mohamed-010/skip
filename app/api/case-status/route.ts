@@ -27,12 +27,11 @@ async function getAccessToken(): Promise<string> {
   const clientId = process.env.USCIS_CLIENT_ID;
   const clientSecret = process.env.USCIS_CLIENT_SECRET;
   
-  const response = await axios.post<TokenResponse>('https://api-int.uscis.gov/oauth/accesstoken', 
+  const response = await axios.post<TokenResponse>(process.env.USCIS_API_URL || 'https://api-int.uscis.gov/oauth/accesstoken', 
     `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
     {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'demo_id': '2842'
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
     }
   );
@@ -56,7 +55,6 @@ export async function GET(request: Request) {
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
-          'demo_id': '2842'
         },
       }
     );
