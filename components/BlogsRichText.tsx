@@ -122,8 +122,19 @@ export default function BlogRichText({
 
           if (block._type === "block") {
             if (block.listItem === "bullet") {
+              const bulletLevelClass =
+                block.level === 2
+                  ? "ml-10"
+                  : block.level === 3
+                    ? "ml-14"
+                    : "ml-6";
+              const markerColorClass =
+                block.level && block.level >= 2 ? "marker:text-black" : "";
               return (
-                <ul key={blockIndex} className="list-disc ml-6 mt-3">
+                <ul
+                  key={blockIndex}
+                  className={`list-disc ${bulletLevelClass} mt-3 text-gray-700 ${markerColorClass}`}
+                >
                   <li className="mb-2">
                     {block.children.map((span: any, spanIndex: number) => {
                       const marks = span.marks || [];

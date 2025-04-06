@@ -127,10 +127,19 @@ export default function RichTextRenderer({
 
           if (block._type === "block") {
             if (block.listItem === "bullet") {
+              const bulletLevelClass =
+                block.level === 2
+                  ? "ml-10"
+                  : block.level === 3
+                    ? "ml-14"
+                    : "ml-6";
+              // For nested bullets (level >= 2), use marker:text-black; otherwise keep gray
+              const markerColorClass =
+                block.level && block.level >= 2 ? "marker:text-black" : "";
               return (
                 <ul
                   key={blockIndex}
-                  className="list-disc ml-6 mt-3 text-gray-700"
+                  className={`list-disc ${bulletLevelClass} mt-3 text-gray-700 ${markerColorClass}`}
                 >
                   <li className="mb-2">
                     {block.children.map((span: any, spanIndex: number) => {
@@ -194,7 +203,12 @@ export default function RichTextRenderer({
 
             if (block.listItem === "number") {
               if (block._processedInList) return null;
-
+              const numberLevelClass =
+                block.level === 2
+                  ? "ml-10"
+                  : block.level === 3
+                    ? "ml-14"
+                    : "ml-6";
               const currentIndex = allBlocks.indexOf(block);
               const listItems = [];
 
@@ -212,7 +226,7 @@ export default function RichTextRenderer({
               return (
                 <ol
                   key={blockIndex}
-                  className="list-decimal mt-2 ml-6 [&>li]:pl-2 text-gray-700 [&>li::marker]:text-primary [&>li::marker]:font-bold"
+                  className={`list-decimal mt-2 ${numberLevelClass} [&>li]:pl-2 text-gray-700 [&>li::marker]:text-primary [&>li::marker]:font-bold`}
                 >
                   {listItems.map((item: any, itemIndex: number) => (
                     <li key={itemIndex} className="mb-2">
