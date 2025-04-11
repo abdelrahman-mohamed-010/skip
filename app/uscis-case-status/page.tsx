@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import Navigation from "@/components/Navigation";
+import { Bell, Check, Mail, RefreshCw, ChevronRight, AlertCircle } from 'lucide-react';
 
 type HistoricalStatus = {
   date: string;
@@ -27,6 +28,10 @@ export default function ImmigrationCaseStatus() {
   const [caseStatus, setCaseStatus] = useState<CaseStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +72,42 @@ export default function ImmigrationCaseStatus() {
       );
     }
   }, [caseStatus]);
+
+  const handleSubscribe = async () => {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setSubscribeError('Please enter a valid email address');
+      return;
+    }
+    if (!caseStatus?.case_status.receiptNumber) {
+      setSubscribeError('Cannot subscribe without a valid case check first.');
+      return;
+    }
+
+    setSubscribeLoading(true);
+    setSubscribeError('');
+
+    try {
+      // Replace with actual API call to /api/subscribe
+      console.log('Subscribing:', email, caseStatus.case_status.receiptNumber);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      // const response = await fetch('/api/subscribe', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ 
+      //     email,
+      //     receiptNumber: caseStatus.case_status.receiptNumber
+      //   }),
+      // });
+      // if (!response.ok) {
+      //   throw new Error('Failed to subscribe.');
+      // }
+      setSubscribed(true);
+    } catch (err) {
+      setSubscribeError(err instanceof Error ? err.message : 'Failed to subscribe.');
+    } finally {
+      setSubscribeLoading(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     try {
@@ -112,8 +153,66 @@ export default function ImmigrationCaseStatus() {
           </div>
         )}
 
+        {/* Email Notification Form/Confirmation - MOVED HERE */} 
         {caseStatus && (
-          <div className="max-w-2xl mx-auto">
+          !subscribed ? (
+            <div className="max-w-2xl mx-auto mt-8 border-2 border-yellow-400 rounded-lg overflow-hidden bg-yellow-100 p-4 shadow-lg transition-opacity duration-500 ease-in-out animate-fadeIn">
+              <div className="flex items-start mb-3">
+                <Bell className="h-6 w-6 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-bold text-lg text-yellow-800">Get Status Updates</h4>
+                  <p className="text-sm text-gray-700">
+                    We'll notify you when your case status changes
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-grow">
+                  <input
+                    type="email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-primary"
+                    placeholder="Your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <button
+                  className="px-6 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center"
+                  onClick={handleSubscribe}
+                  disabled={subscribeLoading}
+                >
+                  {subscribeLoading ? (
+                    <RefreshCw className="animate-spin h-4 w-4" />
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4 mr-1" /> Stay Informed
+                    </>
+                  )}
+                </button>
+              </div>
+              {subscribeError && (
+                <div className="mt-3 text-red-600 text-sm flex items-center">
+                  <AlertCircle className="h-4 w-4 mr-1" /> {subscribeError}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="max-w-2xl mx-auto mt-8 border border-green-200 rounded-lg overflow-hidden bg-green-50 p-4">
+              <div className="flex items-center">
+                <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
+                <div>
+                  <h4 className="font-medium text-green-800">Subscription Confirmed!</h4>
+                  <p className="text-sm text-gray-600">
+                    You'll receive email notifications for receipt number {caseStatus?.case_status.receiptNumber} at {email}.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )
+        )}
+
+        {caseStatus && (
+          <div className="max-w-2xl mx-auto mt-8">
             <div className="rounded-md border p-4 max-h-[600px] overflow-y-auto">
               <div className="space-y-6">
                 {/* Current Status Section */}
@@ -184,6 +283,25 @@ export default function ImmigrationCaseStatus() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Information Box - MOVED HERE */} 
+            <div className="mt-8 bg-gray-50 p-4 rounded-md border border-gray-200">
+              <h4 className="font-medium text-gray-800 mb-2">What's Next?</h4>
+              <ul className="text-sm text-gray-700 space-y-2">
+                <li className="flex items-start">
+                  <ChevronRight className="h-4 w-4 text-blue-600 mr-1 mt-0.5 flex-shrink-0" />
+                  <span>We'll send you updates when your case status changes (if subscribed).</span>
+                </li>
+                <li className="flex items-start">
+                  <ChevronRight className="h-4 w-4 text-blue-600 mr-1 mt-0.5 flex-shrink-0" />
+                  <span>You can check back anytime with your receipt number.</span>
+                </li>
+                <li className="flex items-start">
+                  <ChevronRight className="h-4 w-4 text-blue-600 mr-1 mt-0.5 flex-shrink-0" />
+                  <span>If you have questions about your case, contact USCIS directly.</span>
+                </li>
+              </ul>
             </div>
           </div>
         )}

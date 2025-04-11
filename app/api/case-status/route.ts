@@ -26,8 +26,21 @@ type CaseStatusResponse = {
 async function getAccessToken(): Promise<string> {
   const clientId = process.env.USCIS_CLIENT_ID;
   const clientSecret = process.env.USCIS_CLIENT_SECRET;
+  const apiUrl = process.env.USCIS_API_URL;
+
+  if (!apiUrl) {
+    throw new Error('USCIS_API_URL environment variable is not set.');
+  }
+  if (!clientId) {
+    throw new Error('USCIS_CLIENT_ID environment variable is not set.');
+  }
+  if (!clientSecret) {
+    throw new Error('USCIS_CLIENT_SECRET environment variable is not set.');
+  }
   
-  const response = await axios.post<TokenResponse>(process.env.USCIS_API_URL || 'https://api-int.uscis.gov/oauth/accesstoken', 
+  const tokenUrl = `${apiUrl}/oauth/accesstoken`; // Construct token URL
+
+  const response = await axios.post<TokenResponse>(tokenUrl, // Use constructed token URL
     `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
     {
       headers: {
@@ -50,8 +63,16 @@ export async function GET(request: Request) {
   try {
     const accessToken = await getAccessToken();
     
+    const apiUrl = process.env.USCIS_API_URL;
+    if (!apiUrl) {
+      // This should ideally not happen due to the check in getAccessToken, but adding for safety
+      throw new Error('USCIS_API_URL environment variable is not set.');
+    }
+    // Construct case status URL directly from the base URL
+    const caseStatusUrl = `${apiUrl}/case-status/${receiptNumber}`;
+
     const response = await axios.get<CaseStatusResponse>(
-      `https://api-int.uscis.gov/case-status/${receiptNumber}`,
+      caseStatusUrl, // Use the constructed case status URL
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
