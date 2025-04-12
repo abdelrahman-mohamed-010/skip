@@ -440,7 +440,7 @@ const PageCTA = () => {
                   }
                   placeholder={
                     !isAuthenticated && userMessageCount >= 0
-                      ? "Sign in to continue..."
+                      ? "Login or Sign Up to Continue for Free"
                       : "Type your immigration question..."
                   }
                   className="w-full px-4 py-2.5 text-primary rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-20 text-sm"
@@ -480,14 +480,6 @@ const PageCTA = () => {
                 </div>
               )}
 
-              {!isAuthenticated && !showAuthPrompt && (
-                <div className="mt-1.5 text-xs text-gray-500">
-                  {userMessageCount >= 0
-                    ? "Login to continue for free"
-                    : `${3 - userMessageCount} messages remaining. Login to continue for free`}
-                </div>
-              )}
-
               <div className="flex flex-wrap gap-2 mt-3">
                 {[
                   "Visa requirements",
@@ -513,7 +505,10 @@ const PageCTA = () => {
                   <span className="font-medium text-primary">Disclaimer:</span>{" "}
                   Please note that this information is general in nature and
                   does not constitute legal advice.{" "}
-                  <Link href="/terms" className="text-primary hover:text-primary/80">
+                  <Link
+                    href="/terms"
+                    className="text-primary hover:text-primary/80"
+                  >
                     Read full terms here
                   </Link>
                 </p>

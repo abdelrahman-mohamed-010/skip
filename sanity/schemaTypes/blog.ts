@@ -38,6 +38,13 @@ export default {
       title: "Excerpt",
     },
     {
+      name: "customScripts",
+      type: "customScript",
+      title: "Custom Scripts",
+      description:
+        "Add custom scripts to the head and body sections of this blog post page",
+    },
+    {
       name: "content",
       type: "array",
       title: "Content",

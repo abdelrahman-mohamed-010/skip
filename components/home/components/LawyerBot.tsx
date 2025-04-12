@@ -294,7 +294,7 @@ const LawyerBot = () => {
           onKeyPress={(e) => e.key === "Enter" && sendMessage(inputMessage)}
           placeholder={
             !isAuthenticated && userMessageCount >= 0
-              ? "Sign in to continue..."
+              ? "Login or Sign Up to Continue for Free"
               : "Type your immigration question..."
           }
           className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-24 max-sm:text-sm"
@@ -329,14 +329,6 @@ const LawyerBot = () => {
       {fileName && (
         <div className="mt-2 text-sm text-gray-500">
           Uploaded file: {fileName}
-        </div>
-      )}
-
-      {!isAuthenticated && !showAuthPrompt && (
-        <div className="mt-1.5 text-xs text-gray-500">
-          {userMessageCount >= 0
-            ? "Login to continue for free"
-            : `${0 - userMessageCount} messages remaining. Login to continue for free`}
         </div>
       )}
 

@@ -1,6 +1,7 @@
 // import ContactLawyerForm from "@/components/ContactLawyerForm";
 // import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
+import PageScripts from "@/components/PageScripts";
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
 
@@ -51,9 +52,39 @@ export async function generateMetadata({
   };
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface PageData {
+  customScripts?: {
+    headScript?: string;
+    bodyScript?: string;
+  };
+}
+
+async function getPageScripts(slug: string): Promise<PageData> {
+  const pageData = await client.fetch(
+    `*[_type == "page" && slug.current == $slug][0]{
+      customScripts
+    }`,
+    { slug }
+  );
+
+  return pageData || {};
+}
+
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { slug: string };
+}) {
+  const pageData = await getPageScripts(params.slug);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <PageScripts
+        headScript={pageData?.customScripts?.headScript}
+        bodyScript={pageData?.customScripts?.bodyScript}
+      />
       <Navigation />
       {children}
     </div>

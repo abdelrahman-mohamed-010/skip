@@ -43,6 +43,13 @@ export const pageType = defineType({
       description: "Toggle to display share button on page.",
     }),
     defineField({
+      name: "customScripts",
+      type: "customScript",
+      title: "Custom Scripts",
+      description:
+        "Add custom scripts to the head and body sections of this page",
+    }),
+    defineField({
       name: "innerPages",
       type: "array",
       title: "Inner Pages",
@@ -72,6 +79,13 @@ export const pageType = defineType({
               type: "boolean",
               title: "Show Share Button",
               description: "Toggle to display share button on inner page.",
+            }),
+            defineField({
+              name: "customScripts",
+              type: "customScript",
+              title: "Custom Scripts",
+              description:
+                "Add custom scripts to the head and body sections of this inner page",
             }),
             defineField({
               name: "content",
@@ -126,6 +140,13 @@ export const pageType = defineType({
                       title: "Show Share Button",
                       description:
                         "Toggle to display share button on deep nested page.",
+                    }),
+                    defineField({
+                      name: "customScripts",
+                      type: "customScript",
+                      title: "Custom Scripts",
+                      description:
+                        "Add custom scripts to the head and body sections of this deep nested page",
                     }),
                     defineField({
                       name: "content",
