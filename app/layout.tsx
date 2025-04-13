@@ -8,6 +8,7 @@ import { client } from "@/sanity/lib/client";
 import Script from "next/script";
 import ConditionalFooterComponents from "@/components/ConditionalFooterComponents";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+import PageScripts from "@/components/PageScripts";
 
 const DEFAULT_TITLE = "SkipLegal - Immigration Law Made Simplee";
 const DEFAULT_DESCRIPTION =
@@ -59,11 +60,32 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export default function RootLayout({
+async function getLandingScripts() {
+  try {
+    const landingScripts = await client.fetch(`
+      *[_type=="landing"][0]{
+        customScripts {
+          headScript,
+          bodyScript
+        }
+      }
+    `);
+    return (
+      landingScripts?.customScripts || { headScript: null, bodyScript: null }
+    );
+  } catch (error) {
+    console.error("Error fetching landing scripts:", error);
+    return { headScript: null, bodyScript: null };
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const landingScripts = await getLandingScripts();
+
   return (
     <ClerkProvider>
       <html lang="en">
@@ -80,7 +102,7 @@ export default function RootLayout({
               new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','GTM-MMGTJ8TG');`
+              })(window,document,'script','dataLayer','GTM-MMGTJ8TG');`,
             }}
           />
           {/* End Google Tag Manager */}
@@ -133,10 +155,18 @@ export default function RootLayout({
                 'https://connect.facebook.net/en_US/fbevents.js');
                 fbq('init', '1214200300035848');
                 fbq('track', 'PageView');
-              `
+              `,
             }}
           />
           {/* End Meta Pixel Code */}
+
+          {landingScripts.headScript && (
+            <script
+              dangerouslySetInnerHTML={{
+                __html: landingScripts.headScript,
+              }}
+            />
+          )}
         </head>
         <body
           className={`${montserrat.variable} ${inter.variable} antialiased bg-white`}
@@ -145,7 +175,7 @@ export default function RootLayout({
           <noscript
             dangerouslySetInnerHTML={{
               __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMGTJ8TG"
-              height="0" width="0" style="display:none;visibility:hidden"></iframe>`
+              height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
             }}
           />
           {/* End Google Tag Manager (noscript) */}
@@ -155,14 +185,22 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{
               __html: `<img height="1" width="1" style="display:none"
               src="https://www.facebook.com/tr?id=1214200300035848&ev=PageView&noscript=1"
-              />`
+              />`,
             }}
           />
 
           {children}
           <ConditionalFooterComponents />
           <VercelAnalytics />
+          <PageScripts />
 
+          {landingScripts.bodyScript && (
+            <script
+              dangerouslySetInnerHTML={{
+                __html: landingScripts.bodyScript,
+              }}
+            />
+          )}
         </body>
       </html>
     </ClerkProvider>

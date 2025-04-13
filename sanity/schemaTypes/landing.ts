@@ -29,6 +29,13 @@ export default {
       description: "Custom keywords for SEO.",
     },
     {
+      name: "customScripts",
+      type: "customScript",
+      title: "Custom Scripts",
+      description:
+        "Add custom scripts to the head and body sections of the landing page",
+    },
+    {
       name: "sections",
       title: "Sections",
       type: "array",

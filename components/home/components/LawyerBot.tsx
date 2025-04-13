@@ -287,19 +287,39 @@ const LawyerBot = () => {
       </div>
 
       <div className="relative flex items-center">
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && sendMessage(inputMessage)}
-          placeholder={
-            !isAuthenticated && userMessageCount >= 0
-              ? "Login or Sign Up to Continue for Free"
-              : "Type your immigration question..."
-          }
-          className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-24 max-sm:text-sm"
-          disabled={!isAuthenticated && userMessageCount >= 0}
-        />
+        <div className="w-full relative">
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && sendMessage(inputMessage)}
+            placeholder={
+              !isAuthenticated && userMessageCount >= 0
+                ? ""
+                : "Type your immigration question..."
+            }
+            className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-24 max-sm:text-sm"
+            disabled={!isAuthenticated && userMessageCount >= 0}
+          />
+          {!isAuthenticated && userMessageCount >= 0 && (
+            <div className="absolute inset-0 flex items-center px-4 pointer-events-none">
+              <div className="flex items-center gap-1">
+                <SignInButton mode="modal">
+                  <button className="text-primary hover:text-primary/80 pointer-events-auto">
+                    Login
+                  </button>
+                </SignInButton>
+                <span className="text-gray-500">or</span>
+                <SignUpButton mode="modal">
+                  <button className="text-primary hover:text-primary/80 pointer-events-auto">
+                    Sign up
+                  </button>
+                </SignUpButton>
+                <span className="text-gray-500">to Continue for Free</span>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="absolute right-2 flex items-center gap-1">
           <button
             onClick={() =>
