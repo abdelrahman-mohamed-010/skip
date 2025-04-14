@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import HeadScripts from "./HeadScripts";
 
 type PageScriptsProps = {
   headScript?: string | null;
@@ -10,14 +11,10 @@ type PageScriptsProps = {
 const PageScripts = ({ headScript, bodyScript }: PageScriptsProps) => {
   return (
     <>
-      {headScript && (
-        <Script
-          id="page-head-script"
-          dangerouslySetInnerHTML={{ __html: headScript }}
-          strategy="beforeInteractive"
-        />
-      )}
+      {/* Component to add scripts directly to head */}
+      {headScript && <HeadScripts headScript={headScript} />}
 
+      {/* Body scripts with afterInteractive strategy */}
       {bodyScript && (
         <Script
           id="page-body-script"

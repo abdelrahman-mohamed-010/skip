@@ -9,6 +9,7 @@ import Script from "next/script";
 import ConditionalFooterComponents from "@/components/ConditionalFooterComponents";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import PageScripts from "@/components/PageScripts";
+import ScriptLogger from "@/components/ScriptLogger";
 
 const DEFAULT_TITLE = "SkipLegal - Immigration Law Made Simplee";
 const DEFAULT_DESCRIPTION =
@@ -188,6 +189,9 @@ export default async function RootLayout({
               />`,
             }}
           />
+
+          {/* Development script logger */}
+          {process.env.NODE_ENV === "development" && <ScriptLogger />}
 
           {children}
           <ConditionalFooterComponents />
