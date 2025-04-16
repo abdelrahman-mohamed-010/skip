@@ -4,11 +4,14 @@ import { SitemapStream, streamToPromise } from "sitemap";
 import { client } from "@/sanity/lib/client";
 
 export async function GET(req) {
-  // Fetch pages from Sanity CMS
+  // Fetch pages from Sanity CMS with three levels of nested pages
   const pages = await client.fetch(`*[_type == "page"]{
     "slug": slug.current,
     innerPages[]{
-      "slug": slug.current
+      "slug": slug.current,
+      deepNestedPages[]{
+        "slug": slug.current
+      }
     }
   }`);
 
@@ -39,6 +42,19 @@ export async function GET(req) {
               changefreq: "weekly",
               priority: 0.7,
             });
+
+            // Add deep nested pages (third level)
+            if (nested.deepNestedPages) {
+              nested.deepNestedPages.forEach((deepNested) => {
+                if (deepNested.slug) {
+                  dynamicUrls.push({
+                    url: `/${page.slug}/${nested.slug}/${deepNested.slug}`,
+                    changefreq: "weekly",
+                    priority: 0.6,
+                  });
+                }
+              });
+            }
           }
         });
       }

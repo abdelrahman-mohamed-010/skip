@@ -286,20 +286,31 @@ const LawyerBot = () => {
         )}
       </div>
 
-      <div className="relative flex items-center">
+      <div className="relative flex items-end">
         <div className="w-full relative">
-          <input
-            type="text"
+          <textarea
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && sendMessage(inputMessage)}
+            onChange={(e) => {
+              setInputMessage(e.target.value);
+              // Auto-resize
+              e.target.style.height = "inherit";
+              const newHeight = Math.min(e.target.scrollHeight, 120);
+              e.target.style.height = `${newHeight}px`;
+            }}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(inputMessage);
+              }
+            }}
             placeholder={
               !isAuthenticated && userMessageCount >= 0
                 ? ""
                 : "Type your immigration question..."
             }
-            className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-24 max-sm:text-sm"
+            className="w-full px-4 max-sm:px-3 py-3 max-sm:py-2 rounded-xl bg-white border border-primary/20 focus:outline-none focus:border-primary/50 pr-20 max-sm:pr-20 max-sm:text-sm min-h-[40px] max-h-[120px] resize-none overflow-y-auto [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:overflow-y-scroll [&:hover::-webkit-scrollbar]:block scrollbar-thin scrollbar-thumb-primary/10 scrollbar-track-transparent hover:scrollbar-thumb-primary/20"
             disabled={!isAuthenticated && userMessageCount >= 0}
+            rows={1}
           />
           {!isAuthenticated && userMessageCount >= 0 && (
             <div className="absolute inset-0 flex items-center px-4 pointer-events-none">
@@ -320,12 +331,12 @@ const LawyerBot = () => {
             </div>
           )}
         </div>
-        <div className="absolute right-2 flex items-center gap-1">
+        <div className="absolute right-2 bottom-2.5 flex items-center gap-1">
           <button
             onClick={() =>
               document.getElementById("file-upload-input")?.click()
             }
-            className="p-2 text-primary hover:text-primary/80 transition-colors"
+            className="p-2 max-sm:p-1.5 text-primary hover:text-primary/80 transition-colors"
             disabled={!isAuthenticated && userMessageCount >= 0}
           >
             <Paperclip className="w-5 h-5" />

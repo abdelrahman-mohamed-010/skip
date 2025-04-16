@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Script from "next/script";
 
 type HeadScriptsProps = {
   headScript?: string | null;
