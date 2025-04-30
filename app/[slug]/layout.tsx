@@ -1,7 +1,6 @@
 // import ContactLawyerForm from "@/components/ContactLawyerForm";
 // import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
-import PageScripts from "@/components/PageScripts";
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
 
@@ -24,18 +23,26 @@ const defaultMetadata = {
   },
 };
 
+// Helper function to fetch page data
+async function getPageMetadata(slug: string) {
+  const data = await client.fetch(
+    `*[_type == "page" && slug.current == $slug][0]{
+      title,
+      seo,
+      headScript
+    }`,
+    { slug }
+  );
+  return data;
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const page = await client.fetch(
-    `*[_type == "page" && slug.current == $slug][0]{
-      title,
-      seo
-    }`,
-    { slug: params.slug }
-  );
+  params = await params;
+  const page = await getPageMetadata(params.slug);
 
   if (!page?.seo?.metaTitle) {
     return defaultMetadata;
@@ -49,42 +56,21 @@ export async function generateMetadata({
       title: page.seo.metaTitle,
       description: page.seo.metaDescription,
     },
+    ...(page.headScript && {
+      other: {
+        custom: page.headScript
+      }
+    })
   };
-}
-
-interface PageData {
-  customScripts?: {
-    headScript?: string;
-    bodyScript?: string;
-  };
-}
-
-async function getPageScripts(slug: string): Promise<PageData> {
-  const pageData = await client.fetch(
-    `*[_type == "page" && slug.current == $slug][0]{
-      customScripts
-    }`,
-    { slug }
-  );
-
-  return pageData || {};
 }
 
 export default async function Layout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { slug: string };
 }) {
-  const pageData = await getPageScripts(params.slug);
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <PageScripts
-        headScript={pageData?.customScripts?.headScript}
-        bodyScript={pageData?.customScripts?.bodyScript}
-      />
       <Navigation />
       {children}
     </div>

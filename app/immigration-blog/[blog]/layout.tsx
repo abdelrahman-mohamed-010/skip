@@ -8,18 +8,26 @@ const defaultMetadata = {
   keywords: ["immigration law", "legal blog", "immigration updates"],
 };
 
+// Helper function to fetch blog data
+async function getBlogMetadata(slug: string) {
+  const data = await client.fetch(
+    `*[_type == "blog" && slug.current == $slug][0]{
+      title,
+      seo,
+      headScript
+    }`,
+    { slug }
+  );
+  return data;
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { blog: string };
 }): Promise<Metadata> {
-  const blogData = await client.fetch(
-    `*[_type == "blog" && slug.current == $slug][0]{
-      title,
-      seo
-    }`,
-    { slug: params.blog }
-  );
+  params = await params;
+  const blogData = await getBlogMetadata(params.blog);
 
   if (!blogData?.seo?.metaTitle) {
     return defaultMetadata;
@@ -33,6 +41,11 @@ export async function generateMetadata({
       title: blogData.seo.metaTitle,
       description: blogData.seo.metaDescription,
     },
+    ...(blogData.headScript && {
+      other: {
+        custom: blogData.headScript
+      }
+    })
   };
 }
 

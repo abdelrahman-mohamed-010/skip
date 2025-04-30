@@ -24,6 +24,7 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
+  params = await params;
   const page = await client.fetch(
     `*[_type == "page" && slug.current == $slug][0]{
     title,
@@ -114,7 +115,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
         question,
         answer
       }
-    }
+    },
+    bodyScript
   }`,
     { slug: params.slug }
   );
@@ -128,8 +130,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
   // Define url for share buttons
   const url = typeof window !== "undefined" ? window.location.href : "";
 
+  const bodyScriptHtml = page?.bodyScript || '';
+
   return (
     <>
+      {/* Add the body script directly to the page */}
+      {bodyScriptHtml && (
+        <div
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: bodyScriptHtml }}
+        />
+      )}
       {page.seo && (
         <Head>
           <title>{page.seo.metaTitle || page.title}</title>

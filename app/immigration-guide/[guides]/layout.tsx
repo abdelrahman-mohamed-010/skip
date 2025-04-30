@@ -8,18 +8,26 @@ const defaultMetadata = {
   keywords: ["immigration guides", "immigration resources", "legal guidance"],
 };
 
+// Helper function to fetch guide data
+async function getGuideMetadata(slug: string) {
+  const data = await client.fetch(
+    `*[_type == "guides" && slug.current == $slug][0]{
+      title,
+      seo,
+      headScript
+    }`,
+    { slug }
+  );
+  return data;
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { guides: string };
 }): Promise<Metadata> {
-  const guideData = await client.fetch(
-    `*[_type == "guides" && slug.current == $slug][0]{
-      title,
-      seo
-    }`,
-    { slug: params.guides }
-  );
+  params = await params;
+  const guideData = await getGuideMetadata(params.guides);
 
   if (!guideData?.seo?.metaTitle) {
     return defaultMetadata;
@@ -33,6 +41,11 @@ export async function generateMetadata({
       title: guideData.seo.metaTitle,
       description: guideData.seo.metaDescription,
     },
+    ...(guideData.headScript && {
+      other: {
+        custom: guideData.headScript
+      }
+    })
   };
 }
 

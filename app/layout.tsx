@@ -8,7 +8,6 @@ import { client } from "@/sanity/lib/client";
 import Script from "next/script";
 import ConditionalFooterComponents from "@/components/ConditionalFooterComponents";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import PageScripts from "@/components/PageScripts";
 import ScriptLogger from "@/components/ScriptLogger";
 
 const DEFAULT_TITLE = "SkipLegal - Immigration Law Made Simplee";
@@ -61,32 +60,11 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-async function getLandingScripts() {
-  try {
-    const landingScripts = await client.fetch(`
-      *[_type=="landing"][0]{
-        customScripts {
-          headScript,
-          bodyScript
-        }
-      }
-    `);
-    return (
-      landingScripts?.customScripts || { headScript: null, bodyScript: null }
-    );
-  } catch (error) {
-    console.error("Error fetching landing scripts:", error);
-    return { headScript: null, bodyScript: null };
-  }
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const landingScripts = await getLandingScripts();
-
   return (
     <ClerkProvider>
       <html lang="en">
@@ -160,14 +138,6 @@ export default async function RootLayout({
             }}
           />
           {/* End Meta Pixel Code */}
-
-          {landingScripts.headScript && (
-            <script
-              dangerouslySetInnerHTML={{
-                __html: landingScripts.headScript,
-              }}
-            />
-          )}
         </head>
         <body
           className={`${montserrat.variable} ${inter.variable} antialiased bg-white`}
@@ -196,15 +166,6 @@ export default async function RootLayout({
           {children}
           <ConditionalFooterComponents />
           <VercelAnalytics />
-          <PageScripts />
-
-          {landingScripts.bodyScript && (
-            <script
-              dangerouslySetInnerHTML={{
-                __html: landingScripts.bodyScript,
-              }}
-            />
-          )}
         </body>
       </html>
     </ClerkProvider>

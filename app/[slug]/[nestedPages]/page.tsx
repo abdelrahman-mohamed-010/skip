@@ -21,6 +21,7 @@ type Params = {
 };
 
 export default async function Page({ params }: Params) {
+  params = await params;
   const { slug, nestedPages } = params;
   // Fetch the parent page including inner pages with their content.
   const pageData = await client.fetch(
@@ -92,8 +93,10 @@ export default async function Page({ params }: Params) {
           faqs[] {  // Add this block to fetch FAQ data
             question,
             answer
-          }
-        }
+          },
+          bodyScript
+        },
+        bodyScript
       }
     }`,
     { slug }
@@ -115,8 +118,17 @@ export default async function Page({ params }: Params) {
   // Define url for share buttons
   const url = typeof window !== "undefined" ? window.location.href : "";
 
+  const bodyScriptHtml = innerPage?.bodyScript || '';
+
   return (
     <main>
+      {/* Add the body script directly to the page */}
+      {bodyScriptHtml && (
+        <div
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: bodyScriptHtml }}
+        />
+      )}
       {!hasHeaderComponent && (
         <section className="text-center pt-24 relative ">
           <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">

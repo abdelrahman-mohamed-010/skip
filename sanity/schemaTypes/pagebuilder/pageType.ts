@@ -43,11 +43,18 @@ export const pageType = defineType({
       description: "Toggle to display share button on page.",
     }),
     defineField({
-      name: "customScripts",
-      type: "customScript",
-      title: "Custom Scripts",
+      name: "headScript",
+      type: "text",
+      title: "Head Script",
       description:
-        "Add custom scripts to the head and body sections of this page",
+        "JavaScript or other code to be placed in the head section of the page (e.g. structured data)",
+    }),
+    defineField({
+      name: "bodyScript",
+      type: "text",
+      title: "Body Script",
+      description:
+        "JavaScript or other code to be placed at the end of the body section",
     }),
     defineField({
       name: "innerPages",
@@ -81,11 +88,18 @@ export const pageType = defineType({
               description: "Toggle to display share button on inner page.",
             }),
             defineField({
-              name: "customScripts",
-              type: "customScript",
-              title: "Custom Scripts",
+              name: "headScript",
+              type: "text",
+              title: "Head Script",
               description:
-                "Add custom scripts to the head and body sections of this inner page",
+                "JavaScript or other code to be placed in the head section of the inner page (e.g. structured data)",
+            }),
+            defineField({
+              name: "bodyScript",
+              type: "text",
+              title: "Body Script",
+              description:
+                "JavaScript or other code to be placed at the end of the body section of the inner page",
             }),
             defineField({
               name: "content",
@@ -142,11 +156,18 @@ export const pageType = defineType({
                         "Toggle to display share button on deep nested page.",
                     }),
                     defineField({
-                      name: "customScripts",
-                      type: "customScript",
-                      title: "Custom Scripts",
+                      name: "headScript",
+                      type: "text",
+                      title: "Head Script",
                       description:
-                        "Add custom scripts to the head and body sections of this deep nested page",
+                        "JavaScript or other code to be placed in the head section of the deep nested page (e.g. structured data)",
+                    }),
+                    defineField({
+                      name: "bodyScript",
+                      type: "text",
+                      title: "Body Script",
+                      description:
+                        "JavaScript or other code to be placed at the end of the body section of the deep nested page",
                     }),
                     defineField({
                       name: "content",

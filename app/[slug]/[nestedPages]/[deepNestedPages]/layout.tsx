@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Navigation from "@/components/Navigation";
-import PageScripts from "@/components/PageScripts";
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
 
@@ -23,34 +22,34 @@ const defaultMetadata = {
   },
 };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string; nestedPages: string; deepNestedPages: string };
-}): Promise<Metadata> {
-  const pageData = await client.fetch(
+// Helper function to fetch deep nested page data
+async function getDeepNestedPageMetadata(slug: string, nestedPages: string, deepNestedPages: string) {
+  const data = await client.fetch(
     `*[_type == "page" && slug.current == $slug][0]{
       innerPages[]{
         "slug": slug.current,
         deepNestedPages[]{
           "slug": slug.current,
           title,
-          seo
+          seo,
+          headScript
         }
       }
     }`,
-    { slug: params.slug }
+    { slug }
   );
+  const innerPage = data?.innerPages?.find((page: any) => page.slug === nestedPages);
+  const deepNestedPage = innerPage?.deepNestedPages?.find((page: any) => page.slug === deepNestedPages);
+  return deepNestedPage;
+}
 
-  // Find the correct inner page first
-  const innerPage = pageData?.innerPages?.find(
-    (page: any) => page.slug === params.nestedPages
-  );
-
-  // Then find the deep nested page
-  const deepNestedPage = innerPage?.deepNestedPages?.find(
-    (page: any) => page.slug === params.deepNestedPages
-  );
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string; nestedPages: string; deepNestedPages: string };
+}): Promise<Metadata> {
+  params = await params;
+  const deepNestedPage = await getDeepNestedPageMetadata(params.slug, params.nestedPages, params.deepNestedPages);
 
   if (!deepNestedPage?.seo?.metaTitle) {
     return defaultMetadata;
@@ -64,72 +63,21 @@ export async function generateMetadata({
       title: deepNestedPage.seo.metaTitle,
       description: deepNestedPage.seo.metaDescription,
     },
-  };
-}
-
-interface PageData {
-  innerPages?: Array<{
-    slug: string;
-    deepNestedPages?: Array<{
-      slug: string;
-      customScripts?: {
-        headScript?: string;
-        bodyScript?: string;
-      };
-    }>;
-  }>;
-}
-
-async function getPageScripts(
-  slug: string,
-  nestedPage: string,
-  deepNestedPage: string
-): Promise<{ headScript?: string; bodyScript?: string }> {
-  const pageData = (await client.fetch(
-    `*[_type == "page" && slug.current == $slug][0]{
-      innerPages[]{
-        "slug": slug.current,
-        deepNestedPages[]{
-          "slug": slug.current,
-          customScripts
-        }
+    ...(deepNestedPage.headScript && {
+      other: {
+        custom: deepNestedPage.headScript
       }
-    }`,
-    { slug }
-  )) as PageData;
-
-  // Find the correct inner page
-  const innerPage = pageData?.innerPages?.find(
-    (page) => page.slug === nestedPage
-  );
-
-  // Find the deep nested page
-  const deepPage = innerPage?.deepNestedPages?.find(
-    (page) => page.slug === deepNestedPage
-  );
-
-  return deepPage?.customScripts || {};
+    })
+  };
 }
 
 export default async function Layout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { slug: string; nestedPages: string; deepNestedPages: string };
 }) {
-  const customScripts = await getPageScripts(
-    params.slug,
-    params.nestedPages,
-    params.deepNestedPages
-  );
-
   return (
     <div className="min-h-screen flex flex-col">
-      <PageScripts
-        headScript={customScripts?.headScript}
-        bodyScript={customScripts?.bodyScript}
-      />
       <Navigation />
       {children}
     </div>

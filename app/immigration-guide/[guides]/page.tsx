@@ -1,7 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import ShareButton from "@/components/ShareButton";
 import BlogRichText from "@/components/BlogsRichText";
-import PageScripts from "@/components/PageScripts";
 
 async function getGuide(slug: string) {
   return await client.fetch(
@@ -16,25 +15,31 @@ async function getGuide(slug: string) {
           asset->
         }
       },
-      customScripts
+      bodyScript
     }`,
     { slug }
   );
 }
 
 const guidesPage = async ({ params }: { params: { guides: string } }) => {
+  params = await params;
   const guides = await getGuide(params.guides);
 
   if (!guides) {
     return <div>guides not found</div>;
   }
 
+  const bodyScriptHtml = guides?.bodyScript || '';
+
   return (
     <>
-      <PageScripts
-        headScript={guides.customScripts?.headScript}
-        bodyScript={guides.customScripts?.bodyScript}
-      />
+      {/* Add the body script directly to the page */}
+      {bodyScriptHtml && (
+        <div
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: bodyScriptHtml }}
+        />
+      )}
       <article className="container mx-auto px-4 mt-16 py-12 max-w-4xl">
         <header className="mb-8">
           <h1 className="text-4xl text-primary max-sm:text-2xl font-bold mb-4">

@@ -1,7 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import ShareButton from "@/components/ShareButton";
 import BlogRichText from "@/components/BlogsRichText";
-import PageScripts from "@/components/PageScripts";
 
 async function getBlog(slug: string) {
   return await client.fetch(
@@ -16,25 +15,31 @@ async function getBlog(slug: string) {
           asset->
         }
       },
-      customScripts
+      bodyScript
     }`,
     { slug }
   );
 }
 
 const BlogPage = async ({ params }: { params: { blog: string } }) => {
+  params = await params;
   const blog = await getBlog(params.blog);
 
   if (!blog) {
     return <div>Blog not found</div>;
   }
 
+  const bodyScriptHtml = blog?.bodyScript || '';
+
   return (
     <>
-      <PageScripts
-        headScript={blog.customScripts?.headScript}
-        bodyScript={blog.customScripts?.bodyScript}
-      />
+      {/* Add the body script directly to the page */}
+      {bodyScriptHtml && (
+        <div
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: bodyScriptHtml }}
+        />
+      )}
       <article className="container mx-auto px-4 mt-16 py-12 max-w-4xl">
         <header className="mb-8">
           <h1 className="text-4xl max-sm:text-2xl  text-primary font-bold mb-4">

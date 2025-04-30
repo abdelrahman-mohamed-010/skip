@@ -25,6 +25,7 @@ interface ShareButtonConfig {
   label: string;
   color: string;
   count: string;
+  platform: string;
 }
 
 export default function InlineShareButtons({
@@ -40,7 +41,7 @@ export default function InlineShareButtons({
   const shareButtons: ShareButtonConfig[] = [
     {
       Button: TwitterShareButton,
-      Icon: ({ size }) => (
+      Icon: ({ size }: { size: number }) => (
         <svg viewBox="0 0 24 24" width={size} height={size}>
           <path
             fill="currentColor"
@@ -51,6 +52,7 @@ export default function InlineShareButtons({
       label: "Post",
       color: "bg-black hover:bg-gray-900",
       count: "1.2K",
+      platform: "twitter",
     },
     {
       Button: FacebookShareButton,
@@ -58,6 +60,7 @@ export default function InlineShareButtons({
       label: "Share",
       color: "bg-[#4267B2] hover:bg-[#365899]",
       count: "892",
+      platform: "facebook",
     },
     {
       Button: LinkedinShareButton,
@@ -65,6 +68,7 @@ export default function InlineShareButtons({
       label: "Post",
       color: "bg-[#0077b5] hover:bg-[#006399]",
       count: "654",
+      platform: "linkedin",
     },
   ];
 
@@ -78,9 +82,9 @@ export default function InlineShareButtons({
         Share this article
       </h3>
       <div className="flex gap-4">
-        {shareButtons.map(({ Button, Icon, label, color, count }) => (
+        {shareButtons.map(({ Button, Icon, label, color, count, platform }) => (
           <Button
-            key={label}
+            key={platform}
             url={shareUrl}
             title={shareTitle}
             className="focus:outline-none"
