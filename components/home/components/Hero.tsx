@@ -1,5 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import LawyerBot from "./LawyerBot";
 import CallButton from "@/components/CallButton";
+import AttorneyHelpModal from "@/components/AttorneyHelpModal";
+import { UserPlus } from "lucide-react";
 
 interface HeroProps {
   heroData: {
@@ -10,6 +15,8 @@ interface HeroProps {
 }
 
 const Hero = ({ heroData }: HeroProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <section className="relative md:min-h-screen py-24  max-sm:pb-12 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-white via-primary/5 to-primary/10">
       <div className="max-w-7xl mx-auto text-center relative">
@@ -29,6 +36,25 @@ const Hero = ({ heroData }: HeroProps) => {
               <div className="absolute -bottom-2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             </span>
           </h1>
+
+          {/* Enhanced Attorney Help Section */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8 px-4">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 shadow-md border border-primary/10 flex items-center md:mr-3">
+              <span className="text-primary/90 font-medium text-sm md:text-base">
+                Need personalized legal advice?{" "}
+                <span className="font-semibold block md:inline">
+                  Our attorneys are ready to help.
+                </span>
+              </span>
+            </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 px-8 py-3 text-white bg-primary border-2 border-primary hover:bg-white hover:text-primary rounded-full transition-all shadow-lg hover:shadow-xl font-medium transform hover:scale-100 duration-300"
+            >
+              <UserPlus className="w-5 h-5" />
+              <span>Get Attorney Help</span>
+            </button>
+          </div>
 
           <div className="mt-8 sm:mt-12 max-w-4xl mx-auto animate-fadeIn">
             <LawyerBot />
@@ -52,6 +78,12 @@ const Hero = ({ heroData }: HeroProps) => {
           </div>
         </div>
       </div>
+
+      {/* Attorney Help Modal */}
+      <AttorneyHelpModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

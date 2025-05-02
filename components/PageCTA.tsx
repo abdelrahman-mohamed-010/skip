@@ -7,6 +7,7 @@ import {
   Paperclip,
   X,
   LogIn,
+  UserPlus,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { chatStore } from "@/lib/chatStore";
@@ -15,6 +16,7 @@ import { logUserEvent } from "@/lib/logger";
 import logger from "@/lib/logger";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
+import AttorneyHelpModal from "@/components/AttorneyHelpModal";
 
 interface Message {
   role: "user" | "ai";
@@ -23,6 +25,7 @@ interface Message {
 
 const PageCTA = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isAttorneyModalOpen, setIsAttorneyModalOpen] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -295,6 +298,22 @@ const PageCTA = () => {
         <div className="group relative flex items-center">
           <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
             <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
+              Get attorney help
+              <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 transform rotate-45 w-3 h-3 bg-gray-900"></div>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsAttorneyModalOpen(true)}
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all transform hover:scale-105"
+            aria-label="Get attorney help"
+          >
+            <UserPlus className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+        </div>
+
+        <div className="group relative flex items-center">
+          <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
+            <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
               Chat with your AI immigration assistant
               <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 transform rotate-45 w-3 h-3 bg-gray-900"></div>
             </div>
@@ -528,6 +547,12 @@ const PageCTA = () => {
           </div>
         </div>
       )}
+
+      {/* Attorney Help Modal */}
+      <AttorneyHelpModal
+        isOpen={isAttorneyModalOpen}
+        onClose={() => setIsAttorneyModalOpen(false)}
+      />
     </>
   );
 };
