@@ -160,6 +160,20 @@ export default async function RootLayout({
             }}
           />
 
+          {/* Begin Constant Contact Active Forms */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `var _ctct_m = "e8a9d118df4ddfae0e702415c05694db";`,
+            }}
+          />
+          <script 
+            id="signupScript" 
+            src="//static.ctctcdn.com/js/signup-form-widget/current/signup-form-widget.min.js" 
+            async 
+            defer
+          />
+          {/* End Constant Contact Active Forms */}
+
           {/* Development script logger */}
           {process.env.NODE_ENV === "development" && <ScriptLogger />}
 
