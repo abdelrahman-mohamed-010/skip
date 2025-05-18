@@ -12,6 +12,7 @@ import BlockComponent from "@/components/BlockComponent";
 import Questions from "@/components/Questions";
 import InlineShareButtons from "@/components/InlineShareButtons";
 import Slider from "@/components/Slider";
+import CaseIntroSection from "@/components/CaseIntroSection";
 
 type Params = {
   params: {
@@ -118,7 +119,7 @@ export default async function Page({ params }: Params) {
   // Define url for share buttons
   const url = typeof window !== "undefined" ? window.location.href : "";
 
-  const bodyScriptHtml = innerPage?.bodyScript || '';
+  const bodyScriptHtml = innerPage?.bodyScript || "";
 
   return (
     <main>
@@ -129,8 +130,9 @@ export default async function Page({ params }: Params) {
           dangerouslySetInnerHTML={{ __html: bodyScriptHtml }}
         />
       )}
+      <CaseIntroSection />
       {!hasHeaderComponent && (
-        <section className="text-center pt-24 relative ">
+        <section className="text-center pt-12 relative ">
           <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
             {innerPage.title}
           </h1>

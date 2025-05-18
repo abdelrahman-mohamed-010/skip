@@ -1,50 +1,32 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import Hero from "@/components/home/components/Hero";
-import Features from "@/components/home/components/Features";
-import Services from "@/components/home/components/Services";
-import Process from "@/components/home/components/Process";
-import News from "@/components/home/components/News";
 import Navigation from "@/components/Navigation";
-// Import the client wrapper component
-import { client } from "../sanity/lib/client";
-
-// Fetch landing page sections
-async function getData() {
-  try {
-    const data = await client.fetch(`*[_type == "landing"][0]{ 
-      sections
-    }`);
-    return data ?? { sections: [] };
-  } catch (error) {
-    console.error('Error fetching home data:', error);
-    return { sections: [] };
-  }
-}
+import FileSecuritySection from "@/components/home/components/FileSecuritySection";
+import LegalDocumentsSection from "@/components/home/components/LegalDocumentsSection";
+import TestimonialsSection from "@/components/home/components/TestimonialsSection";
+import VideoShowcaseSection from "@/components/home/components/VideoShowcaseSection";
+import FAQ from "@/components/home/components/FAQ";
+import CallToActionSection from "@/components/home/components/CallToActionSection";
+import Hero from "@/components/home/components/Hero";
+import News from "@/components/home/components/News";
 
 export default async function Home() {
-  const data = await getData();
-
+  // Mock data for hero - in production, you would fetch this from Sanity
+  const heroData = {
+    journeyTitle: "Your Immigration Journey",
+    startsText: "Starts Here",
+    ctaNumber: "844-475-4753",
+  };
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      {data.sections.map((section: any) => {
-        // Render section based on its _type.
-        switch (section._type) {
-          case "hero":
-            return <Hero heroData={section} key={section._id || "hero"} />;
-          case "features":
-            return <Features key="features" data={section} />;
-          case "services":
-            return <Services key="services" data={section} />;
-          case "process":
-            return <Process key="process" data={section} />;
-          default:
-            return null;
-        }
-      })}
-      <News />
-      
+      <Hero heroData={heroData} />
+     
+      <FileSecuritySection />
+      <VideoShowcaseSection />
+      <LegalDocumentsSection /> <News />
+      <TestimonialsSection />
+      <FAQ />
+      <CallToActionSection />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import BlockComponent from "@/components/BlockComponent";
 import Questions from "@/components/Questions";
 import InlineShareButtons from "@/components/InlineShareButtons";
 import Slider from "@/components/Slider";
+import CaseIntroSection from "@/components/CaseIntroSection";
 
 export async function generateStaticParams() {
   const pages = await client.fetch(`*[_type == "page"]{
@@ -130,7 +131,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   // Define url for share buttons
   const url = typeof window !== "undefined" ? window.location.href : "";
 
-  const bodyScriptHtml = page?.bodyScript || '';
+  const bodyScriptHtml = page?.bodyScript || "";
 
   return (
     <>
@@ -150,9 +151,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
           )}
         </Head>
       )}
-      <main className=" bg-white">
+      <main className="bg-white">
+        <CaseIntroSection />
         {!hasHeaderComponent && (
-          <section className="pt-24 text-center">
+          <section className="pt-12 text-center">
             <h1 className="text-5xl max-sm:text-4xl font-bold text-primary">
               {page.title}
             </h1>

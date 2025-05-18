@@ -30,57 +30,59 @@ const News = async () => {
   const latestNews = await getLatestNews();
 
   return (
-    <section className="py-16 bg-gradient-to-br from-white via-primary/5 to-primary/10 mb-14">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-primary">
-            Latest Immigration News
-          </h2>
+    <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <div className="flex flex-col items-center text-center mb-12">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-4">
+          Latest Immigration News
+        </h2>
+        <p className="text-secondary text-base md:text-lg max-w-2xl">
+          Stay informed with the most recent updates and changes in immigration
+          law and policies
+        </p>
+      </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {latestNews.map((news) => (
           <Link
-            href="/latest-immigration-news"
-            className="text-accent hover:text-accent/80 transition-colors duration-200 inline-flex items-center self-start sm:self-auto"
+            href={`/latest-immigration-news/${news.slug.current}`}
+            key={news._id}
+            className="group"
           >
-            View All
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </Link>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {latestNews.map((news, index) => (
-            <Link
-              href={`/latest-immigration-news/${news.slug.current}`}
-              key={news._id}
-              className="group"
-            >
-              <article
-                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 animate-fadeIn cursor-pointer"
-                style={{ animationDelay: `${0.2 * index}s` }}
-              >
-                {news.imageUrl && (
+            <article className="h-full flex flex-col bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+              {news.imageUrl && (
+                <div className="relative h-48 md:h-56 overflow-hidden">
                   <img
                     src={news.imageUrl}
                     alt={news.title}
-                    className="w-full aspect-video object-cover"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                   />
-                )}
-                <div className="p-6">
-                  <span className="text-sm text-accent">{news.category}</span>
-                  <h3 className="text-xl font-semibold text-primary mt-2 mb-3 line-clamp-2">
-                    {news.title}
-                  </h3>
-                  <p className="text-secondary mb-4 line-clamp-2">
-                    {news.excerpt}
-                  </p>
-                  <span className="inline-flex items-center text-primary group-hover:text-accent transition-colors duration-200">
-                    Read More
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </span>
                 </div>
-              </article>
-            </Link>
-          ))}
-        </div>
+              )}
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-xl font-semibold text-primary mb-3 line-clamp-2 group-hover:text-accent transition-colors duration-200">
+                  {news.title}
+                </h3>
+                <p className="text-secondary text-sm mb-4 line-clamp-2 flex-grow">
+                  {news.excerpt}
+                </p>
+                <div className="inline-flex items-center text-accent text-sm font-medium">
+                  Read More
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                </div>
+              </div>
+            </article>
+          </Link>
+        ))}
       </div>
-    </section>
+      <div className="flex justify-center mt-10">
+        <Link
+          href="/latest-immigration-news"
+          className="inline-flex items-center text-sm px-6 py-3 bg-primary hover:bg-accent text-white rounded-md font-medium transition-colors duration-200"
+        >
+          View All Immigration News
+          <ArrowRight className="ml-2 w-4 h-4" />
+        </Link>
+      </div>
+    </div>
   );
 };
 
