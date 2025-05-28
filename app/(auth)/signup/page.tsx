@@ -1,20 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { SignUp } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Lock, User, ArrowRight } from "lucide-react";
 
 export default function SignUpPage() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Add your signup logic here
-    setTimeout(() => setIsLoading(false), 1000);
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-[400px] space-y-8">
@@ -30,120 +20,21 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-8">
-          <div className="space-y-1">
-            <label htmlFor="name" className="text-sm font-medium text-gray-700">
-              Full Name
-            </label>
-            <div className="relative">
-              <input
-                id="name"
-                type="text"
-                required
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter your full name"
-              />
-              <User className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <div className="relative">
-              <input
-                id="email"
-                type="email"
-                required
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter your email"
-              />
-              <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type="password"
-                required
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Create a password"
-              />
-              <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label
-              htmlFor="confirmPassword"
-              className="text-sm font-medium text-gray-700"
-            >
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type="password"
-                required
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Confirm your password"
-              />
-              <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-            </div>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              id="terms"
-              type="checkbox"
-              required
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-              I agree to the{" "}
-              <Link
-                href="/terms"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Privacy Policy
-              </Link>
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <>
-                Create account
-                <ArrowRight className="ml-2 -mr-1 w-4 h-4" />
-              </>
-            )}
-          </button>
-        </form>
+        <div className="mt-8">
+          <SignUp
+            afterSignUpUrl="/app"
+            redirectUrl="/app"
+            appearance={{
+              elements: {
+                formButtonPrimary:
+                  "bg-blue-600 hover:bg-blue-700 text-sm normal-case",
+                card: "shadow-none",
+                headerTitle: "hidden",
+                headerSubtitle: "hidden",
+              },
+            }}
+          />
+        </div>
 
         <p className="text-center text-sm text-gray-600">
           Already have an account?{" "}

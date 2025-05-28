@@ -20,7 +20,6 @@ export default async function Home() {
     <div className="min-h-screen bg-white">
       <Navigation />
       <Hero heroData={heroData} />
-     
       <FileSecuritySection />
       <VideoShowcaseSection />
       <LegalDocumentsSection /> <News />

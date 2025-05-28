@@ -9,8 +9,9 @@ export default function ConditionalFooterComponents() {
   const pathname = usePathname();
   const isStudioRoute = pathname.includes("/studio");
   const isThankYouPage = pathname.includes("/thank-you");
+  const isAppRoute = pathname.includes("/app");
 
-  if (isStudioRoute || isThankYouPage) {
+  if (isStudioRoute || isThankYouPage || isAppRoute) {
     return null;
   }
 

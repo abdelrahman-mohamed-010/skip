@@ -4,7 +4,7 @@ import { client } from "@/sanity/lib/client";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import ImageSlider from "@/components/imageSlider";
 import ContentSlider from "@/components/ContentSlider";
-import PdfViewer from "@/components/PdfViewer";
+import PdfViewer from "@/app/app/components/PdfViewer";
 import PageCTA from "@/components/PageCTA";
 import Header from "@/components/Header";
 import Finale from "@/components/Finale";
