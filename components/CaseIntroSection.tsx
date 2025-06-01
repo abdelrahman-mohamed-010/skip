@@ -1,8 +1,11 @@
 "use client";
 
 import { Shield, Lock, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const CaseIntroSection = () => {
+  const router = useRouter();
+
   return (
     <section className="py-16 bg-gradient-to-br from-white to-slate-50 pt-24">
       <div className="container mx-auto px-4 max-w-4xl text-center">
@@ -34,7 +37,7 @@ const CaseIntroSection = () => {
           </div>
 
           <button
-            onClick={() => (window.location.href = "#apply-form")}
+            onClick={() => router.push("/app")}
             className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg text-lg font-medium transition-all transform hover:scale-105"
           >
             Start Your Case Analysis Now
