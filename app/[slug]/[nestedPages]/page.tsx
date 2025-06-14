@@ -204,7 +204,7 @@ export default async function Page({ params }: Params) {
                 className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
               >
                 <div className="container mx-auto px-4">
-                  <PdfViewer pdfUrl={component.pdfFile.asset.url} />
+                  <PDFViewer pdfFile={component.pdfFile.asset.url} />
                 </div>
               </section>
             );

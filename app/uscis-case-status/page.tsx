@@ -4,28 +4,6 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import Navigation from "@/components/Navigation";
 import { Bell, Check, Mail, RefreshCw, ChevronRight, AlertCircle } from 'lucide-react';
-import Script from 'next/script';
-
-declare global {
-  interface Window {
-    hbspt: {
-      forms: {
-        create: (config: HubSpotFormConfig) => void;
-      };
-    };
-  }
-}
-
-interface HubSpotFormConfig {
-  region: string;
-  portalId: string;
-  formId: string;
-  target: string;
-  css?: string;
-  cssRequired?: string;
-  cssClass?: string;
-  onFormSubmit?: () => void;
-}
 
 type HistoricalStatus = {
   date: string;
@@ -77,19 +55,50 @@ export default function ImmigrationCaseStatus() {
     setEmail('');
 
     try {
-      const response = await fetch(
-        `/api/case-status?receiptNumber=${receiptNumber}`
-      );
+      // Check if we're in development mode
+      const isDevelopment = process.env.NODE_ENV === 'development' || 
+                            typeof window !== 'undefined' && window.location.hostname === 'localhost';
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API Error Response:", errorText);
-        throw new Error(`Failed to fetch case status. Please make sure you have the correct receipt number`);
+      let data;
+      
+      if (isDevelopment) {
+        // DEVELOPMENT ONLY - Use mock data for local testing
+        console.log("Using mock data in development mode");
+        
+        // Mock data that simulates a successful API response
+        data = {
+          case_status: {
+            receiptNumber: receiptNumber,
+            formType: "I-485 Application to Register Permanent Residence",
+            submittedDate: "2023-06-15",
+            current_case_status_text_en: "Case Was Received",
+            current_case_status_desc_en: "Your case has been received by USCIS and is being processed. You will be notified of any updates.",
+            hist_case_status: [
+              {
+                date: "2023-06-15",
+                completed_text_en: "Case Was Received",
+                completed_text_es: "Caso Recibido"
+              }
+            ]
+          },
+          message: "Success"
+        };
+      } else {
+        // PRODUCTION - Use the real API
+        const response = await fetch(
+          `/api/case-status?receiptNumber=${receiptNumber}`
+        );
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("API Error Response:", errorText);
+          throw new Error(`Failed to fetch case status. Please make sure you have the correct receipt number`);
+        }
+        
+        data = await response.json();
+        console.log("API Response:", data);
+        console.log("Historical Data:", data.case_status?.hist_case_status);
       }
-      
-      const data = await response.json();
-      console.log("API Response:", data);
-      console.log("Historical Data:", data.case_status?.hist_case_status);
       
       setCaseStatus(data);
     } catch (err) {
@@ -132,43 +141,42 @@ export default function ImmigrationCaseStatus() {
 
     setSubscribeLoading(true);
     setSubscribeError('');
-
+    
     try {
-      const portalId = '48301226';
-      const formId = '98f52bc1-6ae0-458b-be2f-597a38bb3397';
-      const formData = {
-        fields: [
-          {
-            name: 'email',
-            value: email
-          },
-          {
-            name: 'uscis_case_number',
-            value: caseStatus.case_status.receiptNumber
-          }
-        ],
-        context: {
-          pageUri: window.location.href,
-          pageName: document.title
-        }
-      };
-
-      const response = await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`, {
+      console.log('Sending subscription request to API route');
+      const response = await fetch('/api/subscribe-case', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          email,
+          caseNumber: caseStatus.case_status.receiptNumber
+        })
       });
 
+      console.log('Response received:', response.status);
+      
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error('Failed to submit subscription');
+        console.error('Subscription error:', data);
+        throw new Error(data.error || 'Failed to subscribe. Please try again.');
       }
 
+      console.log('Subscription successful:', data);
       setSubscribed(true);
     } catch (err) {
-      console.error('Error submitting to HubSpot:', err);
-      setSubscribeError('Failed to subscribe. Please try again.');
+      console.error('Error in subscription process:', err);
+      if (err instanceof Error) {
+        if (err.message.includes('Unable to connect to the backend service')) {
+          setSubscribeError('Subscription service is currently unavailable. Please try again later.');
+        } else {
+          setSubscribeError(err.message);
+        }
+      } else {
+        setSubscribeError('Failed to subscribe. Please try again.');
+      }
     } finally {
       setSubscribeLoading(false);
     }
@@ -184,32 +192,6 @@ export default function ImmigrationCaseStatus() {
 
   return (
     <>
-      <Script
-        src="https://js.hsforms.net/forms/embed/v2.js"
-        strategy="beforeInteractive"
-        onLoad={() => {
-          console.log('HubSpot script loaded, attempting to create form...');
-          if (typeof window !== 'undefined' && window.hbspt) {
-            window.hbspt.forms.create({
-              region: "na1",
-              portalId: "48301226",
-              formId: "98f52bc1-6ae0-458b-be2f-597a38bb3397",
-              target: "#hubspotForm",
-              css: "display: none;",
-              cssRequired: "",
-              cssClass: "hidden-hubspot-form",
-              onFormSubmit: () => {
-                console.log('Form submitted successfully');
-                setSubscribed(true);
-              }
-            });
-          }
-        }}
-        onError={(e) => {
-          console.error('Error loading HubSpot script:', e);
-          setSubscribeError('Failed to load subscription service. Please refresh the page.');
-        }}
-      />
       <Navigation />
       <div className="container mx-auto py-24 px-4">
         <h1 className="text-3xl font-bold text-center mb-8 text-primary">
@@ -266,8 +248,14 @@ export default function ImmigrationCaseStatus() {
             )}
           </div>
           <button
-            className={`w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${loading || !receiptNumber ? "opacity-50 cursor-not-allowed" : ""}`}
-            disabled={loading || !receiptNumber}
+            className={`w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${loading || !receiptNumber.trim() ? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={loading || !receiptNumber.trim()}
+            type="submit"
+            onClick={(e) => {
+              if (receiptNumber.trim()) {
+                handleSubmit(e as React.FormEvent);
+              }
+            }}
           >
             {loading ? "Checking..." : "Check Status"}
           </button>
@@ -326,16 +314,6 @@ export default function ImmigrationCaseStatus() {
                   <AlertCircle className="h-4 w-4 mr-1" /> {subscribeError}
                 </div>
               )}
-              <div 
-                id="hubspotForm" 
-                className="hidden-hubspot-form" 
-                style={{ 
-                  position: 'absolute',
-                  visibility: 'hidden',
-                  height: 0,
-                  overflow: 'hidden'
-                }}
-              ></div>
             </div>
           ) : (
             <div className="max-w-2xl mx-auto mt-8 border border-green-200 rounded-lg overflow-hidden bg-green-50 p-4">

@@ -2,7 +2,7 @@
 import { client } from "@/sanity/lib/client";
 import ImageSlider from "@/components/imageSlider";
 import ContentSlider from "@/components/ContentSlider";
-import PdfViewer from "@/app/app/components/PdfViewer";
+import PDFViewer from "@/app/app/components/PDFViewer";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import PageCTA from "@/components/PageCTA";
 import Header from "@/components/Header";
@@ -228,7 +228,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   className={`py-16 px-4 max-w-[1160px] mx-auto bg-white ${firstComponentClass}`}
                 >
                   <div className="container mx-auto px-4">
-                    <PdfViewer pdfUrl={component.pdfFile.asset.url} />
+                    <PDFViewer pdfFile={component.pdfFile.asset.url} />
                   </div>
                 </section>
               );

@@ -52,7 +52,7 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
   };
 
   // Modified answer handler for simple questions
-  const handleAnswer = (question: number, answer: any) => {
+  const handleAnswer = (question: number, answer: string | boolean) => {
     const newAnswers = { ...answers };
     switch (question) {
       case 0:
@@ -192,7 +192,7 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
       <div className="bg-red-50 border border-red-300 p-8 rounded-xl text-center">
         <h3 className="text-3xl font-bold text-red-700 mb-4">Heads Up!</h3>
         <p className="text-lg mb-6">
-          We couldn't find a matching category for your situation. Please see
+          We could not find a matching category for your situation. Please see
           other resources or consult an attorney.
         </p>
       </div>

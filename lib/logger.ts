@@ -60,7 +60,7 @@ const logToGrafana = async (
   }
 
   if (!process.env.GRAFANA_API_KEY) {
-    logToConsole(level, message, metadata);
+    logToConsole(level, message, metadata); // Fallback if API key is missing
     return;
   }
 
@@ -88,41 +88,75 @@ const logToGrafana = async (
     }]
   };
 
-  try {
-    // Using your exact authentication format
-    const auth = Buffer.from(`${GRAFANA_USERNAME}:${process.env.GRAFANA_API_KEY}`).toString('base64');
-    
-    // Only attempt to send to Grafana in a server context
-    if (typeof window === 'undefined') {
+  // Only attempt to send to Grafana in a server context
+  if (typeof window !== 'undefined') {
+    logToConsole(level, message, metadata); // Fallback in browser context
+    return;
+  }
+
+  const auth = Buffer.from(`${GRAFANA_USERNAME}:${process.env.GRAFANA_API_KEY}`).toString('base64');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Basic ${auth}`,
+    'X-Scope-OrgID': GRAFANA_USERNAME
+  };
+
+  let lastError: any = null;
+  const maxRetries = 3; // 3 retries means 4 attempts total
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
       const response = await fetch(GRAFANA_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${auth}`,
-          'X-Scope-OrgID': GRAFANA_USERNAME
-        },
+        headers: headers,
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Grafana logging failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorText,
-          url: GRAFANA_URL,
-          authType: 'Basic',
-          username: GRAFANA_USERNAME
-        });
+      if (response.ok) {
+        return; // Successfully sent to Grafana
       }
-    } else {
-      // In browser context, fall back to console
-      logToConsole(level, message, metadata);
+
+      // Handle non-ok responses
+      const status = response.status;
+      const errorText = await response.text();
+      lastError = { status, statusText: response.statusText, error: errorText };
+
+      if (status >= 400 && status < 500) {
+        // Do not retry for 4xx errors
+        console.error('Grafana logging failed with client error (will not retry):', lastError);
+        logToConsole(level, message, { ...metadata, grafanaError: lastError });
+        return;
+      }
+
+      // For 5xx errors or other non-ok responses that aren't 4xx
+      console.warn(`Grafana logging attempt ${attempt + 1} failed with status ${status}:`, lastError);
+
+      if (attempt === maxRetries) {
+        // All retries failed
+        console.error('All Grafana logging attempts failed.', { originalMessage: message, finalError: lastError });
+        logToConsole(level, message, { ...metadata, grafanaError: `All ${maxRetries + 1} attempts to log to Grafana failed. Last error: ${JSON.stringify(lastError)}` });
+        return;
+      }
+
+      // Wait before retrying
+      const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+      await new Promise(resolve => setTimeout(resolve, delay));
+
+    } catch (error) { // Network error or other fetch-related error
+      lastError = error;
+      console.warn(`Grafana logging attempt ${attempt + 1} failed with network/fetch error:`, error);
+      
+      if (attempt === maxRetries) {
+        // All retries failed
+        console.error('All Grafana logging attempts failed due to network/fetch errors.', { originalMessage: message, finalError: error });
+        logToConsole(level, message, { ...metadata, grafanaError: `All ${maxRetries + 1} attempts to log to Grafana failed. Last error: ${error instanceof Error ? error.message : String(error)}` });
+        return;
+      }
+
+      // Wait before retrying
+      const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
-  } catch (error) {
-    // If Grafana logging fails, fallback to console
-    console.error('Failed to send log to Grafana:', error);
-    logToConsole(level, message, metadata);
   }
 };
 
@@ -342,6 +376,27 @@ export async function logUserEvent(eventType: UserEventType, metadata: EventMeta
     // If server-side, log directly
     await log('info', `User Event: ${eventType}`, enrichedMetadata);
   }
+}
+
+// Startup check for Grafana API Key
+// This runs once when the module is initialized.
+if (typeof process !== 'undefined' && process.env) {
+  const grafanaApiKey = process.env.GRAFANA_API_KEY;
+  const timestamp = new Date().toISOString();
+  const logPrefix = `[${timestamp}] [INFO] [${serviceName}]`;
+
+  if (grafanaApiKey && grafanaApiKey.trim() !== '') {
+    console.info(`${logPrefix} Grafana API key is configured. Grafana logging enabled.`);
+  } else {
+    console.info(`${logPrefix} Grafana API key is MISSING. Grafana logging will be disabled (fallback to console).`);
+  }
+} else {
+  // Fallback for environments where process.env might not be available as expected
+  const timestamp = new Date().toISOString();
+  // serviceName might not be available here if process itself is undefined, so use a default.
+  const currentServiceName = typeof serviceName !== 'undefined' ? serviceName : 'skiplegal-app';
+  const logPrefix = `[${timestamp}] [INFO] [${currentServiceName}]`;
+  console.info(`${logPrefix} Unable to check Grafana API key (process or process.env not available). Grafana logging status unknown.`);
 }
 
 // New function for generic client-side logging
