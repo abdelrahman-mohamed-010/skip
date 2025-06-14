@@ -331,7 +331,7 @@ const PageCTA = () => {
         <div className="group relative flex items-center">
           <div className="absolute right-[calc(100%+0.75rem)] bottom-1/2 translate-y-1/2 hidden group-hover:block">
             <div className="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">
-              Call 844-4-SKIPLEGAL (844-475-4753)
+              Call 844-4-SKIPLEGAL (+1-844-475-4753)
               <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 transform rotate-45 w-3 h-3 bg-gray-900"></div>
             </div>
           </div>

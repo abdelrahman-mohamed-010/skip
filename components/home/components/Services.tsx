@@ -25,7 +25,7 @@ const Services = ({ data }: { data: ServicesData }) => {
             <div className="flex gap-6">
               <div className="group relative inline-block">
                 <CallButton
-                  phoneNumber="8444754753"
+                  phoneNumber="+18444754753"
                   source="services-section"
                   className="px-8 py-4 bg-primary hover:bg-white hover:text-primary border-primary border-2 max-sm:px-5 max-sm:py-3 max-sm:text-sm text-white rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center"
                 >
@@ -34,7 +34,7 @@ const Services = ({ data }: { data: ServicesData }) => {
                 <div className="absolute left-0 right-0 top-full mt-2 hidden group-hover:block w-max">
                   <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
                     <p className="text-primary text-sm">
-                      Call Us @ 844-4-SKIPLEGAL (844-475-4753)
+                      Call Us @ 844-4-SKIPLEGAL (+1-844-475-4753)
                     </p>
                   </div>
                 </div>

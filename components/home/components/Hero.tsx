@@ -57,7 +57,7 @@ const Hero = ({ heroData }: HeroProps) => {
         </div>
         <div className="group relative inline-block">
           <CallButton
-            phoneNumber="8444754753"
+            phoneNumber="+18444754753"
             source="hero-section"
             showIcon
             className="inline-flex items-center px-12 max-sm:px-8 py-3 mt-12 text-lg max-sm:text-base font-medium text-white bg-primary border-2 border-primary hover:bg-white hover:text-primary rounded-full transition-colors shadow-lg hover:shadow-xl"
@@ -67,7 +67,7 @@ const Hero = ({ heroData }: HeroProps) => {
           <div className="absolute left-0 right-0 top-full mt-2 hidden group-hover:block w-max">
             <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
               <p className="text-primary text-sm">
-                Call Us @ 844-4-SKIPLEGAL (844-475-4753)
+                Call Us @ 844-4-SKIPLEGAL (+1-844-475-4753)
               </p>
             </div>
           </div>

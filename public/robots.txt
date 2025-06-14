@@ -2,5 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /thank-you
+Disallow: /public/202505-SkipLegal-PitchDeck.pdf
+Disallow: /public/SkipLegal-Demo-deck.mov
+Disallow: /public/demo-video.mp4
 
 Sitemap: https://skiplegal.ai/sitemap-index.xml

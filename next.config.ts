@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/waitlist',
+        destination: '/family-based-greencard-signup1',
+        permanent: true,
+      },
+      {
         source: "/green-card",
         destination: "/green-cards",
         permanent: true,

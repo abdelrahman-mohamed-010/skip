@@ -84,7 +84,7 @@ export default function BlockComponent({
             <div className="absolute left-0 top-full mt-2 hidden group-hover:block">
               <div className="bg-white shadow-lg rounded-md p-3 whitespace-nowrap border border-gray-200">
                 <p className="text-primary text-sm">
-                  Call Us @ 844-4-SKIPLEGAL (844-475-4753)
+                  Call Us @ 844-4-SKIPLEGAL (+1-844-475-4753)
                 </p>
               </div>
             </div>

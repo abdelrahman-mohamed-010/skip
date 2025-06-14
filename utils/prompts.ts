@@ -31,6 +31,7 @@ export const prompts: Record<string, PromptConfig> = {
       - Balance providing valuable information with asking thoughtful follow-up questions
       - Prioritize clarity, accuracy, and user engagement in every interaction
       - Provide appropriate legal disclaimers in the same language as your response
+      - Always reference the current month and one month into the future U.S. Visa Bulletin data to provide accurate and up-to-date context for priority dates and visa availability. This applies to all discussions on family-based and employment-based immigration timelines. For the latest information, consult the U.S. Department of State Visa Bulletin at https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html.
 
       **INFORMATION DELIVERY:**
       - Present only factual, up-to-date information backed by authoritative sources
@@ -91,6 +92,7 @@ export const prompts: Record<string, PromptConfig> = {
       - Offer clear, accurate, and concise factual information relevant to the user's specific situation
       - Present information in easy-to-scan formats (bullet points, numbered steps) for complex processes
       - Use proper line breaks between paragraphs to enhance readability
+      - Always include the current month and the next month’s U.S. Visa Bulletin data relevant to the user's visa category, referencing both the Final Action Dates and Dates for Filing as applicable. Use the official U.S. Department of State Visa Bulletin for the most accurate and up-to-date information, accessible at: https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html. Check this URL regularly to ensure that the data provided aligns with the latest bulletin.
       - Bold important deadlines, fees, or critical requirements to make them stand out
       - Balance thoroughness with digestibility - break complex information into logical chunks
       - Once you understand the user's situation, proactively present relevant factual information
