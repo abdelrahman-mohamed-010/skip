@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 "use client";
 
 import { BookOpenCheck, ChevronRight, ArrowLeft } from "lucide-react";
@@ -8,42 +7,21 @@ interface QuizModalProps {
   onOptionSelect: (takeQuiz: boolean, data?: QuizAnswer) => void;
 }
 
-// Updated answers interface
 interface QuizAnswer {
-  petitionerStatus?: "usCitizen" | "greenCard" | "other";
-  beneficiaryLocation?: "inUS" | "outsideUS";
-  maritalStatus?: "married" | "unmarried";
-  ageStatus?: "over21" | "under21";
-  greencardFor?: "spouse" | "parent" | "sibling" | "fiance" | "child";
-  spouseDuration?: "<2" | ">2";
-  childAdditional?: {
-    maritalStatus?: "married" | "unmarried";
-    ageStatus?: "over21" | "under21";
-    stepchild?: boolean;
-    adopter?: boolean;
-  };
-  // ...existing properties if any...
+  petitionerStatus?: "US_CITIZEN" | "PERMANENT_RESIDENT" | "OTHER";
+  beneficiaryLocation?: "IN_US" | "OUTSIDE_US";
+  maritalStatus?: "MARRIED" | "UNMARRIED";
+  petitionerAge?: "UNDER_18" | "18_TO_20" | "OVER_21";
+  relationship?: "SPOUSE" | "PARENT" | "SIBLING" | "FIANCE" | "CHILD";
+  age?: "UNDER_21" | "OVER_21";
 }
 
 const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
-  // Replace previous state with new quiz flow state
   const [quizStarted, setQuizStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
-
-  // New local states for multi-select steps
-  const [personalStatusSelection, setPersonalStatusSelection] = useState<{
-    maritalStatus?: "married" | "unmarried";
-    ageStatus?: "over21" | "under21";
-  }>({});
-  const [childStatusSelection, setChildStatusSelection] = useState<{
-    maritalStatus?: "married" | "unmarried";
-    ageStatus?: "over21" | "under21";
-    stepchild?: boolean;
-    adopter?: boolean;
-  }>({});
 
   const startQuiz = () => {
     setQuizStarted(true);
@@ -51,180 +29,473 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
     setAnswers({});
   };
 
-  // Modified answer handler for simple questions
-  const handleAnswer = (question: number, answer: string | boolean) => {
+  // Fix handleAnswer function to align with Quiz component
+  const handleAnswer = (question: number, answer: string) => {
     const newAnswers = { ...answers };
     switch (question) {
       case 0:
         newAnswers.petitionerStatus = answer as
-          | "usCitizen"
-          | "greenCard"
-          | "other";
+          | "US_CITIZEN"
+          | "PERMANENT_RESIDENT"
+          | "OTHER";
+        setCurrentQuestion(1);
         break;
       case 1:
-        newAnswers.beneficiaryLocation = answer as "inUS" | "outsideUS";
+        newAnswers.beneficiaryLocation = answer as "IN_US" | "OUTSIDE_US";
+        setCurrentQuestion(2);
+        break;
+      case 2:
+        newAnswers.maritalStatus = answer as "MARRIED" | "UNMARRIED";
+        setCurrentQuestion(3);
         break;
       case 3:
-        newAnswers.greencardFor = answer as
-          | "spouse"
-          | "parent"
-          | "sibling"
-          | "fiance"
-          | "child";
+        newAnswers.petitionerAge = answer as
+          | "UNDER_18"
+          | "18_TO_20"
+          | "OVER_21";
+        setCurrentQuestion(4);
         break;
       case 4:
-        if (answers.greencardFor === "spouse") {
-          newAnswers.spouseDuration = answer as "<2" | ">2";
+        newAnswers.relationship = answer as
+          | "SPOUSE"
+          | "PARENT"
+          | "SIBLING"
+          | "FIANCE"
+          | "CHILD";
+        if (answer === "CHILD") {
+          setCurrentQuestion(5);
+        } else {
+          // Complete quiz for non-child relationships
+          setAnswers(newAnswers);
+          setIsLoading(true);
+          setTimeout(() => {
+            setIsLoading(false);
+            setShowCompletion(true);
+          }, 2000);
+          return;
         }
         break;
-      default:
+      case 5:
+        if (newAnswers.relationship === "CHILD") {
+          newAnswers.age = answer as "UNDER_21" | "OVER_21";
+          setCurrentQuestion(6);
+        }
+        break;
+      case 6:
+        if (newAnswers.relationship === "CHILD") {
+          newAnswers.maritalStatus = answer as "MARRIED" | "UNMARRIED";
+          setAnswers(newAnswers);
+          setIsLoading(true);
+          setTimeout(() => {
+            setIsLoading(false);
+            setShowCompletion(true);
+          }, 2000);
+          return;
+        }
         break;
     }
     setAnswers(newAnswers);
-    // Advance conditionally:
-    if (question === 3) {
-      // if greencardFor is spouse or child, require an extra question step
-      if (answer === "spouse" || answer === "child") {
-        setCurrentQuestion(currentQuestion + 1);
-        return;
-      }
-    }
-    // Final step if on last question
-    if (
-      question === 4 ||
-      (question === 3 && answer !== "spouse" && answer !== "child")
-    ) {
-      // simulate processing and show results
-      setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-        setShowCompletion(true);
-      }, 2000);
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
-    }
   };
 
-  // Function to compute eligibility based on answers (placeholder using provided table)
-  const computeEligibility = () => {
-    let eligibility = {
-      category: "N/A",
-      relationship: "N/A",
-      forms: "N/A",
-      documents: "N/A",
-    };
+  // Use the exact same getRequiredForms function from visaUtils
+  const getRequiredForms = (
+    petitionerStatus: string,
+    isInUS: boolean,
+    isSpouse: boolean,
+    relationship: string,
+    age: string,
+    maritalStatus: string,
+    petitionerAge: string
+  ): {
+    immediate: string[];
+    whenCurrent: string[];
+    requiredDocuments?: string[];
+    fianceNote?: string;
+  } => {
+    const immediate: string[] = [];
+    const whenCurrent: string[] = [];
+    const requiredDocuments: string[] = [];
+    let fianceNote: string | undefined = undefined;
 
-    // NEW category logic
-    if (answers.petitionerStatus === "usCitizen") {
-      if (answers.greencardFor === "spouse") {
-        if (answers.spouseDuration === ">2") {
-          eligibility.category = "IR-1";
-          eligibility.relationship = "Spouse of U.S. citizen (>2 yrs)";
-          eligibility.forms = "I-130, I-485, I-864";
-          eligibility.documents =
-            "Marriage cert, I-485, I-864, passport, I-94, photos, medical";
-        } else {
-          eligibility.category = "CR-1";
-          eligibility.relationship = "Spouse of U.S. citizen (<2 yrs)";
-          eligibility.forms = "I-130, I-485, I-864, I-751 (later)";
-          eligibility.documents = "Same as IR-1 + I-751 to remove conditions";
-        }
-      } else if (answers.greencardFor === "child") {
-        if (answers.childAdditional?.ageStatus === "under21") {
-          eligibility.category = "IR-2";
-          eligibility.relationship = "Unmarried child (<21) of U.S. citizen";
-          eligibility.forms = "I-130, I-485, I-864";
-          eligibility.documents = "Birth cert, passport, I-94, medical, I-864";
-        } else {
-          eligibility.category = "F3";
-          eligibility.relationship =
-            "Married son/daughter of U.S. citizen or child 21+";
-          eligibility.forms = "I-130, then DS-260/I-485 if PD current";
-          eligibility.documents =
-            "Marriage & birth certs, I-864, other supporting docs";
-        }
-      } else if (answers.greencardFor === "fiance") {
-        eligibility.category = "K1";
-        eligibility.relationship = "Fiancé(e) of U.S. citizen";
-        eligibility.forms = "I-129F, DS-160, then I-485 after marriage";
-        eligibility.documents =
-          "Proof of relationship, passport, marriage docs, I-864 after marriage";
-      } else if (answers.greencardFor === "parent") {
-        eligibility.category = "IR-5";
-        eligibility.relationship = "Parent of U.S. citizen (petitioner 21+)";
-        eligibility.forms = "I-130, I-485, I-864";
-        eligibility.documents =
-          "Proof of relationship (petitioner birth cert), passport, I-94, medical";
-      } else if (answers.greencardFor === "sibling") {
-        eligibility.category = "F4";
-        eligibility.relationship = "Sibling of U.S. citizen";
-        eligibility.forms = "I-130, then DS-260/I-485 if PD current";
-        eligibility.documents =
-          "Birth certs showing shared parent, I-864, other supporting docs";
+    // Fiance logic
+    if (petitionerStatus === "US_CITIZEN" && relationship === "FIANCE") {
+      if (isInUS) {
+        // Not eligible to file anything as a fiance in the US
+        return { immediate: [], whenCurrent: [] };
       } else {
-        eligibility.category = "N/A";
+        immediate.push("I-129F");
+        whenCurrent.push("I-864");
+        whenCurrent.push(
+          "I-864A (contract between sponsor and household member, needed in certain cases)"
+        );
+        whenCurrent.push("I-485");
+        whenCurrent.push("I-765 (Optional - for work authorization)");
+        whenCurrent.push(
+          "I-131 (Optional - for international travel while case is pending)"
+        );
+        whenCurrent.push(
+          "I-693 (Medical Examination - requires USCIS Civil Surgeon)"
+        );
+        fianceNote =
+          "Once the K-1 visa is approved, the beneficiary must travel to the US, get married within 90 days, and then file these forms to adjust status.";
+        return { immediate, whenCurrent, ...(fianceNote && { fianceNote }) };
       }
-    } else if (answers.petitionerStatus === "greenCard") {
-      if (
-        answers.greencardFor === "spouse" ||
-        (answers.greencardFor === "child" &&
-          answers.childAdditional?.ageStatus === "under21")
-      ) {
-        eligibility.category = "F2A";
-        eligibility.relationship = "Spouse or unmarried child (<21) of LPR";
-        eligibility.forms = "I-130, DS-260/I-485, I-864";
-        eligibility.documents =
-          "Marriage cert or birth cert, passport, proof of LPR status, medical";
-      } else if (answers.greencardFor === "child") {
-        eligibility.category = "F2B";
-        eligibility.relationship = "Unmarried sons/daughters (21+) of LPR";
-        eligibility.forms = "I-130, DS-260/I-485, I-864";
-        eligibility.documents =
-          "Birth cert, proof of relationship, passport, I-94 if inside U.S.";
-      } else {
-        eligibility.category = "N/A";
-      }
-    } else {
-      eligibility.category = "N/A";
     }
 
-    return eligibility.category === "N/A" ? (
-      <div className="bg-red-50 border border-red-300 p-8 rounded-xl text-center">
-        <h3 className="text-3xl font-bold text-red-700 mb-4">Heads Up!</h3>
-        <p className="text-lg mb-6">
-          We could not find a matching category for your situation. Please see
-          other resources or consult an attorney.
-        </p>
-      </div>
-    ) : (
-      <div className="bg-green-50 border border-green-300 p-8 rounded-xl text-center">
-        <h3 className="text-3xl font-bold text-green-700 mb-4">
-          Congratulations!
-        </h3>
-        <p className="text-lg mb-6">
-          Based on your responses, you are eligible for the{" "}
-          <span className="font-semibold">{eligibility.category}</span>{" "}
-          category.
-        </p>
-        <div className="text-left bg-white p-4 rounded shadow-md inline-block">
-          <p>
-            <span className="font-semibold">Relationship:</span>{" "}
-            {eligibility.relationship}
-          </p>
-          <p>
-            <span className="font-semibold">Required Forms:</span>{" "}
-            {eligibility.forms}
-          </p>
-          <p>
-            <span className="font-semibold">Documents Needed:</span>{" "}
-            {eligibility.documents}
+    // Check eligibility based on petitioner status, relationship, and age
+    const isEligible =
+      // US Citizen cases
+      (petitionerStatus === "US_CITIZEN" &&
+        // Spouse - petitioner must be 18+
+        ((isSpouse && petitionerAge !== "UNDER_18") ||
+          // Children - no age requirement for petitioner
+          (relationship === "CHILD" &&
+            (age === "UNDER_21" || age === "OVER_21")) ||
+          (relationship === "CHILD" &&
+            age === "OVER_21" &&
+            maritalStatus === "UNMARRIED") ||
+          (relationship === "CHILD" &&
+            age === "OVER_21" &&
+            maritalStatus === "MARRIED") ||
+          // Parents and Siblings - petitioner must be 21+
+          ((relationship === "SIBLING" || relationship === "PARENT") &&
+            petitionerAge === "OVER_21"))) ||
+      // Permanent Resident cases
+      (petitionerStatus === "PERMANENT_RESIDENT" &&
+        // Spouse - petitioner must be 18+
+        ((isSpouse && petitionerAge !== "UNDER_18") ||
+          // Children - only unmarried children
+          (relationship === "CHILD" &&
+            (age === "UNDER_21" || age === "OVER_21") &&
+            maritalStatus === "UNMARRIED")));
+
+    if (isEligible) {
+      // Everyone eligible can file I-130
+      immediate.push("I-130");
+
+      // Additional forms based on relationship and location
+      if (isSpouse) {
+        immediate.push("I-130A");
+      }
+
+      // Required documents for parent petitions
+      if (relationship === "PARENT") {
+        requiredDocuments.push(
+          "Birth certificate showing your name and your parent's name",
+          "Certificate of Naturalization or U.S. passport (if you were not born in the United States)"
+        );
+
+        // Additional documents for father petitions
+        if (maritalStatus === "MARRIED") {
+          requiredDocuments.push("Parents' civil marriage certificate");
+        }
+      }
+
+      // Forms required when priority date becomes current
+      whenCurrent.push(
+        "I-864 (Affidavit of Support)",
+        "I-864A (contract between sponsor and household member, needed in certain cases)",
+        "DS-260 (Immigrant Visa Application)"
+      );
+
+      // Additional forms for beneficiaries in the US
+      if (isInUS) {
+        whenCurrent.push(
+          "I-485 (Adjustment of Status)",
+          "I-765 (Optional - for work authorization)",
+          "I-131 (Optional - for international travel while case is pending)",
+          "I-693 (Medical Examination - requires USCIS Civil Surgeon)"
+        );
+      }
+    }
+
+    return {
+      immediate,
+      whenCurrent,
+      ...(requiredDocuments.length > 0 && { requiredDocuments }),
+    };
+  };
+
+  const getIneligibilityReason = () => {
+    if (
+      answers.petitionerStatus !== "US_CITIZEN" &&
+      answers.petitionerStatus !== "PERMANENT_RESIDENT"
+    ) {
+      return "You must be a U.S. citizen or lawful permanent resident to file Form I-130.";
+    }
+
+    if (
+      answers.relationship === "SPOUSE" &&
+      answers.petitionerAge === "UNDER_18"
+    ) {
+      return "You must be at least 18 years old to sponsor a spouse.";
+    }
+
+    if (
+      (answers.relationship === "PARENT" ||
+        answers.relationship === "SIBLING") &&
+      answers.petitionerAge !== "OVER_21"
+    ) {
+      return "You must be at least 21 years old to sponsor a parent or sibling.";
+    }
+
+    return "The relationship does not qualify for I-130 filing.";
+  };
+
+  const generateDetailedResults = () => {
+    const isInUS = answers.beneficiaryLocation === "IN_US";
+    const isSpouse = answers.relationship === "SPOUSE";
+    const isFiance = answers.relationship === "FIANCE";
+
+    const { immediate, whenCurrent, fianceNote } = getRequiredForms(
+      answers.petitionerStatus || "",
+      isInUS,
+      isSpouse,
+      answers.relationship || "",
+      answers.age || "",
+      answers.maritalStatus || "",
+      answers.petitionerAge || ""
+    );
+
+    // Handle special cases first
+    if (immediate.length === 0 && isFiance && isInUS) {
+      return {
+        isEligible: false,
+        specialMessage:
+          "If you are engaged and your fiancé(e) is already in the United States, you cannot file a fiancé(e) petition. Please proceed as a spouse once you are married.",
+      };
+    }
+
+    if (immediate.length === 0) {
+      return {
+        isEligible: false,
+        reason: getIneligibilityReason(),
+      };
+    }
+
+    // Generate document lists based on form type
+    let petitionerDocs: string[] = [];
+    let beneficiaryDocs: string[] = [];
+
+    if (isFiance && !isInUS) {
+      // I-129F documents
+      petitionerDocs = [
+        "US passport",
+        "Birth certificate or naturalization certificate",
+        "Passport size photos",
+        "Evidence of genuine relationship (photos, correspondence)",
+        "Fiance(e) Letter of Intent",
+      ];
+      beneficiaryDocs = [
+        "Valid passport",
+        "Birth certificate",
+        "Marriage certificate (if applicable) / divorce or death certificate for previous marriage (if applicable)",
+        "If beneficiary has children, then birth certificates of children",
+        "Passport size photos",
+        "Fiance(e) Letter of Intent",
+      ];
+    } else {
+      // I-130 documents
+      petitionerDocs = [
+        "US passport",
+        "Birth certificate or naturalization certificate",
+        "Passport size photos",
+        "Evidence of genuine relationship (photos, correspondence)",
+      ];
+      if (isSpouse) {
+        petitionerDocs.push(
+          "Evidence of genuine relationship (joint accounts if filing for spouse)"
+        );
+      }
+
+      beneficiaryDocs = [
+        "Valid passport",
+        "Birth certificate",
+        "Marriage certificate (if applicable) / divorce or death certificate for previous marriage (if applicable)",
+        "If beneficiary has children, then birth certificates of children",
+        "Passport size photos",
+      ];
+      if (isInUS) {
+        beneficiaryDocs.push(
+          "Copy of US visa used to enter the country",
+          "I-94"
+        );
+      }
+    }
+
+    return {
+      isEligible: true,
+      immediateForms: immediate,
+      whenCurrentForms: whenCurrent,
+      petitionerDocs,
+      beneficiaryDocs,
+      fianceNote,
+      isFiance,
+      isInUS,
+      isSpouse,
+    };
+  };
+
+  const renderDetailedResults = () => {
+    const results = generateDetailedResults();
+
+    return (
+      <div className="animate-fadeIn py-6 max-h-96 overflow-y-auto">
+        {!results.isEligible ? (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2 text-red-600">
+              {results.specialMessage
+                ? "No Application at This Point"
+                : "Not Eligible for I-130 Filing"}
+            </h2>
+            <p className="text-lg text-gray-700">
+              {results.specialMessage || results.reason}
+            </p>
+            {!results.specialMessage && (
+              <p className="mt-4 text-gray-700">
+                Please consult with an immigration attorney to explore other
+                potential immigration options.
+              </p>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">
+                Forms You Can File Now
+              </h2>
+              <ul className="list-disc pl-5 space-y-2">
+                {results.immediateForms?.map((form) => (
+                  <li key={form} className="text-lg">
+                    {form}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p className="text-blue-700">
+                  {results.isFiance && !results.isInUS
+                    ? "After filing these forms, USCIS will review your petition. Once approved your fiancé(e) can apply for a K-1 visa at the U.S. Consulate in their home country."
+                    : "After filing these forms, USCIS will review your petition. Once approved and when your priority date is current, your case will be sent to the National Visa Center (NVC) for further processing."}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">
+                Documents Needed for{" "}
+                {results.isFiance && !results.isInUS ? "I-129F" : "I-130"}
+              </h2>
+              <div className="mb-4">
+                <h3 className="font-semibold">Petitioner:</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  {results.petitionerDocs?.map((doc, index) => (
+                    <li key={index} className="text-sm">
+                      {doc}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mb-4">
+                <h3 className="font-semibold">Beneficiary:</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  {results.beneficiaryDocs?.map((doc, index) => (
+                    <li key={index} className="text-sm">
+                      {doc}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {results.fianceNote && (
+              <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
+                <p className="text-yellow-700">{results.fianceNote}</p>
+              </div>
+            )}
+
+            {results.whenCurrentForms &&
+              results.whenCurrentForms.length > 0 && (
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-2">
+                    {results.isFiance
+                      ? "Forms Required After K-1 Entry and Marriage in the US"
+                      : "Forms Required When Your I-130 is Approved and Your Priority Date is Current"}
+                  </h2>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {results.whenCurrentForms.map((form, index) => (
+                      <li key={index} className="text-sm">
+                        {form.includes("I-693") ? (
+                          <>
+                            {form.split(" (")[0]} (medical examination){" "}
+                            <a
+                              href="https://www.uscis.gov/tools/find-a-civil-surgeon"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-800 underline hover:text-blue-900"
+                            >
+                              (find a USCIS civil surgeon)
+                            </a>
+                          </>
+                        ) : (
+                          form
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                  {!results.isFiance && (
+                    <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                      <p className="text-blue-700 text-sm">
+                        To check when your priority date will become current,
+                        visit the{" "}
+                        <a
+                          href="https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/current-visa-bulletin.html"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-800 underline hover:text-blue-900"
+                        >
+                          Department of State Visa Bulletin
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+            {results.isSpouse && (
+              <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
+                <h3 className="font-semibold text-yellow-800 mb-2">
+                  Important Note for Spouses:
+                </h3>
+                <p className="text-yellow-700 text-sm">
+                  If you have been married for less than two years when your
+                  spouse's green card is approved, they will receive conditional
+                  permanent residence. You will need to file Form I-751 to
+                  remove these conditions prior to the expiration of the
+                  conditional green card.
+                </p>
+              </div>
+            )}
+          </>
+        )}
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <h3 className="font-semibold text-blue-800 mb-2">Important Notes:</h3>
+          <p className="text-blue-700 text-sm">
+            Processing times may vary. Check current processing times on the{" "}
+            <a
+              href="https://egov.uscis.gov/processing-times/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-800 underline hover:text-blue-900"
+            >
+              USCIS website
+            </a>
           </p>
         </div>
       </div>
     );
   };
 
-  // Render question based on currentQuestion index
   const renderQuizQuestion = () => {
     switch (currentQuestion) {
       case 0:
@@ -234,28 +505,25 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
               Are you (the petitioner)?
             </h3>
             <div className="grid gap-4 max-w-lg mx-auto">
-              {/* Option a */}
               <button
-                onClick={() => handleAnswer(0, "usCitizen")}
+                onClick={() => handleAnswer(0, "US_CITIZEN")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
-                <span className="text-xl font-medium">a. US Citizen</span>
+                <span className="text-xl font-medium">US Citizen</span>
               </button>
-              {/* Option b */}
               <button
-                onClick={() => handleAnswer(0, "greenCard")}
+                onClick={() => handleAnswer(0, "PERMANENT_RESIDENT")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">
-                  b. Permanent Resident / Green card holder
+                  Permanent Resident / Green card holder
                 </span>
               </button>
-              {/* Option c */}
               <button
-                onClick={() => handleAnswer(0, "other")}
+                onClick={() => handleAnswer(0, "OTHER")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
-                <span className="text-xl font-medium">c. Other</span>
+                <span className="text-xl font-medium">Other</span>
               </button>
             </div>
           </div>
@@ -268,7 +536,7 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
             </h3>
             <div className="grid gap-4 max-w-lg mx-auto">
               <button
-                onClick={() => handleAnswer(1, "inUS")}
+                onClick={() => handleAnswer(1, "IN_US")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">
@@ -276,7 +544,7 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
                 </span>
               </button>
               <button
-                onClick={() => handleAnswer(1, "outsideUS")}
+                onClick={() => handleAnswer(1, "OUTSIDE_US")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">
@@ -289,82 +557,22 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
       case 2:
         return (
           <div className="animate-fadeIn">
-            <h3 className="text-2xl font-bold text-center mb-6">Are you?</h3>
-            <div className="max-w-lg mx-auto space-y-6">
-              <div>
-                <p className="text-xl mb-2">Marital Status:</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() =>
-                      setPersonalStatusSelection((prev) => ({
-                        ...prev,
-                        maritalStatus: "married",
-                      }))
-                    }
-                    className={`border rounded-xl p-6 text-center transition-colors ${personalStatusSelection.maritalStatus === "married" ? "border-blue-500" : ""}`}
-                  >
-                    Married
-                  </button>
-                  <button
-                    onClick={() =>
-                      setPersonalStatusSelection((prev) => ({
-                        ...prev,
-                        maritalStatus: "unmarried",
-                      }))
-                    }
-                    className={`border rounded-xl p-6 text-center transition-colors ${personalStatusSelection.maritalStatus === "unmarried" ? "border-blue-500" : ""}`}
-                  >
-                    Unmarried
-                  </button>
-                </div>
-              </div>
-              <div>
-                <p className="text-xl mb-2">Age:</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() =>
-                      setPersonalStatusSelection((prev) => ({
-                        ...prev,
-                        ageStatus: "over21",
-                      }))
-                    }
-                    className={`border rounded-xl p-6 text-center transition-colors ${personalStatusSelection.ageStatus === "over21" ? "border-blue-500" : ""}`}
-                  >
-                    Over 21
-                  </button>
-                  <button
-                    onClick={() =>
-                      setPersonalStatusSelection((prev) => ({
-                        ...prev,
-                        ageStatus: "under21",
-                      }))
-                    }
-                    className={`border rounded-xl p-6 text-center transition-colors ${personalStatusSelection.ageStatus === "under21" ? "border-blue-500" : ""}`}
-                  >
-                    Under 21
-                  </button>
-                </div>
-              </div>
-              <div className="text-center">
-                <button
-                  onClick={() => {
-                    if (
-                      personalStatusSelection.maritalStatus &&
-                      personalStatusSelection.ageStatus
-                    ) {
-                      setAnswers({
-                        ...answers,
-                        maritalStatus: personalStatusSelection.maritalStatus,
-                        ageStatus: personalStatusSelection.ageStatus,
-                      });
-                      setCurrentQuestion(currentQuestion + 1);
-                    }
-                  }}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-8 rounded-full text-lg transition-colors"
-                >
-                  Next
-                </button>
-              </div>
+            <h3 className="text-2xl font-bold text-center mb-8">
+              What is your marital status?
+            </h3>
+            <div className="grid gap-4 max-w-lg mx-auto">
+              <button
+                onClick={() => handleAnswer(2, "MARRIED")}
+                className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+              >
+                <span className="text-xl font-medium">Married</span>
+              </button>
+              <button
+                onClick={() => handleAnswer(2, "UNMARRIED")}
+                className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+              >
+                <span className="text-xl font-medium">Unmarried</span>
+              </button>
             </div>
           </div>
         );
@@ -372,35 +580,65 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
         return (
           <div className="animate-fadeIn">
             <h3 className="text-2xl font-bold text-center mb-8">
-              Are you applying for a greencard for?
+              What is your age?
             </h3>
             <div className="grid gap-4 max-w-lg mx-auto">
               <button
-                onClick={() => handleAnswer(3, "spouse")}
+                onClick={() => handleAnswer(3, "OVER_21")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
-                <span className="text-xl font-medium">a. Spouse</span>
+                <span className="text-xl font-medium">Over 21</span>
               </button>
               <button
-                onClick={() => handleAnswer(3, "parent")}
+                onClick={() => handleAnswer(3, "18_TO_20")}
+                className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+              >
+                <span className="text-xl font-medium">18 to 20</span>
+              </button>
+              <button
+                onClick={() => handleAnswer(3, "UNDER_18")}
+                className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+              >
+                <span className="text-xl font-medium">Under 18</span>
+              </button>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="animate-fadeIn">
+            <h3 className="text-2xl font-bold text-center mb-8">
+              Are you applying for a greencard for?
+            </h3>
+            <div className="grid gap-4 max-w-lg mx-auto">
+              {answers.maritalStatus === "MARRIED" && (
+                <button
+                  onClick={() => handleAnswer(4, "SPOUSE")}
+                  className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+                >
+                  <span className="text-xl font-medium">a. Spouse</span>
+                </button>
+              )}
+              <button
+                onClick={() => handleAnswer(4, "PARENT")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">b. Parent</span>
               </button>
               <button
-                onClick={() => handleAnswer(3, "sibling")}
+                onClick={() => handleAnswer(4, "SIBLING")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">c. Sibling</span>
               </button>
               <button
-                onClick={() => handleAnswer(3, "fiance")}
+                onClick={() => handleAnswer(4, "FIANCE")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">d. Fiance</span>
               </button>
               <button
-                onClick={() => handleAnswer(3, "child")}
+                onClick={() => handleAnswer(4, "CHILD")}
                 className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
               >
                 <span className="text-xl font-medium">e. Child</span>
@@ -408,129 +646,51 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
             </div>
           </div>
         );
-      case 4:
-        // Conditional question based on greencardFor choice
-        if (answers.greencardFor === "spouse") {
+      case 5:
+        if (answers.relationship === "CHILD") {
           return (
             <div className="animate-fadeIn">
               <h3 className="text-2xl font-bold text-center mb-8">
-                How long have you been married for?
+                What is the age of the child?
               </h3>
               <div className="grid gap-4 max-w-lg mx-auto">
                 <button
-                  onClick={() => handleAnswer(4, "<2")}
+                  onClick={() => handleAnswer(5, "UNDER_21")}
                   className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
                 >
-                  <span className="text-xl font-medium">&lt;2 years</span>
+                  <span className="text-xl font-medium">Under 21</span>
                 </button>
                 <button
-                  onClick={() => handleAnswer(4, ">2")}
+                  onClick={() => handleAnswer(5, "OVER_21")}
                   className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
                 >
-                  <span className="text-xl font-medium">More than 2 years</span>
+                  <span className="text-xl font-medium">Over 21</span>
                 </button>
               </div>
             </div>
           );
-        } else if (answers.greencardFor === "child") {
+        }
+        return null;
+      case 6:
+        if (answers.relationship === "CHILD") {
           return (
             <div className="animate-fadeIn">
-              <h3 className="text-2xl font-bold text-center mb-6">
-                Please specify details for the child:
+              <h3 className="text-2xl font-bold text-center mb-8">
+                What is the marital status of the child?
               </h3>
-              <div className="max-w-lg mx-auto space-y-6">
-                <div>
-                  <p className="text-xl mb-2">Marital Status:</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() =>
-                        setChildStatusSelection((prev) => ({
-                          ...prev,
-                          maritalStatus: "married",
-                        }))
-                      }
-                      className={`border rounded-xl p-6 text-center transition-colors ${childStatusSelection.maritalStatus === "married" ? "border-blue-500" : ""}`}
-                    >
-                      Married
-                    </button>
-                    <button
-                      onClick={() =>
-                        setChildStatusSelection((prev) => ({
-                          ...prev,
-                          maritalStatus: "unmarried",
-                        }))
-                      }
-                      className={`border rounded-xl p-6 text-center transition-colors ${childStatusSelection.maritalStatus === "unmarried" ? "border-blue-500" : ""}`}
-                    >
-                      Unmarried
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xl mb-2">Age:</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() =>
-                        setChildStatusSelection((prev) => ({
-                          ...prev,
-                          ageStatus: "over21",
-                        }))
-                      }
-                      className={`border rounded-xl p-6 text-center transition-colors ${childStatusSelection.ageStatus === "over21" ? "border-blue-500" : ""}`}
-                    >
-                      Over 21
-                    </button>
-                    <button
-                      onClick={() =>
-                        setChildStatusSelection((prev) => ({
-                          ...prev,
-                          ageStatus: "under21",
-                        }))
-                      }
-                      className={`border rounded-xl p-6 text-center transition-colors ${childStatusSelection.ageStatus === "under21" ? "border-blue-500" : ""}`}
-                    >
-                      Under 21
-                    </button>
-                  </div>
-                </div>
-                <div className="flex justify-center gap-4">
-                  <button
-                    onClick={() =>
-                      setChildStatusSelection((prev) => ({
-                        ...prev,
-                        stepchild: !prev.stepchild,
-                      }))
-                    }
-                    className={`border rounded-xl p-4 transition-colors ${childStatusSelection.stepchild ? "border-blue-500" : ""}`}
-                  >
-                    Stepchild
-                  </button>
-                  <button
-                    onClick={() =>
-                      setChildStatusSelection((prev) => ({
-                        ...prev,
-                        adopter: !prev.adopter,
-                      }))
-                    }
-                    className={`border rounded-xl p-4 transition-colors ${childStatusSelection.adopter ? "border-blue-500" : ""}`}
-                  >
-                    Adopter
-                  </button>
-                </div>
-                <div className="text-center">
-                  <button
-                    onClick={() => {
-                      setAnswers({
-                        ...answers,
-                        childAdditional: childStatusSelection,
-                      });
-                      setCurrentQuestion(currentQuestion + 1);
-                    }}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-8 rounded-full text-lg transition-colors"
-                  >
-                    Next
-                  </button>
-                </div>
+              <div className="grid gap-4 max-w-lg mx-auto">
+                <button
+                  onClick={() => handleAnswer(6, "MARRIED")}
+                  className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+                >
+                  <span className="text-xl font-medium">Married</span>
+                </button>
+                <button
+                  onClick={() => handleAnswer(6, "UNMARRIED")}
+                  className="border rounded-xl p-6 text-left hover:border-blue-500 transition-colors"
+                >
+                  <span className="text-xl font-medium">Unmarried</span>
+                </button>
               </div>
             </div>
           );
@@ -558,43 +718,40 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
 
   const renderCompletionScreen = () => {
     return (
-      <div className="animate-fadeIn text-center py-12">
-        {computeEligibility()}
-        <div className="mt-8">
+      <div className="animate-fadeIn py-6">
+        <h3 className="text-3xl font-bold text-green-700 mb-6 text-center">
+          Your Detailed Results
+        </h3>
+        <div className="max-h-[60vh] overflow-y-auto">
+          {renderDetailedResults()}
+        </div>
+        <div className="mt-8 text-center">
           <button
             onClick={() => {
               setShowCompletion(false);
               setQuizStarted(false);
               setCurrentQuestion(0);
               setAnswers({});
-              setPersonalStatusSelection({});
-              setChildStatusSelection({});
             }}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-8 rounded-full text-lg transition-colors"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-8 rounded-full text-lg transition-colors mr-4"
           >
             Take Quiz Again
+          </button>
+          <button
+            onClick={() =>
+              window.open(
+                "https://skiplegal.ai/family-based-greencard-signup",
+                "_blank"
+              )
+            }
+            className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-8 rounded-full text-lg transition-colors"
+          >
+            Join Waitlist
           </button>
         </div>
       </div>
     );
   };
-  // // Close explanations when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     const target = event.target as HTMLElement;
-  //     if (
-  //       !target.closest(".explanation-container") &&
-  //       !target.closest(".help-icon")
-  //     ) {
-  //       setShowExplanation({});
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
 
   return (
     <div className="fixed inset-0 bg-black/20 text-gray-800 flex items-center justify-center z-50">
@@ -665,8 +822,6 @@ const QuizModal = ({ onOptionSelect }: QuizModalProps) => {
                 <ArrowLeft size={20} className="mr-2" />
                 <span>Back</span>
               </button>
-              {/* Optionally show progress bar */}
-              {/* ...existing progress bar code... */}
               {renderQuizQuestion()}
               <div className="mt-8 text-center">
                 <button
